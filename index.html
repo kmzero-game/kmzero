@@ -69,6 +69,8 @@ h1, h2 { margin: 0; font-family: var(--f-display); font-weight: 700; text-wrap: 
 .rm-town { display: flex; align-items: center; gap: 5px; pointer-events: none; }
 .rm-town i { width: 9px; height: 9px; border-radius: 50%; background: #fff; border: 2.4px solid #1B2A33; flex: none; }
 .rm-town.big i { width: 12px; height: 12px; }
+.rm-z0 .rm-town:not(.big), .rm-z0 .rm-town span { display: none; }
+.rm-z1 .rm-town:not(.big) { display: none; }
 .rm-town span { font: 600 12px var(--f-body); color: #1B2A33; text-shadow: 0 0 3px #FBF6E8, 0 0 3px #FBF6E8, 0 0 3px #FBF6E8; white-space: nowrap; }
 .rm-me-dot { position: relative; width: 22px; height: 22px; }
 .rm-me-dot b { position: absolute; inset: 4px; border-radius: 50%; background: var(--signal); border: 2.5px solid #fff; box-shadow: 0 1px 6px rgba(0,0,0,.45); }
@@ -88,6 +90,7 @@ h1, h2 { margin: 0; font-family: var(--f-display); font-weight: 700; text-wrap: 
 .toast { pointer-events: auto; background: rgba(16,24,30,.93); color: #fff; border-left: 4px solid var(--signal); border-radius: 10px; padding: 8px 10px; font-size: 13px; line-height: 1.3; display: grid; gap: 2px; box-shadow: 0 4px 14px rgba(0,0,0,.3); animation: toastin .3s ease-out; }
 .toast b { font-weight: 600; }
 .toast span { opacity: .9; }
+.toast.stamp { border-left-color: #c9953c; } .toast.goal { border-left-color: #7ddc8a; } .toast.rdv { border-left-color: #ffb35a; } .toast.flash { border-left-color: #e8602a; }
 .toast.weather { border-left-color: #6EA8E0; } .toast.arrive { border-left-color: #5FBF7A; } .toast.work { border-left-color: #E3B341; } .toast.wake { border-left-color: #F0B07A; } .toast.train { border-left-color: #8E9BD6; }
 @keyframes toastin { from { transform: translateY(-14px); opacity: 0; } to { transform: none; opacity: 1; } }
 .tlabel { fill: var(--ink); font-size: 9.5px; font-weight: 600; paint-order: stroke; stroke: var(--bg); stroke-width: 3px; stroke-linejoin: round; font-family: var(--f-body); }
@@ -400,8 +403,8 @@ footer .row2 button { min-height: 44px; }
 .statusrow p { margin: 0; font-size: 16px; text-shadow: 0 1px 6px rgba(0,0,0,.6); }
 .statuspill .gearwarn { background: rgba(10,18,28,.78); color: #fff; font-size: 14px; padding: 6px 10px; }
 .statuspill .gearwarn b { color: #FFB39E; }
-.dock { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 8px; }
-.dockbtn { min-height: 58px; align-items: center; justify-content: center; text-align: center; font-size: 17px; flex-direction: row; gap: 8px; background: rgba(247,249,248,.96); color: #12222A; border-color: transparent; }
+.dock { display: grid; grid-template-columns: 1fr 1.35fr 1fr 1fr; gap: 6px; }
+.dockbtn { min-height: 58px; align-items: center; justify-content: center; text-align: center; font-size: 15px; flex-direction: row; gap: 5px; padding-left: 6px; padding-right: 6px; background: rgba(247,249,248,.96); color: #12222A; border-color: transparent; }
 .dockbtn.primary { background: var(--accent); color: var(--accent-ink); }
 .bagrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: center; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
 .bagrow strong { font-size: 17px; }
@@ -411,6 +414,136 @@ footer .row2 button { min-height: 44px; }
 .sheetsec { display: grid; gap: 8px; }
 .sheetsec h3 { margin: 6px 0 0; font-family: var(--f-display); font-size: 15px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .me-ring { animation: none; } .pbar i, .g .bar i { transition: none; } }
+
+/* ---- Écrans plein écran (sac, carte…) ---- */
+.fscreen { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column; background: radial-gradient(120% 90% at 50% 20%, #3a2230 0%, #20141b 55%, #120a10 100%); color: #f6e9dc; animation: fsin .55s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes fsin { from { opacity: 0; transform: scale(1.06); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.fscreen.out { animation: fsout .28s ease-in both; }
+@keyframes fsout { to { opacity: 0; transform: scale(.97); } }
+.fs-top { position: absolute; left: 0; right: 0; top: 0; z-index: 3; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: calc(env(safe-area-inset-top, 0px) + 12px) max(14px, env(safe-area-inset-left)) 12px; background: linear-gradient(#120a10cc, #120a1000); pointer-events: none; }
+.fs-top > * { pointer-events: auto; }
+.fs-title { font-family: var(--f-display); font-size: 30px; line-height: 1; letter-spacing: .02em; color: #ffd9a0; text-shadow: 0 2px 10px #0008; }
+.fs-meta { font-size: 13px; color: #d9c3b0; margin-top: 4px; }
+.fs-close { background: #ffffff1c; color: #fff; border: 1px solid #ffffff33; backdrop-filter: blur(6px); border-radius: 999px; padding: 8px 16px; min-height: 40px; }
+.fs-stage { position: absolute; inset: 0; z-index: 1; }
+.fs-vignette { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, #0008 100%); }
+.fs-hint { position: absolute; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); z-index: 3; text-align: center; font-size: 14px; color: #e8d3bf; text-shadow: 0 1px 6px #000a; pointer-events: none; }
+.fs-card { position: absolute; left: 10px; right: 10px; bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); z-index: 4; max-width: 520px; margin: 0 auto; padding: 14px 14px 12px; border-radius: 18px; background: #1d1219ee; border: 1px solid #ffffff22; backdrop-filter: blur(10px); box-shadow: 0 10px 40px #000a; display: grid; gap: 8px; animation: cardup .3s ease-out both; }
+@keyframes cardup { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.fs-card h3 { margin: 0; font-family: var(--f-display); font-size: 24px; line-height: 1.05; color: #ffd9a0; }
+.fs-card .cat { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #b99f8d; }
+.fs-card p { margin: 0; font-size: 14px; line-height: 1.35; color: #eadbcc; }
+.stbar { height: 10px; border-radius: 99px; background: #ffffff1a; overflow: hidden; }
+.stbar i { display: block; height: 100%; border-radius: 99px; transition: width .4s; }
+.strow { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 14px; }
+.strow b { color: #fff; }
+.fx { display: flex; flex-wrap: wrap; gap: 6px; }
+.fx em { font-style: normal; font-size: 12.5px; padding: 3px 9px; border-radius: 99px; background: #ffffff14; border: 1px solid #ffffff22; }
+.fx em.g { color: #9be8a6; border-color: #9be8a655; }
+.fx em.n { color: #ffcf8a; border-color: #ffcf8a55; }
+.fs-card .acts { display: grid; gap: 6px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-top: 2px; }
+.fs-card .acts .btn { min-height: 46px; }
+.fs-card .acts small { display: block; font-size: 11px; opacity: .75; }
+
+/* ---- Carte plein écran : papier qui se déplie ---- */
+.mapfs { background: radial-gradient(120% 100% at 50% 0%, #3a2a1c 0%, #21160e 60%, #130c07 100%); animation: none; }
+.mapfs.go { animation: fsin .45s ease-out both; }
+.mapfs .fs-top { background: linear-gradient(#130c07dd, #130c0700); }
+.mapwrap { position: absolute; z-index: 2; left: 8px; right: 8px; top: calc(env(safe-area-inset-top, 0px) + 62px); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); perspective: 1500px; transform-origin: 50% 50%; }
+.mapwrap.go { animation: unfx 1s cubic-bezier(.22,.7,.2,1) both; }
+@keyframes unfx { 0% { transform: scaleX(.34); } 100% { transform: none; } }
+.mappaper { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; border-radius: 10px; background: #efe5cf; box-shadow: 0 18px 60px #000c, 0 0 0 1px #00000040; transform-origin: 50% 0; -webkit-overflow-scrolling: touch; padding: 8px; display: grid; gap: 12px; align-content: start; }
+.mapwrap.go .mappaper { animation: unfold 1.15s cubic-bezier(.2,.75,.2,1) both; }
+@keyframes unfold { 0% { transform: rotateX(-84deg) scaleY(.25); opacity: 0; } 30% { opacity: 1; } 68% { transform: rotateX(9deg); } 84% { transform: rotateX(-3deg); } 100% { transform: none; opacity: 1; } }
+.mapcreases { position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: 10px; background: linear-gradient(90deg, #0003 0, #0000 5%, #0000 31%, #ffffff30 33.2%, #00000030 33.5%, #0000 37%, #0000 63%, #ffffff30 66.4%, #00000030 66.7%, #0000 71%, #0000 95%, #0003 100%); opacity: .3; }
+.mapwrap.go .mapcreases { animation: crease 1.4s ease-out both; }
+@keyframes crease { 0% { opacity: 1; } 100% { opacity: .3; } }
+.mapfs .mapcard { background: transparent; border: 0; padding: 0; }
+.mapfs #rmap { height: min(66vh, 620px); min-height: 320px; border-radius: 6px; box-shadow: inset 0 0 0 1px #0002; }
+.mapfs .journal { background: #f6efdc; color: #2a2118; border-radius: 10px; padding: 12px; border: 0; }
+.mapfs .journal li { border-top-color: #00000020; }
+.mapfs .journal time, .mapfs .journal h2 { color: #6d5d49; }
+.mapfs .mapcard svg { background: #e9dfc6; }
+.mapfs .where, .mapfs .where strong { color: #2a2118; }
+.mapfs .maptabs .btn { background: #2a2118; color: #f3e6cc; border-color: #2a2118; }
+.mapfs .maptabs .btn[aria-selected="true"] { background: #c9602a; border-color: #c9602a; color: #fff; }
+
+/* ---- Carnet de voyage ---- */
+.carnetfs { background: radial-gradient(120% 100% at 50% 0%, #3b2616 0%, #1f130b 70%, #120a05 100%); }
+.cbook { position: absolute; z-index: 2; left: 8px; right: 8px; top: calc(env(safe-area-inset-top, 0px) + 62px); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); perspective: 1800px; display: flex; flex-direction: column; }
+.ctabs { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; padding: 0 4px; margin-bottom: -1px; position: relative; z-index: 2; }
+.ctabs::-webkit-scrollbar { display: none; }
+.ctab { flex: 0 0 auto; padding: 8px 10px; border-radius: 10px 10px 0 0; background: #bba67f; color: #3a2c1c; border: 0; font: 600 13px var(--f-body); min-height: 38px; }
+.ctab[aria-selected="true"] { background: #f5ecd7; box-shadow: 0 -2px 0 #c9602a inset; }
+.cpage { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #f5ecd7; background-image: repeating-linear-gradient(transparent 0 27px, #d8c9a644 27px 28px); border-radius: 0 12px 12px 12px; box-shadow: 0 18px 60px #000c; padding: 14px 12px 24px; color: #2b2218; position: relative; }
+.cpage h2 { font-family: var(--f-display); font-size: 24px; margin: 0 0 4px; color: #5a3416; }
+.cpage .csub { font-size: 13px; color: #7a6850; margin: 0 0 10px; }
+.csum { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 12px; }
+.csum span { background: #2b2218; color: #f5e3c0; border-radius: 99px; padding: 4px 11px; font-size: 13px; font-weight: 600; }
+.cprog { height: 8px; border-radius: 99px; background: #d9cba9; overflow: hidden; margin: 4px 0 12px; }
+.cprog i { display: block; height: 100%; background: linear-gradient(90deg, #c9602a, #e0a43a); border-radius: 99px; }
+.sgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 6px; }
+.scell { display: grid; justify-items: center; gap: 1px; background: none; border: 0; padding: 4px 2px; color: inherit; font: inherit; cursor: pointer; border-radius: 12px; }
+.scell:active { background: #0000000c; }
+.scell svg { width: 100%; max-width: 112px; height: auto; display: block; }
+.scell b { font-size: 12.5px; text-align: center; line-height: 1.15; }
+.scell.lock b { color: #8a7a62; font-weight: 500; }
+.scell i { font-style: normal; font-size: 10px; letter-spacing: 2px; color: #c9602a; }
+.ccover { position: absolute; inset: 0; z-index: 6; border-radius: 6px 14px 14px 6px; background: linear-gradient(135deg, #7a4a26, #4a2b14); box-shadow: inset 0 0 0 7px #5b3519, inset 0 0 0 9px #c9953c66, 0 20px 60px #000c; display: grid; place-items: center; text-align: center; color: #e8c779; transform-origin: left center; animation: coveropen 1.3s .3s cubic-bezier(.6,.05,.3,1) both; pointer-events: none; }
+.ccover div { font-family: var(--f-display); font-size: 40px; letter-spacing: .05em; line-height: 1; text-shadow: 0 2px 0 #0006; }
+.ccover small { display: block; font-family: var(--f-body); font-size: 14px; letter-spacing: .3em; margin-top: 10px; color: #d9b25f; }
+@keyframes coveropen { 0% { transform: rotateY(0); opacity: 1; } 75% { opacity: 1; } 100% { transform: rotateY(-170deg); opacity: 0; visibility: hidden; } }
+.goal { display: grid; gap: 4px; padding: 9px 0; border-top: 1px dashed #b9a67f; }
+.goal .gh { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; font-size: 15px; }
+.goal .gh em { font-style: normal; font-weight: 600; color: #7a6850; font-size: 13px; white-space: nowrap; }
+.goal.done .gh span { text-decoration: line-through; color: #7a6850; }
+.goal .gb { height: 8px; border-radius: 99px; background: #d9cba9; overflow: hidden; }
+.goal .gb i { display: block; height: 100%; background: #4f9a5f; border-radius: 99px; transition: width .4s; }
+.goal small { color: #7a6850; font-size: 12px; }
+.rdvrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 6px 0 14px; }
+.rdvt { border: 1.5px solid #b9a67f; border-radius: 12px; padding: 8px 6px; text-align: center; display: grid; gap: 2px; background: #fff8e6; }
+.rdvt b { font-size: 14px; } .rdvt small { font-size: 12px; color: #7a6850; }
+.rdvt.open { border-color: #c9602a; box-shadow: 0 0 0 3px #c9602a33; animation: rdvp 1.6s ease-in-out infinite; }
+.rdvt.done { background: #e1f1dc; border-color: #4f9a5f; }
+@keyframes rdvp { 50% { box-shadow: 0 0 0 6px #c9602a22; } }
+.carnetfs .fs-card { background: #fbf3df; color: #2b2218; border-color: #00000020; }
+.carnetfs .fs-card h3 { color: #5a3416; } .carnetfs .fs-card p { color: #4a3b2a; } .carnetfs .fs-card .cat { color: #8a7650; }
+.cdbig { display: grid; justify-items: center; }
+.cdbig svg { width: 150px; height: auto; }
+.cchk { display: grid; gap: 6px; margin: 4px 0; }
+.cchk div { display: grid; grid-template-columns: 22px 1fr; gap: 6px; align-items: start; font-size: 14px; }
+.cchk b { color: #2b2218; } .cchk .ok { color: #3f8a4f; font-weight: 700; } .cchk .no { color: #b9a67f; font-weight: 700; }
+.dockbtn.dot { position: relative; }
+.dockbtn.dot::after { content: ""; position: absolute; top: 7px; right: 9px; width: 10px; height: 10px; border-radius: 50%; background: #e8602a; box-shadow: 0 0 0 2px #fff; }
+.stampfx { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: radial-gradient(circle at center, #000a 0%, #000d 100%); animation: fsin .3s ease-out both; }
+.stampfx .box { display: grid; justify-items: center; gap: 8px; padding: 22px; text-align: center; color: #fff; max-width: 420px; }
+.stampfx .paperbit { width: 230px; height: 230px; border-radius: 10px; background: #f5ecd7; display: grid; place-items: center; box-shadow: 0 20px 60px #000c; position: relative; transform: rotate(-3deg); }
+.stampfx .paperbit svg { width: 190px; height: auto; animation: slam .75s cubic-bezier(.2,.9,.25,1.2) .15s both; }
+.stampfx .paperbit::after { content: ""; position: absolute; inset: 20px; border-radius: 50%; border: 3px solid #fff8; animation: ring .8s ease-out .5s both; }
+@keyframes slam { 0% { transform: scale(3.2) rotate(-25deg); opacity: 0; } 60% { transform: scale(.94) rotate(3deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes ring { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.5); opacity: 0; } }
+.stampfx h2 { font-family: var(--f-display); font-size: 30px; line-height: 1; color: #ffd9a0; margin: 6px 0 0; }
+.stampfx p { margin: 0; color: #eadbcc; font-size: 15px; }
+.stampfx .btns { display: grid; gap: 8px; width: 100%; margin-top: 8px; }
+
+/* ---- Événements à durée limitée ---- */
+#flashbar { position: fixed; left: 8px; right: 8px; bottom: calc(env(safe-area-inset-bottom, 0px) + 98px); z-index: 15; max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: 38px minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; padding: 10px 12px; border-radius: 16px; background: #1b1117f2; color: #f6e9dc; border: 1.5px solid #e8602a; box-shadow: 0 8px 30px #000a, 0 0 0 4px #e8602a22; animation: flin .35s cubic-bezier(.2,.9,.3,1.2) both; }
+@keyframes flin { from { transform: translateY(24px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+#flashbar .fl-ic { font-size: 28px; grid-row: 1 / span 2; text-align: center; }
+#flashbar .fl-tx { display: grid; gap: 2px; min-width: 0; }
+#flashbar b { font-size: 15px; color: #ffd9a0; } #flashbar span { font-size: 13px; line-height: 1.25; color: #eadbcc; }
+#flashbar .fl-t { font-variant-numeric: tabular-nums; font-weight: 700; color: #ff9a6e; font-size: 15px; }
+#flashbar .fl-bar { height: 4px; border-radius: 9px; background: #ffffff22; overflow: hidden; margin-top: 3px; } #flashbar .fl-bar i { display: block; height: 100%; background: #e8602a; transition: width 1s linear; }
+#flashbar .fl-b { grid-column: 2 / span 2; display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; margin-top: 4px; }
+#flashbar .fl-b .btn { min-height: 42px; font-size: 14px; padding: 6px 10px; }
+/* ---- Petits jeux ---- */
+.mgfs { z-index: 40; background: #14100d; animation: fsin .35s ease-out both; }
+#mgcv { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; z-index: 1; }
+.mgfs .fs-top, .mgfs .fs-hint, .mgfs .fs-card, .mgfs .mgtap { z-index: 4; }
+.mgtap { position: absolute; left: 14px; right: 14px; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); max-width: 420px; margin: 0 auto; min-height: 64px; font-size: 22px; font-family: var(--f-display); letter-spacing: .04em; }
+.mgfs .fs-hint { bottom: calc(env(safe-area-inset-bottom, 0px) + 92px); }
+.stars { font-size: 34px; letter-spacing: 6px; color: #ffcf5a; text-align: center; text-shadow: 0 2px 10px #0008; }
+.stars i { font-style: normal; opacity: .22; } .stars i.on { opacity: 1; }
 </style>
 
 
@@ -428,6 +561,7 @@ footer .row2 button { min-height: 44px; }
       <nav class="homemenu" aria-label="Menu principal">
         <button class="btn primary big" id="h-new" type="button">Nouvelle partie<small>Crée ton personnage, choisis ta destination et pars</small></button>
         <button class="btn big" id="h-load" type="button">Charger une partie<small id="h-load-sub"></small></button>
+        <button class="btn big" id="h-carnet" type="button">Carnet de voyage<small id="h-carnet-sub"></small></button>
         <div class="row2">
           <button class="btn big" id="h-set" type="button">Paramètres</button>
           <button class="btn big" id="h-online" type="button" disabled>Mode en ligne<small>Bientôt</small></button>
@@ -539,6 +673,7 @@ footer .row2 button { min-height: 44px; }
       <button class="btn dockbtn" id="bag-btn" type="button"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 7V5.5A2.5 2.5 0 0 1 10.5 3h3A2.5 2.5 0 0 1 16 5.5V7m-9 0h10a2 2 0 0 1 2 2v9a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V9a2 2 0 0 1 2-2Zm-2 6h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Sac</button>
       <button class="btn dockbtn primary" id="act-btn" type="button">Actions</button>
       <button class="btn dockbtn" id="map-btn" type="button"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="m9 4-6 2v14l6-2 6 2 6-2V4l-6 2-6-2Zm0 0v14m6-12v14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Carte</button>
+      <button class="btn dockbtn" id="carnet-btn" type="button"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6V3Zm0 0v18m3-13h6m-6 4h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Carnet</button>
     </div>
   </div>
 </div>
@@ -557,6 +692,53 @@ footer .row2 button { min-height: 44px; }
     <h2>Journal de bord</h2>
     <ol id="log"></ol>
   </section>
+</div>
+
+<div id="flashbar" hidden role="status">
+  <div class="fl-ic" id="fl-ic"></div>
+  <div class="fl-tx"><b id="fl-title"></b><span id="fl-text"></span><div class="fl-bar"><i id="fl-bar"></i></div></div>
+  <div class="fl-t" id="fl-t"></div>
+  <div class="fl-b"><button class="btn primary" id="fl-yes" type="button"></button><button class="btn" id="fl-no" type="button"></button></div>
+</div>
+
+<div class="fscreen mgfs" id="mgscreen" hidden role="dialog" aria-modal="true" aria-label="Petit jeu">
+  <canvas id="mgcv"></canvas>
+  <div class="fs-top"><div><div class="fs-title" id="mg-title"></div><div class="fs-meta" id="mg-sub"></div></div><button class="btn fs-close" id="mg-skip" type="button">Passer</button></div>
+  <div class="fs-hint" id="mg-hint"></div>
+  <button class="btn primary mgtap" id="mg-tap" type="button"></button>
+  <div class="fs-card" id="mg-res" hidden></div>
+</div>
+
+<div class="fscreen carnetfs" id="carnetscreen" hidden role="dialog" aria-modal="true" aria-label="Carnet de voyage">
+  <div class="fs-top"><div><div class="fs-title">Carnet de voyage</div><div class="fs-meta" id="carnet-meta"></div></div><button class="btn fs-close" id="carnet-close" type="button">Fermer</button></div>
+  <div class="cbook" id="cbook">
+    <div class="ctabs" id="ctabs" role="tablist"></div>
+    <div class="cpage" id="cpage"></div>
+    <div class="ccover" id="ccover"><div>KM ZÉRO<small>CARNET DE VOYAGE</small></div></div>
+  </div>
+  <div class="fs-card" id="cdetail" hidden></div>
+</div>
+
+<div class="stampfx" id="stampfx" hidden role="dialog" aria-modal="true" aria-label="Nouveau tampon">
+  <div class="box">
+    <div class="paperbit" id="stampfx-art"></div>
+    <h2>Nouveau tampon !</h2>
+    <p id="stampfx-txt"></p>
+    <div class="btns"><button class="btn primary" id="stampfx-open" type="button">Voir mon carnet</button><button class="btn" id="stampfx-ok" type="button">Continuer</button></div>
+  </div>
+</div>
+
+<div class="fscreen mapfs" id="mapscreen" hidden role="dialog" aria-modal="true" aria-label="Carte">
+  <div class="fs-top"><div><div class="fs-title">Carte du voyage</div><div class="fs-meta" id="map-meta"></div></div><button class="btn fs-close" id="map-close" type="button">Fermer</button></div>
+  <div class="mapwrap" id="mapwrap"><div class="mappaper" id="mappaper"><div id="mapslot" style="display:grid;gap:12px"></div></div><div class="mapcreases" id="mapcreases"></div></div>
+</div>
+
+<div class="fscreen" id="bagscreen" hidden role="dialog" aria-modal="true" aria-label="Sac">
+  <div class="fs-stage" id="bag3d"></div>
+  <div class="fs-vignette"></div>
+  <div class="fs-top"><div><div class="fs-title">Mon sac</div><div class="fs-meta" id="bag-meta"></div></div><button class="btn fs-close" id="bag-close" type="button">Fermer</button></div>
+  <div class="fs-hint" id="bag-hint">Touche un objet pour le voir de près</div>
+  <div class="fs-card" id="bagcard" hidden></div>
 </div>
 
 <div class="overlay" id="sheet2" hidden role="dialog" aria-modal="true" aria-labelledby="sheet2-title">
@@ -878,50 +1060,174 @@ footer .row2 button { min-height: 44px; }
     });
   }
 
+  // ---------- Objets : état, effets, poids ----------
+  // kind : fill (gourde) · battery · wear (usure) · clean (propreté) · uses (usages) · none
   var ITEMS = {
-    eau:        { n: 'Gourde d’eau',        cat: 'Vivres',      d: 'Quelques gorgées pour tenir. Elle se remplit gratuitement à chaque ville.', usable: true, verb: 'Boire' },
-    barre:      { n: 'Barres de céréales',  cat: 'Vivres',      d: 'Une vraie collation : coupe la faim et redonne un peu d’énergie.', usable: true, verb: 'Manger' },
-    pansement:  { n: 'Pansements',          cat: 'Soins',       d: 'Servent automatiquement en cas d’ampoule : gratuit, au lieu de 4 €.' },
-    trousse:    { n: 'Trousse de secours',  cat: 'Soins',       d: 'Désinfectant et compresses. À utiliser quand la santé est entamée.', usable: true, verb: 'Se soigner' },
-    lampe:      { n: 'Lampe frontale',      cat: 'Équipement',  d: 'La nuit, elle réduit fortement le risque de chute sur la route.' },
-    tel:        { n: 'Téléphone',           cat: 'Divers',      d: 'Un appel à un proche remonte le moral (une fois toutes les 12 h).', usable: true, verb: 'Appeler un proche' },
-    carnet:     { n: 'Carnet de route',     cat: 'Divers',      d: 'Écrire ce qu’on a vu fait du bien (une fois toutes les 6 h).', usable: true, verb: 'Écrire' },
-    toilette:   { n: 'Kit de toilette',       cat: 'Hygiène',     d: 'Savon, brosse à dents : une toilette de fortune qui redonne un peu de fraîcheur.', usable: true, verb: 'Faire sa toilette' },
-    chaussettes:{ n: 'Chaussettes propres',  cat: 'Hygiène',     d: 'Une paire sèche et propre : le pied dit merci.', usable: true, verb: 'Se changer' },
-    poncho:     { n: 'Poncho de pluie',      cat: 'Équipement',  d: 'Dans le sac, il limite les effets de la pluie quand tu n’as pas d’imperméable.' },
-    couverture: { n: 'Couverture de survie', cat: 'Équipement',  d: 'Pour dormir dehors : elle gagne quelques degrés.' },
-    gants:      { n: 'Gants et bonnet',      cat: 'Équipement',  d: 'Ils t’aident à supporter le froid.' },
-    papiers:    { n: 'Papiers et carte bancaire', cat: 'Divers', d: 'Dans la poche intérieure. Pas d’effet pour l’instant.' }
+    eau:        { n: 'Gourde d’eau',        cat: 'Vivres',     w: 0.25, kind: 'fill', model: 'gourde',
+      d: 'Quelques gorgées pour tenir. Elle se remplit gratuitement à chaque ville.',
+      fx: [{ t: 'Endurance +3', g: 1 }, { t: 'Moral +1', g: 1 }], acts: [{ k: 'use', verb: 'Boire' }] },
+    barre:      { n: 'Barres de céréales',  cat: 'Vivres',     w: 0.05, kind: 'none', stateText: 'Emballées, intactes', model: 'barre',
+      d: 'Une vraie collation : coupe la faim et redonne un peu d’énergie.',
+      fx: [{ t: 'Faim −4 h', g: 1 }, { t: 'Endurance +4', g: 1 }, { t: 'Moral +1', g: 1 }], acts: [{ k: 'use', verb: 'Manger' }] },
+    pansement:  { n: 'Pansements',          cat: 'Soins',      w: 0.02, kind: 'none', stateText: 'Stériles', model: 'pansement',
+      d: 'Servent automatiquement en cas d’ampoule : gratuit, au lieu de 4 €.',
+      fx: [{ t: 'Soigne une ampoule (automatique)', g: 1 }], acts: [] },
+    trousse:    { n: 'Trousse de secours',  cat: 'Soins',      w: 0.35, kind: 'uses', model: 'trousse',
+      d: 'Désinfectant et compresses. À utiliser quand la santé est entamée.',
+      fx: [{ t: 'Santé +14', g: 1 }, { t: 'Blessures −10', g: 1 }, { t: '3 usages', g: 0 }], acts: [{ k: 'use', verb: 'Se soigner' }] },
+    lampe:      { n: 'Lampe frontale',      cat: 'Équipement', w: 0.1, kind: 'battery', model: 'lampe',
+      d: 'La nuit, elle réduit fortement le risque de chute sur la route. Elle se décharge en marchant de nuit.',
+      fx: [{ t: 'Nuit : moins de chutes et de peur', g: 1 }, { t: 'Batterie −9 % par heure de marche de nuit', g: 0 }], acts: [{ k: 'charge', verb: 'Recharger (en ville)' }] },
+    tel:        { n: 'Téléphone',           cat: 'Divers',     w: 0.2, kind: 'battery', model: 'tel',
+      d: 'Un appel à un proche remonte le moral (une fois toutes les 12 h). La batterie baisse doucement.',
+      fx: [{ t: 'Moral +9 (appel)', g: 1 }, { t: 'Batterie −8 % par appel, −1 % par heure', g: 0 }], acts: [{ k: 'use', verb: 'Appeler un proche' }, { k: 'charge', verb: 'Recharger (en ville)' }] },
+    batterie:   { n: 'Batterie externe',    cat: 'Divers',     w: 0.25, kind: 'uses', model: 'batterie',
+      d: 'Trois charges partielles pour le téléphone ou la lampe, n’importe où.',
+      fx: [{ t: 'Recharge téléphone ou lampe', g: 1 }, { t: '3 charges', g: 0 }], acts: [{ k: 'powerTel', verb: 'Charger le téléphone' }, { k: 'powerLamp', verb: 'Charger la lampe' }] },
+    rechaud:    { n: 'Réchaud de camping', cat: 'Vivres',     w: 0.5, kind: 'uses', model: 'rechaud',
+      d: 'Un petit réchaud et du gaz pour trois repas chauds. Cuisiner est un petit jeu : plus tu es précis, meilleur est le repas.',
+      fx: [{ t: 'Faim −4 à −7 h', g: 1 }, { t: 'Endurance +4 à +10', g: 1 }, { t: 'Moral +3 à +6', g: 1 }, { t: '2 € de provisions, 30 min', g: 0 }], acts: [{ k: 'cook', verb: 'Cuisiner (petit jeu)' }] },
+    carnet:     { n: 'Carnet de route',     cat: 'Divers',     w: 0.2, kind: 'none', stateText: 'Pages à remplir', model: 'carnet',
+      d: 'Écrire ce qu’on a vu fait du bien (une fois toutes les 6 h).',
+      fx: [{ t: 'Moral +4', g: 1 }], acts: [{ k: 'use', verb: 'Écrire' }] },
+    habits:     { n: 'Vêtements de rechange', cat: 'Hygiène',  w: 0.8, kind: 'clean', model: 'habits',
+      d: 'T-shirt, caleçon et pantalon propres. Une fois portés, il faut les laver en ville, à l’hôtel ou chez un hôte.',
+      fx: [{ t: 'Hygiène + (selon la propreté)', g: 1 }, { t: 'Moral +3', g: 1 }], acts: [{ k: 'change', verb: 'Se changer' }, { k: 'wash', verb: 'Faire la lessive (en ville)' }] },
+    toilette:   { n: 'Kit de toilette',     cat: 'Hygiène',    w: 0.15, kind: 'none', stateText: 'Savon, brosse à dents', model: 'toilette',
+      d: 'Savon, brosse à dents : une toilette de fortune qui redonne un peu de fraîcheur.',
+      fx: [{ t: 'Hygiène +25', g: 1 }, { t: 'Moral +2', g: 1 }, { t: '15 min', g: 0 }], acts: [{ k: 'use', verb: 'Faire sa toilette' }] },
+    chaussettes:{ n: 'Chaussettes propres', cat: 'Hygiène',    w: 0.08, kind: 'none', stateText: 'Propres et sèches', model: 'chaussettes',
+      d: 'Une paire sèche et propre : le pied dit merci.',
+      fx: [{ t: 'Hygiène +8', g: 1 }, { t: 'Moral +3', g: 1 }, { t: 'Blessures −3', g: 1 }], acts: [{ k: 'use', verb: 'Se changer' }] },
+    poncho:     { n: 'Poncho de pluie',     cat: 'Équipement', w: 0.2, kind: 'wear', model: 'poncho',
+      d: 'Dans le sac, il limite les effets de la pluie quand tu n’as pas d’imperméable. Il s’use sous la pluie.',
+      fx: [{ t: 'Pluie : effets réduits jusqu’à −60 %', g: 1 }], acts: [] },
+    couverture: { n: 'Couverture de survie', cat: 'Équipement', w: 0.1, kind: 'none', stateText: 'Pliée, neuve', model: 'couverture',
+      d: 'Pour dormir dehors : elle gagne quelques degrés.',
+      fx: [{ t: 'Nuit dehors : +2 °C de confort', g: 1 }], acts: [] },
+    gants:      { n: 'Gants et bonnet',     cat: 'Équipement', w: 0.15, kind: 'none', stateText: 'Bon état', model: 'gants',
+      d: 'Ils t’aident à supporter le froid.',
+      fx: [{ t: 'Froid : +1,5 °C de confort', g: 1 }], acts: [] },
+    papiers:    { n: 'Papiers et carte bancaire', cat: 'Divers', w: 0.05, kind: 'none', stateText: 'À l’abri', model: 'papiers',
+      d: 'Dans la poche intérieure. Pas d’effet pour l’instant.',
+      fx: [{ t: 'Nécessaire pour certains services', g: 0 }], acts: [] }
   };
-  var BAG_ORDER = ['eau', 'barre', 'toilette', 'chaussettes', 'pansement', 'trousse', 'poncho', 'couverture', 'gants', 'lampe', 'tel', 'carnet', 'papiers'];
-  function starterBag() { return { eau: EAU_MAX, barre: 3, pansement: 2, trousse: 1, lampe: 1, tel: 1, carnet: 1, papiers: 1 }; }
+  var BAG_ORDER = ['eau', 'barre', 'rechaud', 'toilette', 'chaussettes', 'habits', 'pansement', 'trousse', 'poncho', 'couverture', 'gants', 'lampe', 'tel', 'batterie', 'carnet', 'papiers'];
+  function starterBag() { return { eau: EAU_MAX, barre: 3, pansement: 2, trousse: 1, lampe: 1, tel: 1, carnet: 1, papiers: 1, habits: 1 }; }
   var COOL = { tel: 12, carnet: 6 };
-
+  var SHOE_WEAR = 0.14;   // % d’usure par km marché
+  function cnd(s, id) { var v = s.cond && s.cond[id]; return v === undefined ? 100 : v; }
+  function setCnd(s, id, v) { if (!s.cond) s.cond = {}; s.cond[id] = Math.max(0, Math.min(100, v)); }
+  function lampOn(s) { return !!(s.bag && s.bag.lampe > 0 && cnd(s, 'lampe') > 0); }
+  function bagWeight(s) {
+    var w = 0; if (!s.bag) return 0;
+    Object.keys(s.bag).forEach(function (id) { var it = ITEMS[id]; if (it && s.bag[id] > 0) w += it.w * s.bag[id]; });
+    return Math.round(w * 100) / 100;
+  }
+  function wearLabel(p) { return p >= 90 ? 'Neuf' : p >= 65 ? 'Bon état' : p >= 35 ? 'Usé' : p > 0 ? 'Très usé' : 'Hors d’usage'; }
+  function itemState(s, id) {
+    var it = ITEMS[id], q = s.bag[id] || 0, c = cnd(s, id);
+    switch (it.kind) {
+      case 'fill': return { pct: q / EAU_MAX * 100, label: q >= EAU_MAX ? 'Pleine' : q === 0 ? 'Vide' : q + ' gorgée' + (q > 1 ? 's' : '') + ' sur ' + EAU_MAX };
+      case 'battery': return { pct: c, label: Math.round(c) + ' % de batterie' };
+      case 'wear': return { pct: c, label: wearLabel(c) };
+      case 'clean': return { pct: c, label: c >= 70 ? 'Propres' : c >= 35 ? 'Portés' : 'Sales' };
+      case 'uses': { var u = Math.max(1, Math.ceil(c / 34 - 0.001)); return { pct: c, label: u + ' usage' + (u > 1 ? 's' : '') + ' restant' + (u > 1 ? 's' : '') }; }
+      default: return { pct: 100, label: it.stateText || 'Bon état' };
+    }
+  }
+  function nearTown(s) { return !!townNear(s.km); }
+  function actState(s, id, a, busy) {
+    var reason = '', ok = true, c;
+    if (busy) return { ok: false, reason: 'Pas maintenant' };
+    if (id === 'eau' && s.endu > 97 && s.moral > 97) { ok = false; reason = 'Pas soif'; }
+    else if (id === 'trousse' && s.sante > 90) { ok = false; reason = 'En forme, inutile'; }
+    else if (COOL[id] && a.k === 'use' && s.cool[id] && s.t < s.cool[id]) { ok = false; reason = 'Dans ' + fmtDur(s.cool[id] - s.t); }
+    else if (id === 'tel' && a.k === 'use' && cnd(s, 'tel') < 8) { ok = false; reason = 'Batterie vide'; }
+    else if (a.k === 'charge') { c = cnd(s, id); if (c >= 95) { ok = false; reason = 'Déjà chargé'; } else if (!nearTown(s)) { ok = false; reason = 'Il faut une ville'; } }
+    else if (a.k === 'powerTel') { if (cnd(s, 'tel') >= 95 || !(s.bag.tel > 0)) { ok = false; reason = s.bag.tel > 0 ? 'Déjà chargé' : 'Pas de téléphone'; } }
+    else if (a.k === 'powerLamp') { if (!(s.bag.lampe > 0)) { ok = false; reason = 'Pas de lampe'; } else if (cnd(s, 'lampe') >= 95) { ok = false; reason = 'Déjà chargée'; } }
+    else if (a.k === 'cook') { if (s.act !== 'idle') { ok = false; reason = 'Arrête-toi d’abord'; } else if (s.sinceMeal < 2) { ok = false; reason = 'Tu viens de manger'; } else if (s.money < cost(s, 2)) { ok = false; reason = 'Il faut 2 € de provisions'; } }
+    else if (a.k === 'change') { if (cnd(s, 'habits') < 35) { ok = false; reason = 'Elles sont sales'; } else if (s.hyg > 92) { ok = false; reason = 'Tu es propre'; } }
+    else if (a.k === 'wash') { if (cnd(s, 'habits') >= 85) { ok = false; reason = 'Déjà propres'; } else if (!nearTown(s)) { ok = false; reason = 'Il faut une ville'; } }
+    else if (id === 'toilette' && s.hyg > 92) { ok = false; reason = 'Tu es propre'; }
+    return { ok: ok, reason: reason };
+  }
   function bagList(s) {
     ensure(s);
-    return BAG_ORDER.filter(function (id) { return s.bag[id] > 0; }).map(function (id) {
-      var it = ITEMS[id], q = s.bag[id], busy = !!(s.ev) || s.act === 'sleep_out' || s.act === 'sleep_hotel' || s.act === 'host_search' || s.act === 'train_ride';
-      var ok = !!it.usable && !busy, reason = busy && it.usable ? 'Pas maintenant' : '';
-      if (ok && id === 'trousse' && s.sante > 90) { ok = false; reason = 'En forme, inutile'; }
-      if (ok && id === 'eau' && s.endu > 97 && s.moral > 97) { ok = false; reason = 'Pas soif'; }
-      if (ok && COOL[id] && s.cool[id] && s.t < s.cool[id]) { ok = false; reason = 'Dans ' + fmtDur(s.cool[id] - s.t); }
-      return { id: id, n: it.n, cat: it.cat, d: it.d, qty: q, qtyText: id === 'eau' ? q + ' / ' + EAU_MAX : '× ' + q, usable: !!it.usable, verb: it.verb || '', ok: ok, reason: reason };
+    var busy = !!(s.ev) || s.act === 'sleep_out' || s.act === 'sleep_hotel' || s.act === 'host_search' || s.act === 'train_ride';
+    var rows = BAG_ORDER.filter(function (id) { return s.bag[id] > 0; }).map(function (id) {
+      var it = ITEMS[id], q = s.bag[id], st = itemState(s, id);
+      var acts = (it.acts || []).map(function (a) { var r = actState(s, id, a, busy); return { k: a.k, verb: a.verb, ok: r.ok, reason: r.reason }; });
+      var first = acts[0];
+      return { id: id, n: it.n, cat: it.cat, d: it.d, qty: q, qtyText: id === 'eau' ? q + ' / ' + EAU_MAX : '× ' + q,
+        usable: acts.length > 0, verb: first ? first.verb : '', ok: first ? first.ok : false, reason: first ? first.reason : '',
+        acts: acts, pct: st.pct, stateKind: it.kind, stateLabel: st.label, w: Math.round(it.w * q * 100) / 100, effects: it.fx, model: it.model, worn: false };
     });
+    ['veste', 'chaussures', 'couchage'].forEach(function (slot) {
+      if (slot === 'couchage' && s.gear.couchage === 'aucun') return;
+      var g = GEAR[slot][s.gear[slot]], c = cnd(s, 'g_' + slot), fx = [];
+      if (slot === 'veste') { fx.push({ t: 'Confort jusqu’à ' + g.cold + ' °C', g: 1 }); fx.push({ t: g.rain ? 'Étanche' : 'Pas étanche', g: g.rain ? 1 : 0 }); }
+      if (slot === 'chaussures') { fx.push({ t: 'Fatigue à la marche ×' + g.drain, g: g.drain <= 1 ? 1 : 0 }); fx.push({ t: 'Ampoules ×' + g.blister, g: g.blister <= 1 ? 1 : 0 }); }
+      if (slot === 'couchage') { fx.push({ t: g.cold ? 'Nuit dehors : confort jusqu’à ' + g.cold + ' °C' : 'Aucun couchage', g: g.cold ? 1 : 0 }); if (g.rain) fx.push({ t: 'Étanche', g: 1 }); }
+      fx.push({ t: 'Usure : ' + wearLabel(c).toLowerCase() + ' (les effets baissent avec l’usure)', g: 0 });
+      rows.push({ id: 'g_' + slot, n: g.n, cat: 'Porté sur toi', d: g.d || '', qty: 1, qtyText: 'Porté', usable: false, verb: '', ok: false, reason: '', acts: [],
+        pct: c, stateKind: 'wear', stateLabel: wearLabel(c), w: 0, effects: fx, model: slot, worn: true });
+    });
+    return rows;
   }
-  function doUse(s, id) {
+  function doUse(s, id, actK) {
     ensure(s);
     var row = bagList(s).filter(function (r) { return r.id === id; })[0];
-    if (!row || !row.ok) return { ok: false, msg: row ? row.reason : '' };
-    var txt = '';
-    if (id === 'eau') { s.bag.eau--; s.endu = clamp(s.endu + 3); s.moral = clamp(s.moral + 1); txt = 'Tu bois quelques gorgées d’eau fraîche.'; }
-    else if (id === 'barre') { s.bag.barre--; s.sinceMeal = Math.max(0, s.sinceMeal - 4); s.endu = clamp(s.endu + 4); s.moral = clamp(s.moral + 1); txt = 'Tu croques une barre de céréales en marchant.'; }
-    else if (id === 'toilette') { s.bag.toilette--; s.hyg = clamp(s.hyg + 25); s.moral = clamp(s.moral + 2); s.stallUntil = Math.max(s.t, s.stallUntil) + 15 * MIN; s.stallWhy = 'Toilette'; txt = 'Une toilette au bord de l’eau : tu te sens un peu plus propre.'; }
-    else if (id === 'chaussettes') { s.bag.chaussettes--; s.hyg = clamp(s.hyg + 8); s.moral = clamp(s.moral + 3); s.inj = clamp(s.inj - 3); txt = 'Chaussettes propres : le pied respire.'; }
-    else if (id === 'trousse') { s.bag.trousse--; s.sante = clamp(s.sante + 14); s.inj = clamp(s.inj - 10); txt = 'Tu te soignes avec la trousse de secours. Ça va mieux.'; }
-    else if (id === 'tel') { s.cool.tel = s.t + 12 * H; s.moral = clamp(s.moral + 9); txt = 'Tu appelles un proche. Sa voix te remet du cœur à l’ouvrage.'; }
-    else if (id === 'carnet') { s.cool.carnet = s.t + 6 * H; s.moral = clamp(s.moral + 4); txt = 'Tu notes quelques lignes dans ton carnet de route.'; }
+    if (!row) return { ok: false, msg: '' };
+    var a = actK ? row.acts.filter(function (x) { return x.k === actK; })[0] : row.acts[0];
+    if (!a || !a.ok) return { ok: false, msg: a ? a.reason : '' };
+    var txt = '', k = a.k;
+    if (k === 'cook') return { ok: true, mini: 'cook' };
+    if (k === 'use') {
+      if (id === 'eau') { s.bag.eau--; s.endu = clamp(s.endu + 3); s.moral = clamp(s.moral + 1); txt = 'Tu bois quelques gorgées d’eau fraîche.'; }
+      else if (id === 'barre') { s.bag.barre--; s.sinceMeal = Math.max(0, s.sinceMeal - 4); s.endu = clamp(s.endu + 4); s.moral = clamp(s.moral + 1); txt = 'Tu croques une barre de céréales en marchant.'; }
+      else if (id === 'toilette') { s.bag.toilette--; bump(s, 'cleans', 1); s.hyg = clamp(s.hyg + 25); s.moral = clamp(s.moral + 2); s.stallUntil = Math.max(s.t, s.stallUntil) + 15 * MIN; s.stallWhy = 'Toilette'; txt = 'Une toilette au bord de l’eau : tu te sens un peu plus propre.'; }
+      else if (id === 'chaussettes') { s.bag.chaussettes--; bump(s, 'cleans', 1); s.hyg = clamp(s.hyg + 8); s.moral = clamp(s.moral + 3); s.inj = clamp(s.inj - 3); txt = 'Chaussettes propres : le pied respire.'; }
+      else if (id === 'trousse') { setCnd(s, 'trousse', cnd(s, 'trousse') - 34); if (cnd(s, 'trousse') <= 0) { s.bag.trousse--; setCnd(s, 'trousse', 100); } s.sante = clamp(s.sante + 14); s.inj = clamp(s.inj - 10); txt = 'Tu te soignes avec la trousse de secours. Ça va mieux.'; }
+      else if (id === 'tel') { s.cool.tel = s.t + 12 * H; bump(s, 'calls', 1); setCnd(s, 'tel', cnd(s, 'tel') - 8); s.moral = clamp(s.moral + 9); txt = 'Tu appelles un proche. Sa voix te remet du cœur à l’ouvrage.'; }
+      else if (id === 'carnet') { s.cool.carnet = s.t + 6 * H; bump(s, 'writes', 1); s.moral = clamp(s.moral + 4); txt = 'Tu notes quelques lignes dans ton carnet de route.'; }
+    } else if (k === 'charge') {
+      setCnd(s, id, 100); s.stallUntil = Math.max(s.t, s.stallUntil) + 35 * MIN; s.stallWhy = 'Recharge'; s.moral = clamp(s.moral + 1);
+      txt = id === 'tel' ? 'Un café te prête une prise : le téléphone se recharge pendant que tu souffles.' : 'Tu branches ta lampe chez un commerçant. Batterie pleine.';
+    } else if (k === 'powerTel' || k === 'powerLamp') {
+      var tgt = k === 'powerTel' ? 'tel' : 'lampe';
+      setCnd(s, tgt, cnd(s, tgt) + 55); setCnd(s, 'batterie', cnd(s, 'batterie') - 34);
+      if (cnd(s, 'batterie') <= 0) { s.bag.batterie--; setCnd(s, 'batterie', 100); }
+      txt = tgt === 'tel' ? 'Tu branches le téléphone sur la batterie externe.' : 'Tu recharges ta lampe frontale avec la batterie externe.';
+    } else if (k === 'change') {
+      var cl = cnd(s, 'habits'); bump(s, 'cleans', 1); s.hyg = clamp(s.hyg + 10 + cl * 0.17); s.moral = clamp(s.moral + 3); setCnd(s, 'habits', 10);
+      s.stallUntil = Math.max(s.t, s.stallUntil) + 10 * MIN; s.stallWhy = 'Changement de vêtements';
+      txt = 'Tu enfiles des vêtements propres. Les autres iront à la lessive.';
+    } else if (k === 'wash') {
+      setCnd(s, 'habits', 100); s.stallUntil = Math.max(s.t, s.stallUntil) + 45 * MIN; s.stallWhy = 'Lessive'; s.moral = clamp(s.moral + 1);
+      txt = 'Un lavoir, un lavabo, un peu de savon : tes vêtements sont de nouveau propres.';
+    }
     note(s, txt, 'go');
     return { ok: true, text: txt };
+  }
+  // Usure, batteries : appelée à chaque pas de temps
+  function itemTick(s, dh, night, wx, dKm, pausedWalk) {
+    var gv = GEAR.veste[s.gear.veste], out = (s.act === 'walk' || s.act === 'idle' || s.act === 'hitch' || s.act === 'host_search');
+    if (dKm > 0) setCnd(s, 'g_chaussures', cnd(s, 'g_chaussures') - dKm * SHOE_WEAR);
+    if (out) setCnd(s, 'g_veste', cnd(s, 'g_veste') - 0.05 * dh);
+    if (s.act === 'sleep_out') setCnd(s, 'g_couchage', cnd(s, 'g_couchage') - 0.3 * dh);
+    if (s.bag.poncho > 0 && out && wx === 'pluie' && !gv.rain) { var pw = cnd(s, 'poncho'); setCnd(s, 'poncho', pw - 4 * dh); if (pw > 0 && cnd(s, 'poncho') <= 0) note(s, 'Ton poncho est en lambeaux : il ne protège plus de la pluie.', 'alert'); }
+    if (night && !pausedWalk && (s.act === 'walk' || s.act === 'hitch' || s.act === 'host_search') && lampOn(s)) {
+      var lb = cnd(s, 'lampe'); setCnd(s, 'lampe', lb - 9 * dh);
+      if (lb > 0 && cnd(s, 'lampe') <= 0) note(s, 'Ta lampe frontale n’a plus de batterie.', 'alert');
+      else if (lb > 20 && cnd(s, 'lampe') <= 20) note(s, 'La batterie de ta lampe frontale est faible (20 %).', 'alert');
+    }
+    if (s.bag.tel > 0) {
+      var tb = cnd(s, 'tel'); setCnd(s, 'tel', tb - 1.0 * dh);
+      if (tb > 0 && cnd(s, 'tel') <= 0) note(s, 'Ton téléphone n’a plus de batterie.', 'alert');
+    }
+    if (s.act === 'sleep_hotel') { setCnd(s, 'tel', cnd(s, 'tel') + 35 * dh); setCnd(s, 'lampe', cnd(s, 'lampe') + 35 * dh); setCnd(s, 'habits', cnd(s, 'habits') + 25 * dh); }
   }
 
   function ensure(s) {
@@ -936,6 +1242,11 @@ footer .row2 button { min-height: 44px; }
     if (s.sdebt === undefined) s.sdebt = 0;
     if (s.alarm === undefined) s.alarm = null;
     if (!s.gear) s.gear = { veste: 'coupevent', chaussures: 'baskets', couchage: 'aucun' };
+    if (!s.cond) s.cond = {};
+    if (!s.stamps) s.stamps = {};
+    if (!s.dstat) s.dstat = {};
+    if (s.cond.g_chaussures === undefined) s.cond.g_chaussures = s.gear.chaussures === 'baskets' ? 55 : 100;
+    if (!s.bagV2) { s.bagV2 = true; if (s.bag.habits === undefined) s.bag.habits = 1; }
     if (!s.hero) s.hero = defaultHero(s.look);
     if (!s.hero.look) s.hero.look = {};
     var d = defaultHero(s.hero.look);
@@ -950,15 +1261,24 @@ footer .row2 button { min-height: 44px; }
   function cost(s, base) { return Math.round(base * ensure(s).mods.price * 100) / 100; }
   function walkKmh(s) { return WALK_KMH * (s.endu < 20 ? 0.6 : 1) * (s.moral < 15 ? 0.75 : 1) * (s.sante < 30 ? 0.8 : 1) * (s.inj > 35 ? 0.82 : s.inj > 15 ? 0.93 : 1) * Math.max(0.8, 1 - 0.02 * (s.sdebt || 0)) * s.mods.speed; }
   var SLEEP_NEED = 7.5;
+  // Repos autorisé même sans fatigue entre 22 h 00 et 7 h 30 (le personnage dort en même temps que le joueur)
+  function nightRest(h) { return h >= 22 || h < 7.5; }
+  function tooFresh(s, h) { return s.endu > 85 && !nightRest(h); }
+  var FRESH_MSG = 'Pas fatigué · repos dès 22 h';
   // Heure de réveil : réveil choisi (heure civile) ou sommeil complet de 8 h
   function wakeTimeFor(s, from) {
-    if (s.alarm === null || s.alarm === undefined) return from + 8 * H;
+    if (s.alarm === null || s.alarm === undefined) {
+      var h0 = hourOf(from);
+      if (h0 >= 19 || h0 < 5) { var d0 = (7 - h0 + 24) % 24; return from + Math.min(10.5, Math.max(d0, SLEEP_NEED)) * H; }
+      return from + 8 * H;
+    }
     var h = hourOf(from), d = (s.alarm - h + 24) % 24; if (d < 1) d += 24;
     return from + d * H;
   }
   function endSleep(s, early) {
     var slept = Math.max(0, (s.t - (s.sleepFrom || s.t)) / H);
-    s.sleepFrom = null; s.wakeAt = 0;
+    s.sleepFrom = null; s.wakeAt = 0; s.tentStars = 0;
+    bump(s, 'slept', slept);
     if (slept < 2) return slept;
     if (slept < SLEEP_NEED) { s.sdebt = Math.min(20, s.sdebt + (SLEEP_NEED - slept)); }
     else s.sdebt = Math.max(0, s.sdebt - (slept - SLEEP_NEED + 0.5) * 1.2);
@@ -1088,6 +1408,7 @@ footer .row2 button { min-height: 44px; }
     var m = new Date(now).getMonth();
     if (m >= 11 || m <= 1) { s.gear.veste = 'doudoune'; s.gear.couchage = 'sac'; }
     else if (m === 2 || m === 10) { s.gear.veste = 'impermeable'; if (m === 10) s.gear.couchage = 'sac'; }
+    grantStamp(s, 'lr'); s.moral = 90; s.stampSeq = 0; s.stampLast = null;
     note(s, 'Départ de La Rochelle. ' + s.hero.first + ' boucle son sac : direction ' + gt.n + (gt.km >= 150 ? ', la route est longue.' : '.'), 'start');
     return s;
   }
@@ -1177,7 +1498,7 @@ footer .row2 button { min-height: 44px; }
     },
     ampoule: {
       acts: ['walk'], w: 2, title: 'Une ampoule au talon', def: 1,
-      wmod: function (s) { return GEAR.chaussures[s.gear.chaussures].blister * s.mods.blister; },
+      wmod: function (s) { return GEAR.chaussures[s.gear.chaussures].blister * s.mods.blister * (1 + (100 - cnd(s, 'g_chaussures')) * 0.01); },
       text: 'À chaque pas, ton talon proteste. Une ampoule se forme, et elle ne fera qu’empirer.',
       choices: [
         { label: 'Poser un pansement (4 €)', cost: 4, bag: 'pansement', bagText: 'Un pansement de ton sac, chaussette changée. Tu repars soulagé.', bagFx: { stall: 10 }, out: [{ p: 1, t: 'Pansement posé, chaussette changée. Tu repars soulagé.', fx: { money: -4, stall: 10 } }] },
@@ -1625,7 +1946,7 @@ footer .row2 button { min-height: 44px; }
     if (fx.endu) s.endu = clamp(s.endu + fx.endu);
     if (fx.moral) s.moral = clamp(s.moral + fx.moral);
     if (fx.money) s.money = Math.max(0, Math.round((s.money + fx.money) * 100) / 100);
-    if (fx.meal) s.sinceMeal = Math.max(0, s.sinceMeal - fx.meal);
+    if (fx.meal) { s.sinceMeal = Math.max(0, s.sinceMeal - fx.meal); if (fx.meal >= 1.5) mealHook(s, /^(Boulangerie|Restaurant)$/.test(why || '')); }
     if (fx.alc) { s.alc = (s.alc || 0) + fx.alc; }
     if (fx.inj) { s.inj = clamp((s.inj || 0) + fx.inj); if (fx.inj > 0 && fx.injWhat) s.injWhat = fx.injWhat; }
     if (fx.ill) { s.ill = clamp((s.ill || 0) + fx.ill); }
@@ -1661,7 +1982,7 @@ footer .row2 button { min-height: 44px; }
     var useBag = !!(ch.bag && s.bag[ch.bag] > 0);
     if (!useBag && ch.cost && s.money < ch.cost) return { ok: false, msg: 'Pas assez d’argent.' };
     var outs = ch.out;
-    if (s.ev.id === 'bruits_nuit' && s.bag.lampe && outs.length === 2) outs = [{ p: 0.96, t: 'Ce n’était qu’un renard. Avec ta lampe frontale, tu avances sans crainte.', fx: outs[0].fx }, { p: 0.04, t: outs[1].t, fx: outs[1].fx }];
+    if (s.ev.id === 'bruits_nuit' && lampOn(s) && outs.length === 2) outs = [{ p: 0.96, t: 'Ce n’était qu’un renard. Avec ta lampe frontale, tu avances sans crainte.', fx: outs[0].fx }, { p: 0.04, t: outs[1].t, fx: outs[1].fx }];
     var r = rng(), o = outs[outs.length - 1], acc = 0;
     for (var k = 0; k < outs.length; k++) { acc += outs[k].p; if (r < acc) { o = outs[k]; break; } }
     if (useBag) { s.bag[ch.bag]--; o = { p: 1, t: ch.bagText, fx: ch.bagFx || {} }; }
@@ -1677,6 +1998,7 @@ footer .row2 button { min-height: 44px; }
   function arrived(s, how) {
     var tw = townNear(s.km, 0.5);
     if (tw && s.bag && s.bag.eau < EAU_MAX) { s.bag.eau = EAU_MAX; }
+    if (tw) grantStamp(s, tw.id);
     if (how === 'walk') {
       note(s, tw ? 'Tu arrives à ' + tw.n + '.' : 'Tu t’arrêtes ici.', 'arrive');
       s.moral = clamp(s.moral + 4);
@@ -1688,10 +2010,317 @@ footer .row2 button { min-height: 44px; }
     }
   }
 
+  // ---------- Carnet de voyage : tampons ----------
+  // r : etape (villes du trajet) · france · europe · monde. spec : spécialité à goûter. monu : lieu à visiter.
+  var STAMPS = [
+    { id: 'lr', n: 'La Rochelle', c: 'France', r: 'france', spec: 'Mouclade et moules', monu: 'Le Vieux-Port et ses deux tours' },
+    { id: 'ay', n: 'Aytré', c: 'France', r: 'etape', spec: 'Pineau des Charentes', monu: 'La plage d’Aytré' },
+    { id: 'an', n: 'Angoulins', c: 'France', r: 'etape', spec: 'Moules de bouchot', monu: 'La pointe du Chay' },
+    { id: 'ro', n: 'Rochefort', c: 'France', r: 'etape', spec: 'Pineau et caramels', monu: 'La Corderie royale' },
+    { id: 'sp', n: 'Saint-Porchaire', c: 'France', r: 'etape', spec: 'Eaux-de-vie de Saintonge', monu: 'Le château de la Roche-Courbon' },
+    { id: 'sa', n: 'Saintes', c: 'France', r: 'etape', spec: 'Cagouilles charentaises', monu: 'L’arc de Germanicus' },
+    { id: 'po', n: 'Pons', c: 'France', r: 'etape', spec: 'Pineau blanc', monu: 'Le donjon de Pons' },
+    { id: 'jo', n: 'Jonzac', c: 'France', r: 'etape', spec: 'Pineau et cognac', monu: 'Le château de Jonzac' },
+    { id: 'mo', n: 'Montendre', c: 'France', r: 'etape', spec: 'Fromage de chèvre', monu: 'Le cœur historique' },
+    { id: 'ca', n: 'Cavignac', c: 'France', r: 'etape', spec: 'Vin de Bourg', monu: 'L’église du village' },
+    { id: 'sc', n: 'Saint-André-de-Cubzac', c: 'France', r: 'etape', spec: 'Vin de Bourg', monu: 'Les ponts de Cubzac' },
+    { id: 'cb', n: 'Carbon-Blanc', c: 'France', r: 'etape', spec: 'Vin de Bordeaux', monu: 'Les bords de Garonne' },
+    { id: 'bx', n: 'Bordeaux', c: 'France', r: 'france', spec: 'Cannelé bordelais', monu: 'La place de la Bourse et le Miroir d’eau' },
+    { id: 'paris', n: 'Paris', c: 'France', r: 'france', lat: 48.8566, lon: 2.3522, spec: 'Croissant au beurre', monu: 'La tour Eiffel' },
+    { id: 'lyon', n: 'Lyon', c: 'France', r: 'france', lat: 45.764, lon: 4.8357, spec: 'Praline rose', monu: 'La basilique de Fourvière' },
+    { id: 'marseille', n: 'Marseille', c: 'France', r: 'france', lat: 43.2965, lon: 5.3698, spec: 'Bouillabaisse', monu: 'Notre-Dame de la Garde' },
+    { id: 'toulouse', n: 'Toulouse', c: 'France', r: 'france', lat: 43.6047, lon: 1.4442, spec: 'Cassoulet', monu: 'Le Capitole' },
+    { id: 'nice', n: 'Nice', c: 'France', r: 'france', lat: 43.7102, lon: 7.262, spec: 'Socca', monu: 'La promenade des Anglais' },
+    { id: 'nantes', n: 'Nantes', c: 'France', r: 'france', lat: 47.2184, lon: -1.5536, spec: 'Gâteau nantais', monu: 'Le château des ducs de Bretagne' },
+    { id: 'strasbourg', n: 'Strasbourg', c: 'France', r: 'france', lat: 48.5734, lon: 7.7521, spec: 'Choucroute', monu: 'La cathédrale Notre-Dame' },
+    { id: 'montpellier', n: 'Montpellier', c: 'France', r: 'france', lat: 43.6108, lon: 3.8767, spec: 'Grisette de Montpellier', monu: 'La place de la Comédie' },
+    { id: 'lille', n: 'Lille', c: 'France', r: 'france', lat: 50.6292, lon: 3.0573, spec: 'Gaufre de Lille', monu: 'La Grand-Place' },
+    { id: 'rennes', n: 'Rennes', c: 'France', r: 'france', lat: 48.1173, lon: -1.6778, spec: 'Galette-saucisse', monu: 'La place du Parlement de Bretagne' },
+    { id: 'grenoble', n: 'Grenoble', c: 'France', r: 'france', lat: 45.1885, lon: 5.7245, spec: 'Ravioles du Royans', monu: 'Le téléphérique de la Bastille' },
+    { id: 'dijon', n: 'Dijon', c: 'France', r: 'france', lat: 47.322, lon: 5.0415, spec: 'Moutarde de Dijon', monu: 'Le palais des ducs' },
+    { id: 'brest', n: 'Brest', c: 'France', r: 'france', lat: 48.3904, lon: -4.4861, spec: 'Far breton', monu: 'Les Capucins' },
+    { id: 'reims', n: 'Reims', c: 'France', r: 'france', lat: 49.2583, lon: 4.0317, spec: 'Biscuit rose', monu: 'La cathédrale de Reims' },
+    { id: 'angers', n: 'Angers', c: 'France', r: 'france', lat: 47.4784, lon: -0.5632, spec: 'Quernon d’ardoise', monu: 'Le château d’Angers' },
+    { id: 'limoges', n: 'Limoges', c: 'France', r: 'france', lat: 45.8336, lon: 1.2611, spec: 'Clafoutis limousin', monu: 'La gare des Bénédictins' },
+    { id: 'poitiers', n: 'Poitiers', c: 'France', r: 'france', lat: 46.5802, lon: 0.3404, spec: 'Broyé du Poitou', monu: 'Notre-Dame-la-Grande' },
+    { id: 'clermont', n: 'Clermont-Ferrand', c: 'France', r: 'france', lat: 45.7772, lon: 3.087, spec: 'Fourme d’Ambert', monu: 'La cathédrale en pierre de Volvic' },
+    { id: 'tours', n: 'Tours', c: 'France', r: 'france', lat: 47.3941, lon: 0.6848, spec: 'Rillettes de Tours', monu: 'La place Plumereau' },
+    { id: 'nimes', n: 'Nîmes', c: 'France', r: 'france', lat: 43.8367, lon: 4.3601, spec: 'Brandade de morue', monu: 'Les arènes de Nîmes' },
+    { id: 'biarritz', n: 'Biarritz', c: 'France', r: 'france', lat: 43.4832, lon: -1.5586, spec: 'Gâteau basque', monu: 'Le rocher de la Vierge' },
+    { id: 'perpignan', n: 'Perpignan', c: 'France', r: 'france', lat: 42.6887, lon: 2.8948, spec: 'Rousquille', monu: 'Le Castillet' },
+    { id: 'ajaccio', n: 'Ajaccio', c: 'France', r: 'france', lat: 41.9192, lon: 8.7386, spec: 'Fiadone', monu: 'La maison Bonaparte' },
+    { id: 'rouen', n: 'Rouen', c: 'France', r: 'france', lat: 49.4432, lon: 1.0993, spec: 'Canard à la rouennaise', monu: 'Le Gros-Horloge' },
+    { id: 'avignon', n: 'Avignon', c: 'France', r: 'france', lat: 43.9493, lon: 4.8055, spec: 'Berlingot de Carpentras', monu: 'Le palais des Papes' },
+    { id: 'london', n: 'Londres', c: 'Royaume-Uni', r: 'europe', lat: 51.5072, lon: -0.1276, spec: 'Fish and chips', monu: 'Tower Bridge' },
+    { id: 'madrid', n: 'Madrid', c: 'Espagne', r: 'europe', lat: 40.4168, lon: -3.7038, spec: 'Churros au chocolat', monu: 'Le palais royal' },
+    { id: 'barcelona', n: 'Barcelone', c: 'Espagne', r: 'europe', lat: 41.3874, lon: 2.1686, spec: 'Crema catalana', monu: 'La Sagrada Família' },
+    { id: 'lisbon', n: 'Lisbonne', c: 'Portugal', r: 'europe', lat: 38.7223, lon: -9.1393, spec: 'Pastel de nata', monu: 'La tour de Belém' },
+    { id: 'porto', n: 'Porto', c: 'Portugal', r: 'europe', lat: 41.1579, lon: -8.6291, spec: 'Francesinha', monu: 'Le pont Dom-Luís' },
+    { id: 'seville', n: 'Séville', c: 'Espagne', r: 'europe', lat: 37.3891, lon: -5.9845, spec: 'Tapas', monu: 'L’Alcázar' },
+    { id: 'rome', n: 'Rome', c: 'Italie', r: 'europe', lat: 41.9028, lon: 12.4964, spec: 'Spaghetti carbonara', monu: 'Le Colisée' },
+    { id: 'milan', n: 'Milan', c: 'Italie', r: 'europe', lat: 45.4642, lon: 9.19, spec: 'Risotto milanais', monu: 'Le Duomo' },
+    { id: 'florence', n: 'Florence', c: 'Italie', r: 'europe', lat: 43.7696, lon: 11.2558, spec: 'Bistecca alla fiorentina', monu: 'Le Ponte Vecchio' },
+    { id: 'venice', n: 'Venise', c: 'Italie', r: 'europe', lat: 45.4408, lon: 12.3155, spec: 'Cicchetti', monu: 'La place Saint-Marc' },
+    { id: 'berlin', n: 'Berlin', c: 'Allemagne', r: 'europe', lat: 52.52, lon: 13.405, spec: 'Currywurst', monu: 'La porte de Brandebourg' },
+    { id: 'munich', n: 'Munich', c: 'Allemagne', r: 'europe', lat: 48.1351, lon: 11.582, spec: 'Bretzel bavarois', monu: 'La Marienplatz' },
+    { id: 'brussels', n: 'Bruxelles', c: 'Belgique', r: 'europe', lat: 50.8503, lon: 4.3517, spec: 'Gaufre de Bruxelles', monu: 'La Grand-Place' },
+    { id: 'amsterdam', n: 'Amsterdam', c: 'Pays-Bas', r: 'europe', lat: 52.3676, lon: 4.9041, spec: 'Stroopwafel', monu: 'Les canaux' },
+    { id: 'vienna', n: 'Vienne', c: 'Autriche', r: 'europe', lat: 48.2082, lon: 16.3738, spec: 'Sachertorte', monu: 'Le palais de Schönbrunn' },
+    { id: 'prague', n: 'Prague', c: 'Tchéquie', r: 'europe', lat: 50.0755, lon: 14.4378, spec: 'Trdelník', monu: 'Le pont Charles' },
+    { id: 'budapest', n: 'Budapest', c: 'Hongrie', r: 'europe', lat: 47.4979, lon: 19.0402, spec: 'Goulasch', monu: 'Le Parlement' },
+    { id: 'warsaw', n: 'Varsovie', c: 'Pologne', r: 'europe', lat: 52.2297, lon: 21.0122, spec: 'Pierogi', monu: 'La vieille ville' },
+    { id: 'zurich', n: 'Zurich', c: 'Suisse', r: 'europe', lat: 47.3769, lon: 8.5417, spec: 'Émincé zurichois', monu: 'Le Grossmünster' },
+    { id: 'athens', n: 'Athènes', c: 'Grèce', r: 'europe', lat: 37.9838, lon: 23.7275, spec: 'Moussaka', monu: 'L’Acropole' },
+    { id: 'dublin', n: 'Dublin', c: 'Irlande', r: 'europe', lat: 53.3498, lon: -6.2603, spec: 'Irish stew', monu: 'Temple Bar' },
+    { id: 'edinburgh', n: 'Édimbourg', c: 'Royaume-Uni', r: 'europe', lat: 55.9533, lon: -3.1883, spec: 'Haggis', monu: 'Le château d’Édimbourg' },
+    { id: 'copenhagen', n: 'Copenhague', c: 'Danemark', r: 'europe', lat: 55.6761, lon: 12.5683, spec: 'Smørrebrød', monu: 'La Petite Sirène' },
+    { id: 'stockholm', n: 'Stockholm', c: 'Suède', r: 'europe', lat: 59.3293, lon: 18.0686, spec: 'Boulettes suédoises', monu: 'Gamla stan' },
+    { id: 'oslo', n: 'Oslo', c: 'Norvège', r: 'europe', lat: 59.9139, lon: 10.7522, spec: 'Saumon fumé', monu: 'L’opéra d’Oslo' },
+    { id: 'helsinki', n: 'Helsinki', c: 'Finlande', r: 'europe', lat: 60.1699, lon: 24.9384, spec: 'Soupe au saumon', monu: 'La cathédrale d’Helsinki' },
+    { id: 'newyork', n: 'New York', c: 'États-Unis', r: 'monde', lat: 40.7128, lon: -74.006, spec: 'Bagel', monu: 'La statue de la Liberté' },
+    { id: 'losangeles', n: 'Los Angeles', c: 'États-Unis', r: 'monde', lat: 34.0522, lon: -118.2437, spec: 'Tacos de rue', monu: 'Le panneau Hollywood' },
+    { id: 'sanfrancisco', n: 'San Francisco', c: 'États-Unis', r: 'monde', lat: 37.7749, lon: -122.4194, spec: 'Pain au levain', monu: 'Le Golden Gate' },
+    { id: 'montreal', n: 'Montréal', c: 'Canada', r: 'monde', lat: 45.5019, lon: -73.5674, spec: 'Poutine', monu: 'Le Vieux-Montréal' },
+    { id: 'vancouver', n: 'Vancouver', c: 'Canada', r: 'monde', lat: 49.2827, lon: -123.1207, spec: 'Saumon grillé', monu: 'Stanley Park' },
+    { id: 'mexico', n: 'Mexico', c: 'Mexique', r: 'monde', lat: 19.4326, lon: -99.1332, spec: 'Tacos al pastor', monu: 'Le Zócalo' },
+    { id: 'havana', n: 'La Havane', c: 'Cuba', r: 'monde', lat: 23.1136, lon: -82.3666, spec: 'Ropa vieja', monu: 'Le Malecón' },
+    { id: 'lima', n: 'Lima', c: 'Pérou', r: 'monde', lat: -12.0464, lon: -77.0428, spec: 'Ceviche', monu: 'La place des Armes' },
+    { id: 'rio', n: 'Rio de Janeiro', c: 'Brésil', r: 'monde', lat: -22.9068, lon: -43.1729, spec: 'Feijoada', monu: 'Le Christ Rédempteur' },
+    { id: 'buenosaires', n: 'Buenos Aires', c: 'Argentine', r: 'monde', lat: -34.6037, lon: -58.3816, spec: 'Empanadas', monu: 'La Casa Rosada' },
+    { id: 'marrakech', n: 'Marrakech', c: 'Maroc', r: 'monde', lat: 31.6295, lon: -7.9811, spec: 'Tajine', monu: 'La place Jemaa el-Fna' },
+    { id: 'dakar', n: 'Dakar', c: 'Sénégal', r: 'monde', lat: 14.7167, lon: -17.4677, spec: 'Thiéboudienne', monu: 'Le monument de la Renaissance africaine' },
+    { id: 'cairo', n: 'Le Caire', c: 'Égypte', r: 'monde', lat: 30.0444, lon: 31.2357, spec: 'Koshari', monu: 'Les pyramides de Gizeh' },
+    { id: 'nairobi', n: 'Nairobi', c: 'Kenya', r: 'monde', lat: -1.2921, lon: 36.8219, spec: 'Nyama choma', monu: 'Le parc national de Nairobi' },
+    { id: 'capetown', n: 'Le Cap', c: 'Afrique du Sud', r: 'monde', lat: -33.9249, lon: 18.4241, spec: 'Bobotie', monu: 'La montagne de la Table' },
+    { id: 'istanbul', n: 'Istanbul', c: 'Turquie', r: 'monde', lat: 41.0082, lon: 28.9784, spec: 'Baklava', monu: 'Sainte-Sophie' },
+    { id: 'dubai', n: 'Dubaï', c: 'Émirats arabes unis', r: 'monde', lat: 25.2048, lon: 55.2708, spec: 'Shawarma', monu: 'Le Burj Khalifa' },
+    { id: 'mumbai', n: 'Mumbai', c: 'Inde', r: 'monde', lat: 19.076, lon: 72.8777, spec: 'Vada pav', monu: 'La porte de l’Inde' },
+    { id: 'bangkok', n: 'Bangkok', c: 'Thaïlande', r: 'monde', lat: 13.7563, lon: 100.5018, spec: 'Pad thaï', monu: 'Le Grand Palais' },
+    { id: 'singapore', n: 'Singapour', c: 'Singapour', r: 'monde', lat: 1.3521, lon: 103.8198, spec: 'Laksa', monu: 'Marina Bay Sands' },
+    { id: 'beijing', n: 'Pékin', c: 'Chine', r: 'monde', lat: 39.9042, lon: 116.4074, spec: 'Canard laqué', monu: 'La Cité interdite' },
+    { id: 'seoul', n: 'Séoul', c: 'Corée du Sud', r: 'monde', lat: 37.5665, lon: 126.978, spec: 'Bibimbap', monu: 'Le palais Gyeongbokgung' },
+    { id: 'tokyo', n: 'Tokyo', c: 'Japon', r: 'monde', lat: 35.6762, lon: 139.6503, spec: 'Sushi', monu: 'Le temple Senso-ji' },
+    { id: 'kyoto', n: 'Kyoto', c: 'Japon', r: 'monde', lat: 35.0116, lon: 135.7681, spec: 'Thé matcha', monu: 'Le Fushimi Inari' },
+    { id: 'sydney', n: 'Sydney', c: 'Australie', r: 'monde', lat: -33.8688, lon: 151.2093, spec: 'Meat pie', monu: 'L’opéra de Sydney' },
+    { id: 'auckland', n: 'Auckland', c: 'Nouvelle-Zélande', r: 'monde', lat: -36.8509, lon: 174.7645, spec: 'Pavlova', monu: 'La Sky Tower' }
+  ];
+  var STAMP_BY = {}; STAMPS.forEach(function (x) { STAMP_BY[x.id] = x; });
+  var STAMP_REGIONS = { etape: 'Étapes du trajet', france: 'Grandes villes de France', europe: 'Europe', monde: 'Monde' };
+
+  function stampHere(s) { var tw = townNear(s.km, 1.5); return tw && STAMP_BY[tw.id] ? STAMP_BY[tw.id] : null; }
+  function grantStamp(s, id) {
+    if (!s.stamps) s.stamps = {};
+    if (s.stamps[id]) return false;
+    var d = STAMP_BY[id]; if (!d) return false;
+    s.stamps[id] = { t: s.t, taste: false, seen: false };
+    s.stampSeq = (s.stampSeq || 0) + 1; s.stampLast = id;
+    s.moral = clamp(s.moral + 3);
+    note(s, 'Nouveau tampon dans ton carnet de voyage : ' + d.n + '.', 'stamp');
+    return true;
+  }
+  function stampTaste(s) {
+    var d = stampHere(s); if (!d) return;
+    grantStamp(s, d.id);
+    var st = s.stamps[d.id]; if (!st || st.taste) return;
+    st.taste = true; s.moral = clamp(s.moral + 2);
+    note(s, 'Spécialité locale goûtée à ' + d.n + ' : ' + d.spec + '. C’est noté dans ton carnet.', 'stamp');
+    bump(s, 'tastes', 1);
+  }
+  function stampLevel(st) { return st ? 1 + (st.taste ? 1 : 0) + (st.seen ? 1 : 0) : 0; }
+  function doVisit(s) {
+    var A = availability(s).visit;
+    if (!A.ok) return { ok: false, msg: A.reason };
+    var d = stampHere(s); grantStamp(s, d.id); s.stamps[d.id].seen = true;
+    s.stallUntil = Math.max(s.t, s.stallUntil) + 50 * MIN; s.stallWhy = 'Visite';
+    s.moral = clamp(s.moral + 5); s.endu = clamp(s.endu - 1);
+    bump(s, 'visits', 1);
+    var txt = 'Tu visites : ' + d.monu + '. Tu en gardes un beau souvenir (dans ton carnet).';
+    note(s, txt, 'stamp');
+    return { ok: true, text: txt };
+  }
+
+  // ---------- Objectifs du jour et rendez-vous ----------
+  var GOAL_GROUPS = [
+    [ { id: 'walk12', t: 'Marcher 12 km', stat: 'walk', target: 12, money: 2, moral: 4 },
+      { id: 'walk20', t: 'Marcher 20 km', stat: 'walk', target: 20, money: 3, moral: 5 },
+      { id: 'walk28', t: 'Marcher 28 km', stat: 'walk', target: 28, money: 5, moral: 6 } ],
+    [ { id: 'meals2', t: 'Faire deux vrais repas', stat: 'meals', target: 2, money: 2, moral: 4 },
+      { id: 'rest', t: 'Dormir au moins 7 h 30', stat: 'slept', target: 7.5, money: 2, moral: 5 },
+      { id: 'clean', t: 'Prendre soin de toi (toilette, change, douche)', stat: 'cleans', target: 1, money: 2, moral: 4 },
+      { id: 'call', t: 'Appeler un proche', stat: 'calls', target: 1, money: 1, moral: 5 },
+      { id: 'cook', t: 'Cuisiner un repas chaud', stat: 'cooks', target: 1, money: 3, moral: 5 } ],
+    [ { id: 'write', t: 'Écrire dans le carnet de route', stat: 'writes', target: 1, money: 1, moral: 4 },
+      { id: 'photo', t: 'Prendre une belle photo', stat: 'photos', target: 1, money: 3, moral: 5 },
+      { id: 'visit', t: 'Visiter un lieu en ville', stat: 'visits', target: 1, money: 3, moral: 5 },
+      { id: 'taste', t: 'Goûter une spécialité locale', stat: 'tastes', target: 1, money: 3, moral: 5 },
+      { id: 'earn15', t: 'Gagner 15 € en travaillant', stat: 'earned', target: 15, money: 3, moral: 4 } ]
+  ];
+  var RDV = [
+    { id: 'matin', n: 'Petit-déjeuner', a: 7, b: 10.5, txt: 'Rendez-vous du matin : un vrai petit-déjeuner pour bien partir.' },
+    { id: 'midi', n: 'Déjeuner', a: 12, b: 14.5, txt: 'Rendez-vous de midi : c’est l’heure de déjeuner.' },
+    { id: 'soir', n: 'Dîner', a: 19, b: 22, txt: 'Rendez-vous du soir : un dîner, puis un toit pour la nuit.' }
+  ];
+  function dayNum(t) { var d = zdate(t); return Math.floor(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) / 864e5); }
+  function bump(s, stat, n) { if (!s.dstat) s.dstat = {}; s.dstat[stat] = (s.dstat[stat] || 0) + n; }
+  function dailyEnsure(s) {
+    var dn = dayNum(s.t);
+    if (s.daily && s.daily.dn === dn) return;
+    var seed = hash(String(dn) + ':' + (s.start || 0));
+    var goals = GOAL_GROUPS.map(function (g, i) { var d = g[(seed >>> (i * 4)) % g.length]; return { id: d.id, t: d.t, stat: d.stat, target: d.target, money: d.money, moral: d.moral, done: false }; });
+    s.daily = { dn: dn, goals: goals, rdv: { matin: 0, midi: 0, soir: 0 }, ann: { matin: false, midi: false, soir: false }, all: false };
+    s.dstat = {};
+    if (s.lastAllDay !== undefined && s.lastAllDay < dn - 1) s.streak = 0;
+    note(s, 'Nouvelle journée : tes objectifs du jour t’attendent dans le carnet de voyage.', 'goal');
+  }
+  function goalProg(s, g) { return Math.min(g.target, (s.dstat && s.dstat[g.stat]) || 0); }
+  function dailyTick(s) {
+    dailyEnsure(s);
+    var d = s.daily, h = hourOf(s.t), asleep = s.act === 'sleep_out' || s.act === 'sleep_hotel';
+    d.goals.forEach(function (g) {
+      if (g.done) return;
+      if (((s.dstat && s.dstat[g.stat]) || 0) >= g.target - 1e-9) {
+        g.done = true; s.stars = (s.stars || 0) + 1;
+        s.money = Math.round((s.money + g.money) * 100) / 100; s.moral = clamp(s.moral + g.moral);
+        note(s, 'Objectif atteint : ' + g.t + '. +' + g.money + ' €, moral +' + g.moral + '.', 'goal');
+      }
+    });
+    if (!d.all && d.goals.every(function (g) { return g.done; })) {
+      d.all = true;
+      var dn = d.dn; s.streak = (s.lastAllDay === dn - 1 ? (s.streak || 0) + 1 : 1); s.lastAllDay = dn; s.stars = (s.stars || 0) + 1;
+      var bonus = Math.min(5, s.streak) + 3;
+      s.money = Math.round((s.money + bonus) * 100) / 100; s.moral = clamp(s.moral + 6);
+      note(s, 'Journée complète ! Série de ' + s.streak + ' jour' + (s.streak > 1 ? 's' : '') + '. Bonus : ' + bonus + ' €, moral +6.', 'goal');
+    }
+    RDV.forEach(function (r) {
+      if (!d.ann[r.id] && h >= r.a && h < r.b && !asleep) { d.ann[r.id] = true; if (!d.rdv[r.id]) note(s, r.txt, 'rdv'); }
+    });
+  }
+  function mealHook(s, local) {
+    dailyEnsure(s);
+    var h = hourOf(s.t);
+    if (!s.dstat.lastMeal || s.t - s.dstat.lastMeal > 90 * MIN) { bump(s, 'meals', 1); s.dstat.lastMeal = s.t; }
+    RDV.forEach(function (r) {
+      if (!s.daily.rdv[r.id] && h >= r.a && h < r.b) {
+        s.daily.rdv[r.id] = 1; s.moral = clamp(s.moral + 3);
+        note(s, 'Rendez-vous tenu : ' + r.n + '. Moral +3.', 'rdv');
+      }
+    });
+    if (local) stampTaste(s);
+  }
+  function dailyView(s) {
+    dailyEnsure(s);
+    var d = s.daily, h = hourOf(s.t);
+    var streak = (s.lastAllDay !== undefined && s.lastAllDay >= d.dn - 1) ? (s.streak || 0) : 0;
+    return {
+      goals: d.goals.map(function (g) { var p = goalProg(s, g); return { id: g.id, t: g.t, done: g.done, prog: p, target: g.target, stat: g.stat, money: g.money, moral: g.moral }; }),
+      rdv: RDV.map(function (r) { return { id: r.id, n: r.n, a: r.a, b: r.b, done: !!d.rdv[r.id], open: h >= r.a && h < r.b, past: h >= r.b }; }),
+      all: d.all, streak: streak, stars: s.stars || 0
+    };
+  }
+
+
+  // ---------- Événements à durée limitée (« flash ») et petits jeux ----------
+  var FLASH = {
+    photo:  { icon: '📸', title: 'Moment doré', mins: 25, a: 'Prendre la photo', b: 'Laisser passer', miss: 'la lumière a tourné, la photo n’a pas été prise.' },
+    car:    { icon: '🚗', title: 'Une voiture ralentit', mins: 8, a: 'Lui faire signe', b: 'Laisser passer', miss: 'la voiture a repris de la vitesse.' },
+    market: { icon: '🧺', title: 'Le marché ferme bientôt', mins: 40, a: 'Acheter pour 2 €', b: 'Ignorer', miss: 'le marché a plié bagage.' },
+    host:   { icon: '🏠', title: 'Un lit pour ce soir', mins: 45, a: 'Accepter', b: 'Refuser poliment', miss: 'l’habitante a trouvé une autre personne à héberger.' },
+    job:    { icon: '🛠️', title: 'Un bras en plus', mins: 30, a: 'Aider 2 h pour 25 €', b: 'Non merci', miss: 'le chef de chantier a trouvé quelqu’un d’autre.' }
+  };
+  function flashStart(s, id, text) {
+    var f = FLASH[id];
+    s.flash = { id: id, t0: s.t, until: s.t + f.mins * MIN, text: text };
+    note(s, f.title + ' : ' + text + ' (' + f.mins + ' min pour répondre)', 'flash');
+  }
+  function flashTick(s, h, wx) {
+    if (!s.flashDone) s.flashDone = {};
+    if (s.flash) {
+      if (s.t >= s.flash.until) { note(s, 'Trop tard : ' + FLASH[s.flash.id].miss, ''); s.flash = null; s.nextFlash = s.t + 40 * MIN; }
+      return;
+    }
+    if (s.ev || s.t < (s.nextFlash || 0) || s.won || s.over) return;
+    if (s.act === 'sleep_out' || s.act === 'sleep_hotel' || s.act === 'ride' || s.act === 'train_ride' || s.act === 'train_wait') return;
+    var dn = dayNum(s.t), tw = townNear(s.km, 1.5), Sn = sunTimes(s.t, s.km), dt = 2 / 60;
+    // moment doré : lever et coucher du soleil (une fois chacun par jour)
+    if (s.bag.tel > 0 && cnd(s, 'tel') >= 5 && wx !== 'pluie') {
+      var kS = 'p' + dn + 's', kR = 'p' + dn + 'r';
+      if (!s.flashDone[kS] && h >= Sn.set - 0.6 && h < Sn.set + 0.1) { s.flashDone[kS] = 1; flashStart(s, 'photo', 'le soleil descend et la lumière est magnifique. Sors ton téléphone.'); return; }
+      if (!s.flashDone[kR] && h >= Sn.rise && h < Sn.rise + 0.5) { s.flashDone[kR] = 1; flashStart(s, 'photo', 'le soleil se lève sur la campagne. Un cadre rare.'); return; }
+    }
+    if (s.act === 'walk' && !s.ev && s.t >= s.stallUntil && h >= 7 && h < 19.5 && rng() < 1 - Math.exp(-0.08 * dt)) { flashStart(s, 'car', 'une voiture ralentit à ta hauteur, le conducteur te regarde.'); return; }
+    if (s.act === 'idle' && tw) {
+      var kM = 'm' + dn, kH = 'h' + dn, kJ = 'j' + dn;
+      if (!s.flashDone[kM] && tw.venues && tw.venues.indexOf('boulangerie') >= 0 && h >= 7.5 && h < 11.5 && rng() < 1 - Math.exp(-0.5 * dt)) { s.flashDone[kM] = 1; flashStart(s, 'market', 'les maraîchers bradent leurs fruits et leur pain avant de ranger.'); return; }
+      if (!s.flashDone[kH] && h >= 19.5 && h < 22.5 && rng() < 1 - Math.exp(-0.6 * dt)) { s.flashDone[kH] = 1; flashStart(s, 'host', 'une habitante te voit passer avec ton sac : « J’ai un lit de libre si tu veux. »'); return; }
+      if (!s.flashDone[kJ] && tw.work && h >= 8 && h < 15.5 && s.endu > 35 && rng() < 1 - Math.exp(-0.4 * dt)) { s.flashDone[kJ] = 1; flashStart(s, 'job', 'un chef de chantier cherche un bras pour deux heures, payé en liquide.'); return; }
+    }
+  }
+  function flashAnswer(s, yes) {
+    var f = s.flash; if (!f) return { ok: false };
+    var id = f.id;
+    if (!yes) { s.flash = null; s.nextFlash = s.t + 40 * MIN; note(s, 'Tu laisses passer : ' + FLASH[id].title.toLowerCase() + '.', ''); return { ok: true }; }
+    if (id === 'photo') return { ok: true, mini: 'photo' };
+    s.flash = null; s.nextFlash = s.t + 40 * MIN;
+    if (id === 'car') { openEvent(s, 'stop_voiture'); return { ok: true }; }
+    if (id === 'market') {
+      var pr = cost(s, 2);
+      if (s.money < pr) { note(s, 'Il te manque quelques pièces pour acheter quoi que ce soit.', ''); return { ok: false }; }
+      s.money = Math.round((s.money - pr) * 100) / 100;
+      applyFx(s, { meal: 3, moral: 3, stall: 15 }, 'Marché');
+      stampTaste(s);
+      note(s, 'Au marché, des fruits et du pain presque donnés. Tu manges sur un banc.', 'go');
+      return { ok: true };
+    }
+    if (id === 'host') {
+      s.act = 'sleep_hotel'; s.hotelTier = 'hote'; s.target = null; s.stats.host = (s.stats.host || 0) + 1;
+      s.sinceMeal = Math.max(0, s.sinceMeal - 5); s.moral = clamp(s.moral + 6); mealHook(s, false);
+      note(s, 'Elle t’accueille : repas chaud, douche, un vrai lit. Merci !', 'go');
+      return { ok: true };
+    }
+    if (id === 'job') {
+      applyFx(s, { stall: 120, money: 25, endu: -10, moral: 2, hyg: -3 }, 'Chantier');
+      bump(s, 'earned', 25);
+      note(s, 'Deux heures à porter des parpaings. 25 € dans la poche.', 'work');
+      return { ok: true };
+    }
+    return { ok: false };
+  }
+  // Résultats des mini-jeux (stars : 0 à 3)
+  function doPhoto(s, stars) {
+    stars = Math.max(0, Math.min(3, stars | 0));
+    if (s.flash && s.flash.id === 'photo') { s.flash = null; s.nextFlash = s.t + 40 * MIN; }
+    s.moral = clamp(s.moral + 2 + stars * 2); setCnd(s, 'tel', cnd(s, 'tel') - 3); s.photos = (s.photos || 0) + 1; bump(s, 'photos', 1);
+    var txt = stars >= 3 ? 'Le cliché parfait : tu le regardes plusieurs fois.' : stars === 2 ? 'Une belle photo, tu es content du cadrage.' : stars === 1 ? 'La photo est correcte : le souvenir est là.' : 'Un peu floue, mais tu étais là.';
+    note(s, txt + ' Moral +' + (2 + stars * 2) + '.', 'go');
+    return { ok: true, text: txt };
+  }
+  function doCook(s, stars) {
+    stars = Math.max(0, Math.min(3, stars | 0));
+    var pr = cost(s, 2); bump(s, 'cooks', 1);
+    s.money = Math.max(0, Math.round((s.money - pr) * 100) / 100);
+    setCnd(s, 'rechaud', cnd(s, 'rechaud') - 34); if (cnd(s, 'rechaud') <= 0) { s.bag.rechaud--; setCnd(s, 'rechaud', 100); }
+    applyFx(s, { meal: 4 + stars, endu: 4 + stars * 2, moral: 3 + stars, stall: 30 }, 'Cuisine');
+    var txt = stars >= 3 ? 'Des pâtes parfaitement al dente. Un vrai festin au bord du chemin.' : stars === 2 ? 'Un repas chaud et réussi.' : stars === 1 ? 'Un peu collant, mais c’est chaud et ça cale.' : 'Trop cuit, mais ça remplit l’estomac.';
+    note(s, txt, 'go');
+    return { ok: true, text: txt };
+  }
+  function doHitchBoost(s, stars) {
+    stars = Math.max(0, Math.min(3, stars | 0));
+    s.cool.stopgame = s.t + 30 * MIN;
+    if (s.act === 'hitch') { s.hitchBoostUntil = s.t + 60 * MIN; s.hitchBoost = [1, 1.7, 2.6, 3.6][stars]; }
+    s.moral = clamp(s.moral + stars);
+    var txt = stars >= 2 ? 'Ton pouce et ton sourire font leur effet : les voitures te remarquent.' : stars === 1 ? 'Quelques conducteurs ralentissent.' : 'Les voitures passent sans te voir.';
+    note(s, txt, 'go');
+    return { ok: true, text: txt };
+  }
+  function doTentSetup(s, stars) { s.tentStars = Math.max(0, Math.min(3, stars | 0)); return { ok: true }; }
+
   // ---------- Simulation ----------
   function step(s, dh) {
     s.t += dh * H;
+    dailyTick(s);
     var h = hourOf(s.t), night = isNight(h);
+    flashTick(s, h, weatherAt(s.t));
     s.sinceMeal += dh;
     var hungry = s.sinceMeal > 10 + s.mods.hungerH;
     var pausedWalk = !!s.ev || s.t < s.stallUntil;
@@ -1708,7 +2337,7 @@ footer .row2 button { min-height: 44px; }
         if (pausedWalk) { dE = 1.0; dM = -0.3; break; }
         var v = walkKmh(s);
         d = Math.max(0, Math.min(v * dh, s.target - s.km));
-        s.km += d; s.stats.walk += d;
+        s.km += d; s.stats.walk += d; bump(s, 'walk', d);
         dE = -4.5; dM = night ? -1.4 : -0.5;
         if (s.endu < 20) dS -= 0.6;
         if (s.km >= s.target - 1e-6) { s.km = s.target; s.act = 'idle'; s.target = null; arrived(s, 'walk'); }
@@ -1743,7 +2372,7 @@ footer .row2 button { min-height: 44px; }
         break;
       case 'work':
         var jb = s.job || { wage: WAGE * s.mods.wage, drain: 3.5, sk: null, n: 'Travail' };
-        s.money += jb.wage * dh; s.stats.workH += dh;
+        s.money += jb.wage * dh; s.stats.workH += dh; bump(s, 'earned', jb.wage * dh);
         dE = -jb.drain; dM = -0.5;
         if (jb.sk) s.xp[jb.sk] = (s.xp[jb.sk] || 0) + dh / 8 * (1 + 0.0);
         if (s.t >= s.shiftEnd || s.endu <= 10) {
@@ -1754,7 +2383,7 @@ footer .row2 button { min-height: 44px; }
       case 'hitch':
         dE = -0.8; dM = -1.2;
         if (!pausedWalk) {
-          var rate = (night ? 0.12 : 0.55) * s.mods.hitch;
+          var rate = (night ? 0.12 : 0.55) * s.mods.hitch * (s.t < (s.hitchBoostUntil || 0) ? (s.hitchBoost || 1) : 1);
           if (rng() < 1 - Math.exp(-rate * dh)) openEvent(s, 'stop_voiture');
         }
         break;
@@ -1783,21 +2412,24 @@ footer .row2 button { min-height: 44px; }
 
     var gv = GEAR.veste[s.gear.veste], gc = GEAR.couchage[s.gear.couchage], gsh = GEAR.chaussures[s.gear.chaussures], M = s.mods;
     var temp = tempAt(s.t, s.km), wx = weatherAt(s.t);
+    itemTick(s, dh, night, wx, (s.act === 'walk' && !pausedWalk && d > 0) ? d : 0, pausedWalk);
     if (s.wxLast === undefined) s.wxLast = wx;
     if (wx !== s.wxLast) {
       var msgs = { pluie: 'La pluie se met à tomber.', nuageux: s.wxLast === 'pluie' ? 'La pluie s’arrête, le ciel reste couvert.' : 'Le ciel se couvre.', clair: s.wxLast === 'pluie' ? 'La pluie cesse, le soleil revient.' : 'Les nuages se dissipent, le ciel est dégagé.' };
       note(s, msgs[wx], 'weather'); s.wxLast = wx;
     }
-    if (s.act === 'walk' && dE < 0) dE *= gsh.drain;
+    if (s.act === 'walk' && dE < 0) dE *= gsh.drain * (1 + (100 - cnd(s, 'g_chaussures')) * 0.0015) * (1 + Math.max(0, bagWeight(s) - 6) * 0.01);
     var illAdd = 0, bg = s.bag || {};
     if (s.act === 'idle' || s.act === 'walk' || s.act === 'hitch' || s.act === 'host_search') {
       var felt = temp + (s.act === 'walk' ? 4 : 0) + (bg.gants > 0 ? 1.5 : 0);
-      if (felt < gv.cold - M.coldTol) { var df = gv.cold - M.coldTol - felt; dS -= df * 0.06; dE -= df * 0.2; dM -= df * 0.12; illAdd += df * 0.12; }
-      if (wx === 'pluie' && !gv.rain) { var pn = bg.poncho > 0 ? 0.4 : 1; dE -= 1.2 * pn; dM -= 0.8 * pn; dS -= 0.25 * pn; illAdd += 0.35 * pn; }
+      var vcold = gv.cold + (100 - cnd(s, 'g_veste')) * 0.03;
+      if (felt < vcold - M.coldTol) { var df = vcold - M.coldTol - felt; dS -= df * 0.06; dE -= df * 0.2; dM -= df * 0.12; illAdd += df * 0.12; }
+      if (wx === 'pluie' && !gv.rain) { var pn = bg.poncho > 0 ? 1 - 0.6 * cnd(s, 'poncho') / 100 : 1; dE -= 1.2 * pn; dM -= 0.8 * pn; dS -= 0.25 * pn; illAdd += 0.35 * pn; }
     } else if (s.act === 'sleep_out') {
-      var rating = gc.cold - gv.sleepBonus - M.coldTol - (bg.couverture > 0 ? 2 : 0);
+      var rating = gc.cold + (100 - cnd(s, 'g_couchage')) * 0.03 - gv.sleepBonus - M.coldTol - (bg.couverture > 0 ? 2 : 0) - (s.tentStars || 0) * 1.2;
+      if (s.tentStars) dE += s.tentStars * 0.5;
       if (temp < rating) { var d2 = rating - temp; dS -= d2 * 0.08; dE -= d2 * 0.35; dM -= d2 * 0.1; illAdd += d2 * 0.2; }
-      if (wx === 'pluie' && !gc.rain) { dE -= 1.0; dM -= 0.6; illAdd += 0.4; }
+      if (wx === 'pluie' && !gc.rain && !(s.tentStars >= 2)) { dE -= 1.0; dM -= 0.6; illAdd += 0.4; }
     }
     // hygiène, maladie, blessures
     var inBed = s.act === 'sleep_hotel';
@@ -1827,9 +2459,10 @@ footer .row2 button { min-height: 44px; }
     if (!sleeping && s.sleepFrom) { s.sleepFrom = null; s.wakeAt = 0; }
     if (sleeping && s.t >= s.wakeAt) {
       endSleep(s);
-      if (s.act === 'sleep_hotel' && s.hotelTier === 'hote') { s.sinceMeal = 0; s.moral = clamp(s.moral + 3); note(s, 'Tu te réveilles chez tes hôtes. Café, tartines et sourire : tu repars sans rien devoir.', 'wake'); }
-      else if (s.act === 'sleep_hotel' && (HOTEL_TIERS[s.hotelTier] || HOTEL_TIERS.eco).bf) { s.sinceMeal = 0; s.moral = clamp(s.moral + 3); note(s, 'Tu te réveilles reposé. Le petit-déjeuner est servi, offert : tu n’as rien à payer ce matin.', 'wake'); }
+      if (s.act === 'sleep_hotel' && s.hotelTier === 'hote') { s.sinceMeal = 0; mealHook(s, false); s.moral = clamp(s.moral + 3); note(s, 'Tu te réveilles chez tes hôtes. Café, tartines et sourire : tu repars sans rien devoir.', 'wake'); }
+      else if (s.act === 'sleep_hotel' && (HOTEL_TIERS[s.hotelTier] || HOTEL_TIERS.eco).bf) { s.sinceMeal = 0; mealHook(s, false); s.moral = clamp(s.moral + 3); note(s, 'Tu te réveilles reposé. Le petit-déjeuner est servi, offert : tu n’as rien à payer ce matin.', 'wake'); }
       else note(s, s.act === 'sleep_hotel' ? 'Tu te réveilles reposé dans ta chambre.' : 'Tu te réveilles, courbaturé mais reposé.', 'wake');
+      if (s.act === 'sleep_hotel') setCnd(s, 'habits', 100);
       s.act = 'idle';
     }
     if (s.endu <= 0 && (s.act === 'idle' || s.act === 'walk' || s.act === 'hitch')) {
@@ -1884,14 +2517,17 @@ footer .row2 button { min-height: 44px; }
     A.walk = busy ? off(busy) : (A.ahead.length ? on : off('Tu es arrivé'));
     A.stop = (!block && (s.act === 'walk' || s.act === 'hitch' || s.act === 'work' || s.act === 'host_search' || sleepingNow(s))) ? on : off('Rien à arrêter');
     A.hitch = busy ? off(busy) : (s.act === 'hitch' ? off('Déjà en train') : on);
-    A.sleepOut = busy ? off(busy) : (s.endu > 85 ? off('Pas fatigué') : on);
-    A.hotel = busy ? off(busy) : !tw || !tw.hotel ? off('Il faut une ville') : s.money < cost(s, PRICE.hotel) ? off(cost(s, PRICE.hotel) + ' € requis') : s.endu > 85 ? off('Pas fatigué') : on;
+    A.sleepOut = busy ? off(busy) : (tooFresh(s, h) ? off(FRESH_MSG) : on);
+    A.hotel = busy ? off(busy) : !tw || !tw.hotel ? off('Il faut une ville') : s.money < cost(s, PRICE.hotel) ? off(cost(s, PRICE.hotel) + ' € requis') : tooFresh(s, h) ? off(FRESH_MSG) : on;
     A.work = busy ? off(busy) : !tw ? off('Il faut une ville') : (h < 7 || h >= 17) ? off('Embauche de 7 h à 17 h') : s.endu < 25 ? off('Trop fatigué') : on;
-    A.host = busy ? off(busy) : !tw ? off('Il faut une ville ou un village') : !(h >= 17 || h < 2) ? off('On frappe aux portes dès 17 h') : s.endu > 85 ? off('Pas fatigué') : on;
+    A.host = busy ? off(busy) : !tw ? off('Il faut une ville ou un village') : !(h >= 17 || h < 2) ? off('On frappe aux portes dès 17 h') : tooFresh(s, h) ? off(FRESH_MSG) : on;
     var rs = tw && tw.venues && tw.venues.indexOf('resto') >= 0;
     A.meal = busy ? off(busy) : !rs ? off('Pas de restaurant ici') : (h < 11 || h >= 23.5) ? off('Fermé') : s.money < cost(s, PRICE.meal) ? off(cost(s, PRICE.meal) + ' € requis') : s.sinceMeal < 4 ? off('Tu viens de manger') : on;
     var bk = tw && tw.venues && tw.venues.indexOf('boulangerie') >= 0;
     A.bread = busy ? off(busy) : !bk ? off('Pas de boulangerie ici') : (h < 6.5 || h >= 19.5) ? off('Fermé') : s.money < cost(s, PRICE.bread) ? off(cost(s, PRICE.bread) + ' € requis') : s.sinceMeal < 2 ? off('Tu viens de manger') : on;
+    var sh = stampHere(s), stv = sh && s.stamps && s.stamps[sh.id];
+    A.visit = busy ? off(busy) : !sh ? off('Rien à visiter ici') : (h < 9 || h >= 19.5) ? off('Visites de 9 h à 19 h 30') : (stv && stv.seen) ? off('Déjà visité') : on;
+    A.visitName = sh ? sh.monu : '';
     A.shop = busy ? off(busy) : (!tw || (tw.venues && tw.venues.indexOf('boutique') < 0)) ? off('Pas de magasin ici') : on;
     A.venues = venueList(s);
     A.trains = [];
@@ -1973,7 +2609,7 @@ footer .row2 button { min-height: 44px; }
     var pr = cost(s, item.price);
     if (s.money < pr) return { ok: false, msg: 'Pas assez d’argent.' };
     s.money = Math.round((s.money - pr) * 100) / 100;
-    s.gear[slot] = id;
+    s.gear[slot] = id; if (!s.cond) s.cond = {}; s.cond['g_' + slot] = 100;
     s.stallUntil = Math.max(s.stallUntil, s.t) + 20 * MIN; s.stallWhy = 'Achats';
     note(s, pr ? 'Tu t’équipes : ' + item.n + ' (' + pr + ' €).' : 'Tu reprends : ' + item.n + '.', 'go');
     return { ok: true };
@@ -2075,6 +2711,9 @@ footer .row2 button { min-height: 44px; }
         couv:  { n: 'Couverture de survie', price: 5, d: 'Gagne quelques degrés pour dormir dehors.', item: 'couverture', qty: 1, once: true, fx: {}, stall: 10 },
         gant:  { n: 'Gants et bonnet', price: 12, d: 'Pour affronter le froid.', item: 'gants', qty: 1, once: true, fx: {}, stall: 10 },
         lamp1: { n: 'Lampe frontale basique', price: 10, d: 'Éclaire la route la nuit.', item: 'lampe', qty: 1, once: true, fx: {}, stall: 10 },
+        rech:  { n: 'Réchaud de camping et gaz', price: 22, d: 'Trois repas chauds au bord du chemin (petit jeu de cuisine).', item: 'rechaud', qty: 1, once: true, fx: {}, stall: 10 },
+        habi:  { n: 'Vêtements de rechange', price: 25, d: 'T-shirt, caleçon, pantalon : un ensemble propre dans le sac.', item: 'habits', qty: 1, once: true, fx: {}, stall: 10 },
+        batt:  { n: 'Batterie externe', price: 18, d: 'Trois charges pour le téléphone ou la lampe, partout.', item: 'batterie', qty: 1, once: true, fx: {}, stall: 10 },
         carn:  { n: 'Carnet de route', price: 4, d: 'Pour noter ce que tu vois.', item: 'carnet', qty: 1, once: true, fx: {}, stall: 10 },
         tel1:  { n: 'Téléphone d’occasion', price: 25, d: 'Pour appeler les proches. Un seul suffit.', item: 'tel', qty: 1, once: true, fx: {}, stall: 10 }
       }
@@ -2122,7 +2761,7 @@ footer .row2 button { min-height: 44px; }
       else if (o.bank && s.debt > 0) { ok = false; reason = 'Rembourse d’abord ta dette'; }
       else if (o.repay && !(s.debt > 0)) { ok = false; reason = 'Tu ne dois rien'; }
       else if (o.repay && s.money < s.debt) { ok = false; reason = fmtMoney(s.debt) + ' requis'; }
-      else if (o.hotel && s.endu > 85) { ok = false; reason = 'Pas fatigué'; }
+      else if (o.hotel && tooFresh(s, h)) { ok = false; reason = FRESH_MSG; }
       else if (o.job && !o.job.ok) { ok = false; reason = o.job.reason; }
       else if (o.job && s.endu < 25) { ok = false; reason = 'Trop fatigué'; }
       else if (o.read && skillLvl(s, o.read) >= 4) { ok = false; reason = 'Niveau maximum atteint'; }
@@ -2171,6 +2810,7 @@ footer .row2 button { min-height: 44px; }
     } else if (def.shower) {
       s.hyg = 100; text = 'Une bonne douche chaude (' + fmtMoney(opt.price) + '). Tu te sens propre et neuf.';
     } else if (def.item) {
+      if (!(s.bag[def.item] > 0)) setCnd(s, def.item, 100);
       s.bag[def.item] = (s.bag[def.item] || 0) + def.qty; text = def.n + ' (' + fmtMoney(opt.price) + '), rangé dans ton sac.';
     }
     if (def.gamble) {
@@ -2241,14 +2881,15 @@ footer .row2 button { min-height: 44px; }
   root.PasAPas = {
     skillList: skillList, skillsFromJob: skillsFromJob, SLEEP_NEED: SLEEP_NEED, healthIssues: healthIssues, santeMax: santeMax, METIERS: METIERS, METIER_ORDER: METIER_ORDER, SKILLS: SKILLS, LEVEL_NAMES: LEVEL_NAMES, doHost: doHost, jobOffers: jobOffers, ROUTE_KM: ROUTE_KM, destinations: destinations, goalKmOf: goalKmOf, goalTownOf: goalTownOf, PRICE: PRICE, VENUES: VENUES, venueList: venueList, venueOptions: venueOptions, doVenue: doVenue, WAGE: WAGE, TOWNS: TOWNS, TRAINS: TRAINS, EVENTS: EVENTS, TOWNS_REF: TOWNS,
     newGame: newGame, advance: advance, step: step, choose: choose, availability: availability,
-    doWalk: doWalk, doStop: doStop, doHitch: doHitch, doSleepOut: doSleepOut, doHotel: doHotel,
+    doVisit: doVisit, doWalk: doWalk, flashAnswer: flashAnswer, FLASH: FLASH, doPhoto: doPhoto, doCook: doCook, doHitchBoost: doHitchBoost, doTentSetup: doTentSetup, doStop: doStop, doHitch: doHitch, doSleepOut: doSleepOut, doHotel: doHotel,
     TRAITS: TRAITS, FITNESS: FITNESS, SILHOUETTES: SILHOUETTES, defaultHero: defaultHero, computeProfile: computeProfile, refreshProfile: refreshProfile, cost: cost, walkKmh: walkKmh, bmiOf: bmiOf,
     doBuy: doBuy, GEAR: GEAR, SLOT_NAMES: SLOT_NAMES, ZONE_NAMES: ZONE_NAMES, ensure: ensure, gearAdvice: gearAdvice,
     weatherAt: weatherAt, tempAt: tempAt, zoneAt: zoneAt,
     doWork: doWork, doMeal: doMeal, doBread: doBread, doTrain: doTrain,
     placeText: placeText, statusText: statusText, summary: summary,
     fmtHM: fmtHM, fmtClock: fmtClock, fmtLogTime: fmtLogTime, lightHour: lightHour, sunTimes: sunTimes, shiftTime: shiftTime, zdate: zdate, fmtDur: fmtDur, fmtMoney: fmtMoney, townNear: townNear, hourOf: hourOf,
-    ITEMS: ITEMS, EAU_MAX: EAU_MAX, bagList: bagList, doUse: doUse,
+    STAMPS: STAMPS, STAMP_BY: STAMP_BY, STAMP_REGIONS: STAMP_REGIONS, stampLevel: stampLevel, stampHere: stampHere, grantStamp: grantStamp, dailyView: dailyView,
+    ITEMS: ITEMS, EAU_MAX: EAU_MAX, bagList: bagList, doUse: doUse, bagWeight: bagWeight, lampOn: lampOn,
     setRng: setRng
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = root.PasAPas;
@@ -3228,7 +3869,24 @@ footer .row2 button { min-height: 44px; }
       if (shop) {
         var gw = width * 0.6, gp = PT(zc, -width * 0.12, side * (FACE - 0.03));
         var shopGlow = night;
-        box(shopGlow ? glo : dec, gp[0], y0 + 0.35, gp[1], 0.14, 2.0, gw, shopGlow ? [1, 0.86, 0.55] : hexRGB('#4D6578'), ry, 0, seed + 60);
+        // vitrine en trois vitres, avec montants, imposte plus sombre, objets en devanture et halo de lumière sur le trottoir
+        var npn = 3, pw = gw / npn, warm = [[1, 0.86, 0.55], [1, 0.8, 0.46], [0.98, 0.9, 0.64]];
+        for (var pI = 0; pI < npn; pI++) {
+          var pt = -width * 0.12 - gw / 2 + (pI + 0.5) * pw, pp = PT(zc, pt, side * (FACE - 0.03)), wc = warm[(((Math.floor(seed) + pI) % 3) + 3) % 3], jv = 0.9 + 0.1 * hash(seed * 3 + pI);
+          if (shopGlow) {
+            box(glo, pp[0], y0 + 0.35, pp[1], 0.14, 1.45, pw - 0.1, [wc[0] * jv, wc[1] * jv, wc[2] * jv], ry, 0, seed + 60 + pI);
+            box(glo, pp[0], y0 + 1.8, pp[1], 0.14, 0.55, pw - 0.1, [wc[0] * 0.62, wc[1] * 0.55, wc[2] * 0.4], ry, 0, seed + 66 + pI);
+            var itn = 2 + Math.floor(hash(seed * 7 + pI) * 3);
+            for (var it = 0; it < itn; it++) {
+              var ip = PT(zc, pt + (hash(seed * 13 + pI * 5 + it) - 0.5) * (pw - 0.5), side * (FACE - 0.11)), ih = 0.25 + hash(seed * 17 + pI * 3 + it) * 0.5;
+              box(dec, ip[0], y0 + 0.35, ip[1], 0.1, ih, 0.2 + hash(seed * 19 + it) * 0.18, mulC(hexRGB(pick(URB_AWN)), 0.5), ry, 0, seed + 80 + it);
+            }
+          } else {
+            box(dec, pp[0], y0 + 0.35, pp[1], 0.14, 2.0, pw - 0.1, mixC(hexRGB('#4D6578'), hexRGB('#7B97AB'), hash(seed * 3 + pI)), ry, 0, seed + 60 + pI);
+          }
+          if (pI > 0) { var mp = PT(zc, pt - pw / 2, side * (FACE - 0.05)); box(dec, mp[0], y0 + 0.3, mp[1], 0.2, 2.1, 0.1, mulC(wall, 0.55), ry, 0, seed + 90 + pI); }
+        }
+        if (shopGlow) { var sg = PT(zc, -width * 0.12, side * (FACE - 1.35)); box(glo, sg[0], y0 + 0.006, sg[1], 2.0, 0.012, gw * 1.15, [0.2, 0.16, 0.1], ry, 0, seed + 99); }
         var ap = PT(zc, -width * 0.12, side * (FACE - 0.6));
         box(dec, ap[0], y0 + 2.55, ap[1], 1.25, 0.14, gw + 0.6, awn, ry, 0, seed + 61);
         box(dec, ap[0], y0 + 2.2, ap[1], 1.2, 0.35, gw + 0.6, mulC(awn, 0.82), ry, 0, seed + 62);
@@ -4403,6 +5061,48 @@ footer .row2 button { min-height: 44px; }
     obj.traverse(function (o) { if (o.geometry) o.geometry.dispose(); });
   }
 
+
+  /* ---------- Post-traitement léger : lueur, étalonnage, grain, vignettage ---------- */
+  var PP = { bloom: null, grain: null, ok: true };
+  function ppInit() {
+    if (PP.bloom) return;
+    PP.bloom = document.createElement('canvas');
+    var g = document.createElement('canvas'); g.width = g.height = 160;
+    var gx = g.getContext('2d'), id = gx.createImageData(160, 160), i, v;
+    for (i = 0; i < id.data.length; i += 4) { v = 128 + (Math.random() - 0.5) * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; }
+    gx.putImageData(id, 0, 0); PP.grain = g;
+  }
+  function post(ctx, cw, ch, hour, light, src) {
+    try {
+      ppInit();
+      var gold = Math.max(0, 1 - Math.abs(hour - 19) / 1.7, 1 - Math.abs(hour - 6.9) / 1.4), night = hour < 5.9 || hour >= 20.2, dull = Math.min(1, light.gray || 0);
+      // 1) lueur : les zones claires débordent doucement
+      var bw = Math.max(32, Math.round(cw / 7)), bh = Math.max(32, Math.round(ch / 7)), b = PP.bloom;
+      if (b.width !== bw || b.height !== bh) { b.width = bw; b.height = bh; }
+      var bx = b.getContext('2d');
+      bx.setTransform(1, 0, 0, 1, 0, 0); bx.globalCompositeOperation = 'source-over'; bx.clearRect(0, 0, bw, bh);
+      var hasF = ('filter' in bx);
+      if (hasF) bx.filter = night ? 'brightness(0.95) contrast(2.4) blur(2px)' : 'brightness(0.85) contrast(2.1) blur(2px)';
+      bx.imageSmoothingEnabled = true; bx.drawImage(src, 0, 0, bw, bh); if (hasF) bx.filter = 'none';
+      ctx.save(); ctx.imageSmoothingEnabled = true; ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = hasF ? (night ? 0.75 : 0.32 + gold * 0.25) : 0.06; ctx.drawImage(b, 0, 0, cw, ch); ctx.restore();
+      // 2) étalonnage : heure dorée chaude, nuit bleutée, jour légèrement orange/teal
+      ctx.save();
+      ctx.globalCompositeOperation = 'soft-light';
+      if (night) { ctx.fillStyle = 'rgba(40,70,170,0.34)'; ctx.fillRect(0, 0, cw, ch); }
+      else {
+        var gr = ctx.createLinearGradient(0, 0, 0, ch);
+        gr.addColorStop(0, 'rgba(60,110,150,' + (0.12 * (1 - gold)).toFixed(3) + ')'); gr.addColorStop(1, 'rgba(255,170,90,' + (0.1 + gold * 0.34).toFixed(3) + ')');
+        ctx.fillStyle = gr; ctx.fillRect(0, 0, cw, ch);
+        if (gold > 0.05) { ctx.globalCompositeOperation = 'overlay'; ctx.fillStyle = 'rgba(255,120,50,' + (gold * 0.16).toFixed(3) + ')'; ctx.fillRect(0, 0, cw, ch); }
+      }
+      if (dull > 0.3) { ctx.globalCompositeOperation = 'soft-light'; ctx.fillStyle = 'rgba(120,140,160,' + (dull * 0.18).toFixed(3) + ')'; ctx.fillRect(0, 0, cw, ch); }
+      ctx.restore();
+      // 3) grain de pellicule
+      ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = night ? 0.1 : 0.065;
+      ctx.translate(-Math.random() * 160, -Math.random() * 160); ctx.fillStyle = ctx.createPattern(PP.grain, 'repeat'); ctx.fillRect(0, 0, cw + 160, ch + 160); ctx.restore();
+    } catch (e) { PP.ok = false; }
+  }
   function render(ctx, cw, ch, info, now, opts) {
     var w = world, dt = w.last ? Math.min(0.1, (now - w.last) / 1000) : 0; w.last = now;
     var night = info.hour < 6 || info.hour >= 20.3;
@@ -4442,9 +5142,8 @@ footer .row2 button { min-height: 44px; }
     var sleeping = kind === 'sleep', riding = kind === 'ride', training = kind === 'train';
     w.char.visible = !(sleeping || riding || training);
     if (w.char.visible) {
-      poseChar(w.char, w.ph, WK && WK.walk && kind === 'walk' && !serving ? amp : 0, info.moral, WK ? (WK.pose === 'sign' ? 'walk' : 'w:' + WK.pose) : info.hitch ? 'hitch' : 'walk', Math.sin(now / 900) * (kind === 'walk' ? 0 : 1) * 4);
       w.char.userData.serve = w.mbT > 0 ? w.mbT / 2.4 : 0; w.char.userData.serveSide = 1;
-      poseChar(w.char, w.ph, WK && WK.walk && kind === 'walk' && !serving ? amp : 0, info.moral, WK ? (WK.pose === 'sign' ? 'walk' : 'w:' + WK.pose) : info.hitch ? 'hitch' : 'walk', Math.sin(now / 900) * (kind === 'walk' ? 0 : 1) * 4);
+      poseChar(w.char, w.ph, (WK ? (WK.walk && kind === 'walk' && !serving) : kind === 'walk') ? amp : 0, info.moral, WK ? (WK.pose === 'sign' ? 'walk' : 'w:' + WK.pose) : info.hitch ? 'hitch' : 'walk', Math.sin(now / 900) * (kind === 'walk' ? 0 : 1) * 4);
       setTool(w.char, WK ? WK.tool || '' : '');
       if (WK && WK.pose === 'sign') { setSignText(w.char, WK.sign, '\u2192'); w.char.userData.parts.sign.visible = true; poseChar(w.char, w.ph, 0, info.moral, 'w:sign', 0); }
       w.char.position.set(px, 0, z);
@@ -4602,8 +5301,9 @@ footer .row2 button { min-height: 44px; }
       var fa = Math.max(0, 1 - ctt / 0.5, 1 - Math.abs(ctt - 3.4) / 0.14);
       if (fa > 0) { ctx.fillStyle = 'rgba(0,0,0,' + Math.min(1, fa).toFixed(3) + ')'; ctx.fillRect(0, 0, cw, ch); }
     }
-    var vg = ctx.createRadialGradient(cw / 2, ch * 0.5, Math.min(cw, ch) * 0.35, cw / 2, ch * 0.5, Math.max(cw, ch) * 0.78);
-    vg.addColorStop(0, 'rgba(10,8,20,0)'); vg.addColorStop(1, 'rgba(10,8,20,0.38)');
+    if (PP.ok) post(ctx, cw, ch, info.hour, light, R.domElement);
+    var vg = ctx.createRadialGradient(cw / 2, ch * 0.5, Math.min(cw, ch) * 0.3, cw / 2, ch * 0.5, Math.max(cw, ch) * 0.78);
+    vg.addColorStop(0, 'rgba(10,8,20,0)'); vg.addColorStop(1, 'rgba(10,8,20,0.5)');
     ctx.fillStyle = vg; ctx.fillRect(0, 0, cw, ch);
   }
 
@@ -4681,7 +5381,8 @@ footer .row2 button { min-height: 44px; }
   'use strict';
   var CDN = 'https://cdn.jsdelivr.net/npm/';
   var ML = 'maplibre-gl@4.7.1/dist/maplibre-gl', PM = 'pmtiles@3.2.1/dist/pmtiles.js';
-  var TILES_FILE = 'trajet.pmtiles', ROUTE_FILE = 'trajet.geojson';
+  var TILES_FILE = 'trajet.pmtiles', ROUTE_FILE = 'trajet.geojson', FR_FILE = 'france-z7.pmtiles', WORLD_FILE = 'monde.pmtiles';
+  var ATTR = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> · <a href="https://protomaps.com" target="_blank" rel="noopener">Protomaps</a>';
   var GLYPHS = 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf';
   var RM = { available: null, ready: false, failed: '' };
   var map = null, towns = [], route = [], routeKm = 0, meMarker = null, goalMarker = null, lastKm = -1, lastGoal = '', following = true, box = null, loading = null;
@@ -4695,13 +5396,15 @@ footer .row2 button { min-height: 44px; }
   function url(name) { try { return new URL(name, location.href).href; } catch (e) { return name; } }
 
   /* La carte n'existe que si le fichier de tuiles est servi par un vrai site (pas dans l'aperçu Claude ni en fichier local). */
+  function probeFile(name) {
+    if (!/^https?:$/.test(location.protocol) || typeof fetch !== 'function') return Promise.resolve(false);
+    return fetch(url(name), { headers: { Range: 'bytes=0-15' } }).then(function (r) { return r.ok ? r.arrayBuffer() : null; }).then(function (b) {
+      return !!b && b.byteLength >= 7 && String.fromCharCode.apply(null, new Uint8Array(b, 0, 7)) === 'PMTiles';
+    }).catch(function () { return false; });
+  }
   RM.probe = function () {
     if (RM.available !== null) return Promise.resolve(RM.available);
-    if (!/^https?:$/.test(location.protocol) || typeof fetch !== 'function') { RM.available = false; return Promise.resolve(false); }
-    return fetch(url(TILES_FILE), { headers: { Range: 'bytes=0-15' } }).then(function (r) { return r.ok ? r.arrayBuffer() : null; }).then(function (b) {
-      RM.available = !!b && b.byteLength >= 7 && String.fromCharCode.apply(null, new Uint8Array(b, 0, 7)) === 'PMTiles';
-      return RM.available;
-    }).catch(function () { RM.available = false; return false; });
+    return probeFile(TILES_FILE).then(function (ok) { RM.available = ok; return ok; });
   };
 
   function hav(a, b) {
@@ -4754,7 +5457,9 @@ footer .row2 button { min-height: 44px; }
   }
 
   /* ---------- Style : couleurs du jeu, sur le schéma des tuiles Protomaps ---------- */
-  function style(withLabels) {
+  function style(o) {
+    o = o || {};
+    var withLabels = !!o.labels;
     var F = ['Noto Sans Regular'], FM = ['Noto Sans Medium'];
     var roadW = function (a, b, c) { return { stops: [[8, a], [12, b], [16, c]] }; };
     var layers = [
@@ -4788,14 +5493,41 @@ footer .row2 button { min-height: 44px; }
       { id: 'place-city', type: 'symbol', source: 'osm', 'source-layer': 'places', minzoom: 4, filter: ['all', ['==', ['get', 'kind'], 'locality'], ['in', ['get', 'kind_detail'], ['literal', ['city']]]],
         layout: { 'text-field': ['get', 'name'], 'text-font': FM, 'text-size': 16 }, paint: { 'text-color': '#2B2820', 'text-halo-color': '#FBF6E8', 'text-halo-width': 1.8 } }
     ];
-    if (withLabels) layers = layers.concat(labels);
+    // Sources de plus faible précision (facultatives) : monde entier et France, dessinées sous la carte détaillée du trajet.
+    var base = layers.slice(1), under = [], underLabels = [], extra = {};
+    function copyFor(srcName, sfx) {
+      return base.filter(function (l) { return l.id !== 'buildings' && l.id.indexOf('place-') !== 0; }).map(function (l) {
+        var c = JSON.parse(JSON.stringify(l)); c.id = l.id + '-' + sfx; c.source = srcName; delete c.minzoom; return c;
+      });
+    }
+    var lab = function (id, srcName, flt, size, font, minz, maxz, col) {
+      return { id: id, type: 'symbol', source: srcName, 'source-layer': 'places', minzoom: minz, maxzoom: maxz, filter: flt,
+        layout: { 'text-field': ['get', 'name'], 'text-font': font, 'text-size': size, 'text-max-width': 7 }, paint: { 'text-color': col || '#3C382C', 'text-halo-color': '#FBF6E8', 'text-halo-width': 1.6 } };
+    };
+    var cityF = ['all', ['==', ['get', 'kind'], 'locality'], ['in', ['get', 'kind_detail'], ['literal', ['city']]]];
+    var townF = ['all', ['==', ['get', 'kind'], 'locality'], ['in', ['get', 'kind_detail'], ['literal', ['city', 'town']]]];
+    if (o.world) {
+      extra.world = { type: 'vector', url: 'pmtiles://' + url(WORLD_FILE), attribution: ATTR };
+      under = under.concat(copyFor('world', 'w'));
+      var wb = under.filter(function (l) { return l.id === 'boundary-w'; })[0];
+      if (wb) { wb.filter = ['==', ['get', 'kind'], 'country']; wb.paint['line-color'] = '#9C7FB5'; wb.paint['line-width'] = { stops: [[2, 0.8], [6, 1.4]] }; }
+      underLabels.push(lab('lab-country', 'world', ['==', ['get', 'kind'], 'country'], 13, FM, 1, 7, '#6A5A7A'), lab('lab-city-w', 'world', cityF, 11, F, 4, 7));
+    }
+    if (o.fr) {
+      extra.fr = { type: 'vector', url: 'pmtiles://' + url(FR_FILE), attribution: ATTR };
+      under = under.concat(copyFor('fr', 'f'));
+      underLabels.push(lab('lab-town-f', 'fr', townF, 12, FM, 7, 10), lab('lab-city-f', 'fr', cityF, 15, FM, 5, 10));
+    }
+    if (o.fr || o.world) labels.forEach(function (l) { l.minzoom = Math.max(l.minzoom || 0, 10); });
+    layers = [layers[0]].concat(under, base);
+    if (withLabels) layers = layers.concat(underLabels, labels);
     return {
       version: 8, glyphs: GLYPHS,
-      sources: {
-        osm: { type: 'vector', url: 'pmtiles://' + url(TILES_FILE), attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> · <a href="https://protomaps.com" target="_blank" rel="noopener">Protomaps</a>' },
+      sources: Object.assign({
+        osm: { type: 'vector', url: 'pmtiles://' + url(TILES_FILE), attribution: ATTR },
         route: { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [] } } },
         done: { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [] } } }
-      },
+      }, extra),
       layers: layers.concat([
         { id: 'route-case', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#FFFFFF', 'line-width': { stops: [[6, 5], [12, 9], [16, 16]] }, 'line-opacity': 0.95 } },
         { id: 'route-base', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#6C7378', 'line-width': { stops: [[6, 2.6], [12, 5], [16, 9]] } } },
@@ -4833,20 +5565,22 @@ footer .row2 button { min-height: 44px; }
   RM.open = function (container, townList, totalKm) {
     if (map) { RM.resize(); return Promise.resolve(); }
     box = container; towns = townList;
-    var hasGlyphs = false;
+    var hasGlyphs = false, hasFr = false, hasWorld = false;
     return ensureLibs().then(function () { return RM.probe(); }).then(function (ok) {
       if (!ok) throw new Error('Fichier de carte introuvable.');
-      return glyphProbe().then(function (g) { hasGlyphs = g; return fetchRoute(towns, totalKm); });
+      return Promise.all([glyphProbe(), probeFile(FR_FILE), probeFile(WORLD_FILE)]).then(function (r) { hasGlyphs = r[0]; hasFr = r[1]; hasWorld = r[2]; return fetchRoute(towns, totalKm); });
     }).then(function (rt) {
       route = buildRoute(rt.coords, towns); routeKm = totalKm; RM.realRoute = rt.real;
       var proto = new root.pmtiles.Protocol(); root.maplibregl.addProtocol('pmtiles', proto.tile);
-      map = new root.maplibregl.Map({ container: container, style: style(hasGlyphs), center: [route[0][0], route[0][1]], zoom: 9, minZoom: 5, maxZoom: 17, attributionControl: { compact: true }, pitchWithRotate: false, dragRotate: false });
+      map = new root.maplibregl.Map({ container: container, style: style({ labels: hasGlyphs, fr: hasFr, world: hasWorld }), center: [route[0][0], route[0][1]], zoom: 9, minZoom: hasWorld ? 1.5 : hasFr ? 4 : 5, maxZoom: 17, attributionControl: { compact: true }, pitchWithRotate: false, dragRotate: false });
       map.touchZoomRotate.disableRotation();
       map.addControl(new root.maplibregl.NavigationControl({ showCompass: false }), 'top-right');
       var btn = el('button', 'rm-me', 'Me suivre'); btn.type = 'button';
       btn.addEventListener('click', function () { following = true; focusMe(true); });
       container.appendChild(btn);
       map.on('dragstart', function () { following = false; });
+      var zcls = function () { var z = map.getZoom(); container.classList.toggle('rm-z0', z < 6.5); container.classList.toggle('rm-z1', z >= 6.5 && z < 8.5); };
+      map.on('zoom', zcls); zcls();
       var started = false;
       var onStyle = function () {
         if (started) return; started = true;
@@ -4891,11 +5625,451 @@ footer .row2 button { min-height: 44px; }
     }
   };
   RM.resize = function () { if (map) { map.resize(); } };
+  // Cinématique d'entrée : vue large (France) puis vol jusqu'au personnage
+  RM.intro = function () {
+    if (!map || !RM.ready) return;
+    var p = pointAt(RM._km || 0); if (!p) return;
+    following = true;
+    map.jumpTo({ center: [p.lon, p.lat], zoom: 4.6 });
+    map.flyTo({ center: [p.lon, p.lat], zoom: 11.5, duration: 2600, curve: 1.6, essential: true });
+  };
   RM.stop = function () { if (map) { try { map.remove(); } catch (e) {} map = null; RM.ready = false; meMarker = goalMarker = null; lastKm = -1; lastGoal = ''; } };
   RM.pointAt = pointAt;
   RM.debug = function () { return map; };
   root.KZ_REALMAP = RM;
 })(typeof window !== 'undefined' ? window : this);
+
+</script>
+<script>
+/* Km Zero : écran de sac en 3D (Three.js r128).
+   API : KZ_BAG3D.open(container, rows, {onSelect, onClose}) · update(rows) · select(id) · pulse(id) · close() · supported() */
+(function (root) {
+  'use strict';
+  var T = root.THREE;
+  var R = null; // état de l'écran ouvert
+
+  function supported() {
+    if (!T) return false;
+    try { var c = document.createElement('canvas'); return !!(c.getContext('webgl') || c.getContext('experimental-webgl')); } catch (e) { return false; }
+  }
+  function mat(color, o) {
+    o = o || {};
+    return new T.MeshStandardMaterial({ color: color, roughness: o.r === undefined ? 0.75 : o.r, metalness: o.m || 0, flatShading: o.flat !== false, emissive: o.em || 0x000000, emissiveIntensity: o.ei || 0, transparent: !!o.op, opacity: o.op || 1 });
+  }
+  function mesh(geo, m) { var x = new T.Mesh(geo, m); x.castShadow = true; x.receiveShadow = true; return x; }
+  function box(w, h, d, color, o) { return mesh(new T.BoxGeometry(w, h, d), mat(color, o)); }
+  function cyl(rt, rb, h, color, o, seg) { return mesh(new T.CylinderGeometry(rt, rb, h, seg || 14), mat(color, o)); }
+  function ell(rx, ry, rz, color, o) { var m = mesh(new T.SphereGeometry(1, 14, 10), mat(color, o)); m.scale.set(rx, ry, rz); return m; }
+  function at(o, x, y, z) { o.position.set(x, y, z); return o; }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp01(t) { return Math.max(0, Math.min(1, t)); }
+  function easeOutBack(t) { var c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function easeInOut(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function tint(hex, k) { var c = new T.Color(hex); c.lerp(new T.Color(0x6b5a45), k); return c.getHex(); }
+
+  /* ---------- Modèles d'objets (formes simples, base posée sur y = 0) ---------- */
+  var MODELS = {
+    gourde: function (row) {
+      var g = new T.Group(), f = clamp01(row.pct / 100);
+      g.add(at(cyl(0.17, 0.17, 0.6, 0x3aa0c9, { op: 0.55, r: 0.2, m: 0.2 }), 0, 0.3, 0));
+      var wh = Math.max(0.001, 0.54 * f);
+      var water = cyl(0.15, 0.15, wh, 0x58c8f0, { r: 0.1 }); water.visible = f > 0.01; g.add(at(water, 0, 0.03 + wh / 2, 0));
+      g.add(at(cyl(0.11, 0.11, 0.1, 0x22303a, { m: 0.4 }), 0, 0.65, 0));
+      var strap = mesh(new T.TorusGeometry(0.1, 0.018, 6, 14, Math.PI), mat(0x22303a)); strap.position.set(0, 0.7, 0); g.add(strap);
+      return g;
+    },
+    barre: function (row) {
+      var g = new T.Group(), n = Math.min(5, Math.max(1, row.qty)), cols = [0xe0a43a, 0xd2693a, 0xc79a52, 0xe0b44a, 0xb8683a];
+      for (var i = 0; i < n; i++) {
+        var b = box(0.46, 0.07, 0.15, cols[i % cols.length]); b.position.set((i - (n - 1) / 2) * 0.06, 0.04 + i * 0.075, (i - (n - 1) / 2) * 0.03); b.rotation.y = (i - 2) * 0.12;
+        g.add(b);
+        var st = box(0.47, 0.072, 0.05, 0xf4ead2); st.position.copy(b.position); st.rotation.y = b.rotation.y; g.add(st);
+      }
+      return g;
+    },
+    pansement: function () {
+      var g = new T.Group();
+      g.add(at(box(0.42, 0.07, 0.26, 0xe9ddc8), 0, 0.035, 0));
+      g.add(at(box(0.3, 0.075, 0.05, 0xe0a07a), 0, 0.037, 0.02));
+      g.add(at(box(0.14, 0.02, 0.2, 0xf2ece0), 0.1, 0.08, 0.06));
+      return g;
+    },
+    trousse: function (row) {
+      var g = new T.Group();
+      g.add(at(box(0.56, 0.28, 0.38, 0xc23b34, { r: 0.55 }), 0, 0.14, 0));
+      g.add(at(box(0.16, 0.012, 0.05, 0xf4f0ea), 0, 0.286, 0)); g.add(at(box(0.05, 0.012, 0.16, 0xf4f0ea), 0, 0.287, 0));
+      g.add(at(box(0.1, 0.012, 0.032, 0xf4f0ea), 0, 0.15, 0.192)); g.add(at(box(0.032, 0.012, 0.1, 0xf4f0ea), 0, 0.15, 0.193));
+      var h = mesh(new T.TorusGeometry(0.1, 0.018, 6, 12, Math.PI), mat(0x2a2a2a)); h.position.set(0, 0.28, 0); g.add(h);
+      return g;
+    },
+    lampe: function (row) {
+      var g = new T.Group(), on = row.pct > 0;
+      var band = mesh(new T.TorusGeometry(0.22, 0.025, 6, 20, Math.PI * 1.35), mat(0x2b3138)); band.rotation.x = Math.PI / 2; band.rotation.z = -Math.PI * 0.18; band.position.y = 0.03; g.add(band);
+      g.add(at(box(0.22, 0.13, 0.12, 0x404852, { m: 0.3 }), 0, 0.09, 0.2));
+      var lens = cyl(0.045, 0.045, 0.03, on ? 0xfff2b8 : 0x6a6a6a, { em: on ? 0xffe9a0 : 0x000000, ei: on ? 0.4 + 0.8 * clamp01(row.pct / 100) : 0, r: 0.2 }, 12);
+      lens.rotation.x = Math.PI / 2; lens.position.set(0, 0.09, 0.27); g.add(lens);
+      return g;
+    },
+    tel: function (row) {
+      var g = new T.Group(), p = clamp01(row.pct / 100);
+      g.add(at(box(0.24, 0.045, 0.44, 0x1b1d22, { m: 0.5, r: 0.35 }), 0, 0.025, 0));
+      var sc = box(0.2, 0.004, 0.38, p > 0 ? 0x3a78c9 : 0x0b0c0f, { em: p > 0 ? 0x2a5fb0 : 0x000000, ei: p > 0 ? 0.45 : 0, r: 0.2 }); sc.position.set(0, 0.05, 0); g.add(sc);
+      if (p > 0) { var bar = box(0.14 * p, 0.006, 0.025, p > 0.25 ? 0x6bdc7a : 0xe0554a, { em: p > 0.25 ? 0x3cb050 : 0xc03020, ei: 0.8 }); bar.position.set(-0.07 + 0.07 * p, 0.054, -0.15); g.add(bar); }
+      return g;
+    },
+    batterie: function (row) {
+      var g = new T.Group(), u = Math.max(1, Math.ceil(row.pct / 34 - 0.001));
+      g.add(at(box(0.34, 0.075, 0.2, 0x4a5058, { m: 0.4 }), 0, 0.04, 0));
+      g.add(at(box(0.34, 0.02, 0.07, 0xe3862e), 0, 0.085, 0));
+      for (var i = 0; i < 3; i++) g.add(at(box(0.035, 0.012, 0.035, i < u ? 0x6bdc7a : 0x333a40, { em: i < u ? 0x3cb050 : 0, ei: i < u ? 0.9 : 0 }), -0.07 + i * 0.07, 0.085, 0.08));
+      return g;
+    },
+    carnet: function () {
+      var g = new T.Group();
+      g.add(at(box(0.34, 0.07, 0.46, 0x7a4b2c, { r: 0.8 }), 0, 0.035, 0));
+      g.add(at(box(0.32, 0.05, 0.44, 0xf0e6cc), 0.012, 0.035, 0.0));
+      g.add(at(box(0.34, 0.072, 0.46, 0x7a4b2c, { r: 0.8 }), 0, 0.036, 0).clone());
+      g.add(at(box(0.03, 0.078, 0.47, 0x1e1e1e), 0.1, 0.037, 0));
+      return g;
+    },
+    habits: function (row) {
+      var g = new T.Group(), k = 1 - clamp01(row.pct / 100);
+      g.add(at(box(0.5, 0.1, 0.38, tint(0x4a6fa5, k)), 0, 0.05, 0));
+      g.add(at(box(0.46, 0.09, 0.34, tint(0x34363f, k)), 0.01, 0.145, 0.01));
+      g.add(at(box(0.42, 0.08, 0.3, tint(0xbfc4c9, k)), -0.01, 0.23, 0));
+      return g;
+    },
+    toilette: function () {
+      var g = new T.Group();
+      g.add(at(ell(0.26, 0.14, 0.17, 0x2a9d8f, { r: 0.6 }), 0, 0.14, 0));
+      g.add(at(box(0.42, 0.012, 0.02, 0xe9e9e9), 0, 0.27, 0));
+      var br = cyl(0.014, 0.014, 0.28, 0xe0e0e0, {}, 8); br.rotation.z = Math.PI / 2; br.rotation.y = 0.5; br.position.set(0.05, 0.3, 0.08); g.add(br);
+      return g;
+    },
+    chaussettes: function () {
+      var g = new T.Group();
+      [[-0.1, 0.1], [0.1, -0.1]].forEach(function (p, i) {
+        g.add(at(ell(0.15, 0.07, 0.2, 0xf0f0ea), p[0], 0.07, p[1] * 0.4));
+        g.add(at(box(0.3, 0.02, 0.05, i ? 0xd8453b : 0x3b72d8), p[0], 0.1, p[1] * 0.4 + 0.02));
+      });
+      return g;
+    },
+    poncho: function (row) {
+      var k = 1 - clamp01(row.pct / 100), g = new T.Group();
+      g.add(at(box(0.5, 0.1, 0.4, tint(0xf2c230, k * 0.7)), 0, 0.05, 0));
+      g.add(at(box(0.5, 0.1, 0.4, tint(0xe7b81f, k * 0.7)), 0, 0.14, 0));
+      g.add(at(ell(0.14, 0.09, 0.14, tint(0xf2c230, k * 0.7)), 0.12, 0.2, 0.05));
+      return g;
+    },
+    couverture: function () {
+      var g = new T.Group();
+      var m = mesh(new T.IcosahedronGeometry(0.26, 1), mat(0xcfd6dc, { m: 0.85, r: 0.25 })); m.scale.set(1, 0.34, 0.8); m.position.y = 0.09; g.add(m);
+      g.add(at(box(0.44, 0.02, 0.06, 0xe34a3b), 0, 0.15, 0));
+      return g;
+    },
+    gants: function () {
+      var g = new T.Group();
+      [-0.14, 0.14].forEach(function (x) {
+        g.add(at(box(0.15, 0.07, 0.24, 0xc2362e), x, 0.04, 0.02));
+        g.add(at(ell(0.05, 0.04, 0.08, 0xc2362e), x + (x < 0 ? 0.09 : -0.09), 0.05, 0.0));
+      });
+      g.add(at(ell(0.2, 0.12, 0.2, 0x59606b), 0, 0.12, -0.18));
+      g.add(at(cyl(0.2, 0.2, 0.03, 0x3f454f, {}, 14), 0, 0.03, -0.18));
+      return g;
+    },
+    papiers: function () {
+      var g = new T.Group();
+      g.add(at(box(0.4, 0.04, 0.28, 0x24272e, { r: 0.6 }), 0, 0.02, 0));
+      g.add(at(box(0.32, 0.01, 0.2, 0xf6f3ea), 0.02, 0.05, 0.0).clone());
+      g.add(at(box(0.24, 0.012, 0.15, 0x2b6cb0), 0.1, 0.062, 0.05));
+      g.add(at(box(0.04, 0.014, 0.03, 0xe0c060, { m: 0.8, r: 0.3 }), 0.04, 0.066, 0.05));
+      return g;
+    },
+    rechaud: function (row) {
+      var g = new T.Group();
+      g.add(at(cyl(0.16, 0.18, 0.05, 0x3b4046, { m: 0.5 }, 14), -0.1, 0.025, 0));
+      g.add(at(cyl(0.13, 0.13, 0.15, 0xb9c0c6, { m: 0.7, r: 0.3 }, 14), -0.1, 0.125, 0));
+      g.add(at(cyl(0.135, 0.135, 0.025, 0x8c949c, { m: 0.7 }, 14), -0.1, 0.205, 0));
+      var c = cyl(0.06, 0.06, 0.26, 0x4a9a5a, { m: 0.2 }, 12); c.rotation.z = Math.PI / 2; c.position.set(0.16, 0.07, 0.1); g.add(c);
+      g.add(at(cyl(0.032, 0.032, 0.05, 0x333333, {}, 8), 0.3, 0.07, 0.1).clone());
+      return g;
+    },
+    chaussures: function (row) {
+      var k = 1 - clamp01(row.pct / 100), g = new T.Group();
+      [-0.14, 0.14].forEach(function (x, i) {
+        g.add(at(box(0.18, 0.05, 0.46, 0x2c2c2c), x, 0.025, 0));
+        g.add(at(ell(0.09, 0.07, 0.2, tint(0x8a8f96, k * 0.6)), x, 0.09, 0.02));
+        g.add(at(ell(0.08, 0.08, 0.1, tint(0x6e747c, k * 0.6)), x, 0.13, -0.1));
+        g.add(at(box(0.1, 0.012, 0.18, 0xe8e2d2), x, 0.17, 0.04));
+      });
+      return g;
+    },
+    veste: function (row) {
+      var k = 1 - clamp01(row.pct / 100), g = new T.Group(), c = /doudoune|parka/i.test(row.n) ? 0x2f5d8a : /imperm/i.test(row.n) ? 0x3a8f5c : 0xb0553a;
+      g.add(at(box(0.5, 0.12, 0.42, tint(c, k * 0.6)), 0, 0.06, 0));
+      g.add(at(box(0.5, 0.1, 0.38, tint(c, k * 0.6)), 0, 0.17, 0));
+      g.add(at(box(0.12, 0.03, 0.4, 0xd8d4c8), 0, 0.225, 0));
+      g.add(at(box(0.2, 0.1, 0.12, tint(c, k * 0.6)), 0.3, 0.07, 0.1));
+      g.add(at(box(0.2, 0.1, 0.12, tint(c, k * 0.6)), -0.3, 0.07, 0.1));
+      return g;
+    },
+    couchage: function (row) {
+      var k = 1 - clamp01(row.pct / 100), g = new T.Group();
+      var r = cyl(0.17, 0.17, 0.5, tint(0x4a7a3c, k * 0.6), {}, 16); r.rotation.z = Math.PI / 2; r.position.y = 0.17; g.add(r);
+      var s1 = cyl(0.175, 0.175, 0.04, 0x222222, {}, 16); s1.rotation.z = Math.PI / 2; s1.position.set(-0.12, 0.17, 0); g.add(s1);
+      var s2 = s1.clone(); s2.position.x = 0.12; g.add(s2);
+      return g;
+    }
+  };
+
+  /* ---------- Étiquette ×N ---------- */
+  function badge(text) {
+    var c = document.createElement('canvas'); c.width = 128; c.height = 64;
+    var x = c.getContext('2d');
+    x.fillStyle = 'rgba(20,14,12,0.78)'; x.beginPath();
+    if (x.roundRect) x.roundRect(8, 8, 112, 48, 22); else x.rect(8, 8, 112, 48);
+    x.fill();
+    x.fillStyle = '#ffd9a0'; x.font = 'bold 30px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 64, 34);
+    var tx = new T.CanvasTexture(c);
+    var sp = new T.Sprite(new T.SpriteMaterial({ map: tx, transparent: true, depthTest: false }));
+    sp.scale.set(0.42, 0.21, 1); sp.renderOrder = 10;
+    return sp;
+  }
+
+  function sig(row) { return row.qty + '|' + Math.round(row.pct) + '|' + row.stateLabel; }
+
+  function buildItem(row) {
+    var fn = MODELS[row.model] || MODELS.papiers;
+    var holder = new T.Group(), inner = fn(row);
+    inner.scale.setScalar(1.45); holder.add(inner);
+    if (row.qty > 1 && !row.worn) { var b = badge('× ' + row.qty); b.position.set(0.4, 0.78, 0.3); holder.add(b); }
+    holder.userData = { id: row.id, sig: sig(row), row: row, inner: inner };
+    // zone de toucher généreuse (invisible)
+    var hit = new T.Mesh(new T.CylinderGeometry(0.52, 0.52, 0.95, 10), new T.MeshBasicMaterial({ visible: false }));
+    hit.position.y = 0.4; hit.userData.hit = holder; holder.add(hit); holder.userData.hit = hit;
+    return holder;
+  }
+
+  /* ---------- Sac à dos ---------- */
+  function buildPack() {
+    var g = new T.Group(), c = 0xd9732b, dk = 0x9c4e1a;
+    g.add(at(box(1.5, 1.35, 0.8, c, { r: 0.8 }), 0, 0.68, 0));
+    g.add(at(box(1.2, 0.5, 0.18, dk, { r: 0.8 }), 0, 0.4, 0.49));
+    g.add(at(box(0.18, 0.7, 0.5, dk), -0.84, 0.55, 0.0));
+    g.add(at(box(0.18, 0.7, 0.5, dk), 0.84, 0.55, 0.0));
+    g.add(at(box(0.9, 0.04, 0.5, 0x151515), 0, 1.35, 0).clone());
+    var hinge = new T.Group(); hinge.position.set(0, 1.36, -0.4);
+    var flap = box(1.5, 0.12, 0.86, dk, { r: 0.8 }); flap.position.set(0, 0.0, 0.43); hinge.add(flap);
+    var buckle = box(0.16, 0.05, 0.2, 0xd8d4c8, { m: 0.5 }); buckle.position.set(0, 0.09, 0.78); hinge.add(buckle);
+    g.add(hinge); g.userData.hinge = hinge;
+    return g;
+  }
+
+  /* ---------- Ouverture / fermeture ---------- */
+  function open(container, rows, cb) {
+    if (!supported()) return false;
+    close();
+    var W = container.clientWidth || 360, Hh = container.clientHeight || 600;
+    var renderer = new T.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(2, root.devicePixelRatio || 1));
+    renderer.setSize(W, Hh);
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
+    renderer.outputEncoding = T.sRGBEncoding;
+    renderer.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none';
+    container.innerHTML = ''; container.appendChild(renderer.domElement);
+    var scene = new T.Scene();
+    scene.background = new T.Color(0x20141b);
+    scene.fog = new T.Fog(0x20141b, 14, 34);
+    var cam = new T.PerspectiveCamera(40, W / Hh, 0.1, 80);
+    var hemi = new T.HemisphereLight(0xffd9b0, 0x2a2235, 0.6); scene.add(hemi);
+    var sun = new T.DirectionalLight(0xffc38a, 1.0); sun.position.set(-4, 9, 5); sun.castShadow = true;
+    sun.shadow.mapSize.set(1024, 1024); var sc = sun.shadow.camera; sc.left = -8; sc.right = 8; sc.top = 8; sc.bottom = -8; sc.near = 1; sc.far = 30;
+    scene.add(sun);
+    var rim = new T.DirectionalLight(0x6a8cff, 0.35); rim.position.set(5, 4, -6); scene.add(rim);
+
+    R = { container: container, renderer: renderer, scene: scene, cam: cam, cb: cb || {}, items: {}, order: [], raf: 0, t0: performance.now(), sel: null, shift: 0, yaw: 0, pitch: 0, tgtYaw: 0, skip: false, ring: null, alive: true };
+    R.stage = new T.Group(); scene.add(R.stage);
+    layout(rows, true);
+    bindEvents();
+    loop();
+    return true;
+  }
+
+  function cols(aspect, n) { return aspect < 0.75 ? 3 : aspect < 1.2 ? 4 : Math.min(6, Math.max(4, Math.ceil(n / 2))); }
+
+  function layout(rows, first) {
+    var st = R.stage, ids = {}, i;
+    var W = R.container.clientWidth || 360, Hh = R.container.clientHeight || 600, aspect = W / Hh;
+    var n = rows.length, nc = Math.min(cols(aspect, n), n), nr = Math.ceil(n / nc), sp = 1.12;
+    R.nc = nc; R.nr = nr; R.sp = sp;
+    var gw = nc * sp, gd = nr * sp;
+    // nappe
+    if (R.cloth) { st.remove(R.cloth); }
+    var cloth = mesh(new T.PlaneGeometry(gw + 1.6, gd + 1.4), mat(0x8a6a4c, { r: 0.95, flat: false })); cloth.rotation.x = -Math.PI / 2; cloth.position.set(0, -0.001, 0); cloth.castShadow = false; st.add(cloth); R.cloth = cloth;
+    var hem = mesh(new T.PlaneGeometry(gw + 1.9, gd + 1.7), mat(0x4a3322, { r: 1, flat: false })); hem.rotation.x = -Math.PI / 2; hem.position.set(0, -0.012, 0); hem.castShadow = false; st.add(hem); R.hem = hem;
+    // sac
+    if (!R.pack) { R.pack = buildPack(); st.add(R.pack); }
+    R.pack.position.set(0, 0, -(gd / 2) - 1.2);
+    R.pack.rotation.y = 0;
+    // objets
+    rows.forEach(function (row, idx) {
+      ids[row.id] = true;
+      var c = idx % nc, r = Math.floor(idx / nc);
+      var itemsInRow = Math.min(nc, n - r * nc), off = (nc - itemsInRow) * sp / 2;
+      var x = -gw / 2 + sp / 2 + c * sp + off, z = -gd / 2 + sp / 2 + r * sp + 0.0;
+      var ex = R.items[row.id];
+      if (ex && ex.userData.sig === sig(row)) { ex.userData.home = new T.Vector3(x, 0, z); ex.userData.row = row; return; }
+      var node = buildItem(row);
+      node.userData.home = new T.Vector3(x, 0, z);
+      if (ex) { // remplace en place
+        node.position.copy(ex.position); node.scale.copy(ex.scale); node.userData.arrive = 1; node.userData.t0 = 0; node.userData.pop = performance.now();
+        st.remove(ex);
+      } else {
+        node.userData.arrive = first ? 0 : 1; node.userData.t0 = performance.now() + (first ? 1500 + idx * 85 : 0);
+        node.visible = !first; node.scale.setScalar(first ? 0.01 : 1); node.position.copy(node.userData.home);
+        if (!first) { node.userData.pop = performance.now(); }
+      }
+      R.items[row.id] = node; st.add(node);
+    });
+    Object.keys(R.items).forEach(function (id) { if (!ids[id]) { R.items[id].userData.dying = performance.now(); } });
+    R.order = rows.map(function (r) { return r.id; });
+    // caméra finale : cadre toute la nappe
+    var vf = R.cam.fov * Math.PI / 180, hf = 2 * Math.atan(Math.tan(vf / 2) * aspect);
+    var elev = 0.98; // radians (~56°)
+    var dW = (gw + 1.7) / 2 / Math.tan(hf / 2), dD = (gd + 3.6) / 2 / (Math.tan(vf / 2) * Math.sin(elev));
+    var d = Math.max(dW, dD) * 1.06;
+    R.cfinal = { d: d, elev: elev, target: new T.Vector3(0, 0.2, -0.9) };
+    if (first) R.t0 = performance.now();
+  }
+
+  function camPose(t) {
+    // intro : de haut et loin vers la vue finale
+    var f = R.cfinal, k = easeInOut(clamp01(t / 1.5));
+    var d = lerp(f.d * 1.45, f.d, k), el = lerp(1.35, f.elev, k), az = lerp(0.5, 0, k) + R.yaw * 0.6;
+    var tg = f.target;
+    R.cam.position.set(tg.x + Math.sin(az) * Math.cos(el) * d, tg.y + Math.sin(el) * d, tg.z + Math.cos(az) * Math.cos(el) * d);
+    R.cam.lookAt(tg);
+  }
+
+  function loop() {
+    if (!R || !R.alive) return;
+    R.raf = requestAnimationFrame(loop);
+    var now = performance.now(), t = (now - R.t0) / 1000;
+    if (R.skip) { R.t0 -= 4000; R.skip = false; }
+    R.yaw += (R.tgtYaw - R.yaw) * 0.12;
+    camPose(t);
+    // rabat du sac
+    var hinge = R.pack.userData.hinge, ho = easeOut(clamp01((t - 0.9) / 0.7));
+    hinge.rotation.x = -ho * 1.9;
+    var bagPulse = 1 + 0.04 * Math.sin(clamp01((t - 1.3) / 1.2) * Math.PI) * (t < 2.6 ? 1 : 0);
+    R.pack.scale.set(bagPulse, 1 / bagPulse, bagPulse);
+    var top = new T.Vector3(R.pack.position.x, 1.5, R.pack.position.z + 0.1);
+    Object.keys(R.items).forEach(function (id) {
+      var n = R.items[id], u = n.userData;
+      if (u.dying) { var k = (now - u.dying) / 350; n.scale.setScalar(Math.max(0.001, 1 - k)); n.position.y += 0.02; if (k >= 1) { R.stage.remove(n); delete R.items[id]; } return; }
+      if (u.arrive < 1) {
+        var k2 = (now - u.t0) / 900;
+        if (k2 < 0) { n.visible = false; return; }
+        n.visible = true;
+        var kk = clamp01(k2), e = easeOut(kk);
+        n.position.x = lerp(top.x, u.home.x, e); n.position.z = lerp(top.z, u.home.z, e);
+        n.position.y = lerp(top.y, 0, easeOut(kk)) + Math.sin(kk * Math.PI) * 1.6;
+        n.scale.setScalar(0.2 + 0.8 * easeOutBack(kk)); n.rotation.y = (1 - e) * 5;
+        if (kk >= 1) { u.arrive = 1; n.position.copy(u.home); n.scale.setScalar(1); n.rotation.y = 0; }
+        return;
+      }
+      var selected = R.sel === id;
+      var ty = selected ? 0.55 : 0;
+      n.position.x += (u.home.x - n.position.x) * 0.2; n.position.z += (u.home.z - n.position.z) * 0.2;
+      n.position.y += (ty - n.position.y) * 0.18;
+      var ps = 1;
+      if (u.pop) { var pk = clamp01((now - u.pop) / 450); ps = 1 + 0.25 * Math.sin(pk * Math.PI); if (pk >= 1) u.pop = 0; }
+      var sc = (selected ? 1.25 : 1) * ps;
+      n.scale.setScalar(lerp(n.scale.x, sc, 0.2));
+      if (selected) n.rotation.y += 0.02; else n.rotation.y += (0 - (n.rotation.y % (Math.PI * 2)) ) * 0.1;
+    });
+    if (R.ring) {
+      var s = R.items[R.sel];
+      R.ring.visible = !!s; if (s) { R.ring.position.set(s.position.x, 0.01, s.position.z); R.ring.material.opacity = 0.55 + 0.25 * Math.sin(now / 250); }
+    }
+    R.shift += ((R.sel ? 1 : 0) - R.shift) * 0.14;
+    var cw = R.container.clientWidth || 360, ch = R.container.clientHeight || 600;
+    if (R.shift > 0.004) R.cam.setViewOffset(cw, ch, 0, Math.round(R.shift * ch * 0.14), cw, ch); else if (R.cam.view) R.cam.clearViewOffset();
+    R.renderer.render(R.scene, R.cam);
+  }
+
+  /* ---------- Interaction ---------- */
+  function bindEvents() {
+    var el = R.renderer.domElement, down = null, ray = new T.Raycaster(), v = new T.Vector2();
+    function pt(e) { return { x: e.clientX, y: e.clientY }; }
+    R.onDown = function (e) { down = pt(e); down.yaw = R.tgtYaw; down.moved = false; try { el.setPointerCapture(e.pointerId); } catch (x) {} };
+    R.onMove = function (e) {
+      if (!down) return;
+      var dx = e.clientX - down.x;
+      if (Math.abs(dx) > 6) down.moved = true;
+      if (down.moved) R.tgtYaw = Math.max(-0.8, Math.min(0.8, down.yaw + dx / 220));
+    };
+    R.onUp = function (e) {
+      if (!down) return;
+      var moved = down.moved; down = null;
+      if (moved) return;
+      var r = el.getBoundingClientRect();
+      v.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(v, R.cam);
+      var hits = [];
+      Object.keys(R.items).forEach(function (id) { var n = R.items[id]; if (n.userData.hit && n.userData.arrive >= 1 && !n.userData.dying) hits.push(n.userData.hit); });
+      var res = ray.intersectObjects(hits, false);
+      if (!res.length) { R.skip = true; return; }
+      var id = res[0].object.userData.hit.userData.id;
+      select(id);
+    };
+    el.addEventListener('pointerdown', R.onDown); el.addEventListener('pointermove', R.onMove); el.addEventListener('pointerup', R.onUp); el.addEventListener('pointercancel', R.onUp);
+    R.onResize = function () {
+      if (!R) return;
+      var W = R.container.clientWidth, Hh = R.container.clientHeight; if (!W || !Hh) return;
+      R.renderer.setSize(W, Hh); R.cam.aspect = W / Hh; R.cam.updateProjectionMatrix();
+      relayout();
+    };
+    root.addEventListener('resize', R.onResize);
+    var ring = new T.Mesh(new T.RingGeometry(0.5, 0.62, 28), new T.MeshBasicMaterial({ color: 0xffb35a, transparent: true, opacity: 0.6, side: T.DoubleSide }));
+    ring.rotation.x = -Math.PI / 2; ring.visible = false; R.stage.add(ring); R.ring = ring;
+  }
+  function relayout() { if (!R) return; var rows = R.order.map(function (id) { return R.items[id] && R.items[id].userData.row; }).filter(Boolean); if (rows.length) layout(rows, false); }
+
+  function select(id) {
+    if (!R) return;
+    R.sel = (R.sel === id ? null : id);
+    if (R.cb.onSelect) R.cb.onSelect(R.sel ? R.items[R.sel].userData.row : null);
+  }
+  function update(rows) {
+    if (!R) return;
+    var keepSel = R.sel;
+    layout(rows, false);
+    if (keepSel && !R.items[keepSel]) R.sel = null;
+    var still = rows.filter(function (r) { return r.id === R.sel; })[0];
+    if (R.cb.onSelect) R.cb.onSelect(still || null);
+  }
+  function pulse(id) { if (R && R.items[id]) R.items[id].userData.pop = performance.now(); }
+  function selectedId() { return R ? R.sel : null; }
+  function close() {
+    if (!R) return;
+    R.alive = false; cancelAnimationFrame(R.raf);
+    try {
+      var el = R.renderer.domElement;
+      el.removeEventListener('pointerdown', R.onDown); el.removeEventListener('pointermove', R.onMove); el.removeEventListener('pointerup', R.onUp); el.removeEventListener('pointercancel', R.onUp);
+      root.removeEventListener('resize', R.onResize);
+      R.scene.traverse(function (o) { if (o.geometry) o.geometry.dispose(); if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } });
+      R.renderer.dispose();
+      if (R.renderer.forceContextLoss) R.renderer.forceContextLoss();
+      if (el.parentNode) el.parentNode.removeChild(el);
+    } catch (e) {}
+    R = null;
+  }
+  function isOpen() { return !!R; }
+
+  root.KZ_BAG3D = { open: open, update: update, select: select, pulse: pulse, close: close, supported: supported, isOpen: isOpen, selectedId: selectedId, resize: function () { if (R && R.onResize) R.onResize(); } };
+})(typeof window !== 'undefined' ? window : globalThis);
 
 </script>
 <script>
@@ -4926,6 +6100,7 @@ footer .row2 button { min-height: 44px; }
   function saveAdv() {
     if (!curId || !S) return;
     wj(ADVK + curId, { s: S, last: last });
+    mergeCarnet(S);
     var l = ids(); if (l.indexOf(curId) < 0) { l.unshift(curId); wj(IDX, l); }
   }
   function readAdv(id) { var o = rj(ADVK + id); return o && o.s && o.s.v === 1 ? o : null; }
@@ -4970,6 +6145,7 @@ footer .row2 button { min-height: 44px; }
   function renderHome() {
     var n = listAdv().length;
     $('h-load').disabled = n === 0;
+    var cc = carnetCounts(allStamps()); $('h-carnet-sub').textContent = cc.got + ' / ' + cc.tot + ' tampons · grandes villes de France, d’Europe et du monde';
     $('h-load-sub').textContent = n ? n + (n > 1 ? ' aventures enregistrées' : ' aventure enregistrée') : 'Aucune aventure enregistrée';
     var w = $('h-warn');
     w.hidden = storageOK;
@@ -4996,7 +6172,7 @@ footer .row2 button { min-height: 44px; }
   }
   function loadAdventure(id) {
     var o = readAdv(id); if (!o) return;
-    S = E.ensure(o.s); curId = id; last = o.last || Date.now();
+    S = E.ensure(o.s); curId = id; last = o.last || Date.now(); seenStampSeq = S.stampSeq || 0;
     walkSel = null; resultView = null; sheet2 = null; awayMsg = null;
     var kmBefore = S.km, gap;
     if (settings.speed === 1) { var dr0 = Date.now() - S.t; if (dr0 < -3000) E.shiftTime(S, -dr0); gap = Math.max(0, Date.now() - S.t); }
@@ -5149,7 +6325,7 @@ footer .row2 button { min-height: 44px; }
   function finishCreate() {
     if (!draft.first.trim()) draft.first = 'Voyageur';
     draft.first = draft.first.trim(); draft.last = draft.last.trim();
-    S = E.newGame(Date.now(), draft, draft.goalId); curId = uid(); last = Date.now(); notifSeq = S.logSeq;
+    S = E.newGame(Date.now(), draft, draft.goalId); curId = uid(); last = Date.now(); notifSeq = S.logSeq; seenStampSeq = S.stampSeq || 0;
     walkSel = null; resultView = null; sheet2 = null; awayMsg = null;
     saveAdv(); show('game');
   }
@@ -5213,7 +6389,7 @@ footer .row2 button { min-height: 44px; }
   }
 
   /* ---------- Carte réelle (facultative) ---------- */
-  function setMapMode(m) {
+  function setMapMode(m, intro) {
     mapMode = m;
     var real = m === 'real', err = $('rmerr');
     $('map').style.display = real ? 'none' : '';
@@ -5221,7 +6397,7 @@ footer .row2 button { min-height: 44px; }
     $('mt-svg').setAttribute('aria-selected', !real); $('mt-real').setAttribute('aria-selected', real);
     err.hidden = true;
     if (!real) return;
-    RM.open($('rmap'), E.TOWNS, E.ROUTE_KM).then(function () { RM.resize(); if (S) RM.update(Math.min(S.km, E.goalKmOf(S)), E.goalTownOf(S)); }).catch(function (e) {
+    RM.open($('rmap'), E.TOWNS, E.ROUTE_KM).then(function () { RM.resize(); if (S) RM.update(Math.min(S.km, E.goalKmOf(S)), E.goalTownOf(S)); if (intro) setTimeout(function () { if (mapOpen) RM.intro(); }, 500); }).catch(function (e) {
       mapMode = 'svg'; $('map').style.display = ''; $('rmap').hidden = true;
       $('mt-svg').setAttribute('aria-selected', true); $('mt-real').setAttribute('aria-selected', false);
       err.hidden = false; err.textContent = 'La carte réelle n’a pas pu se charger (' + (e && e.message ? e.message : 'connexion') + '). Le schéma reste disponible.';
@@ -5252,6 +6428,11 @@ footer .row2 button { min-height: 44px; }
   function render() {
     if (view !== 'game' || !S) return;
     var s = S;
+    if ((s.ev || s.won || s.over) && mapOpen) closeMapScreen(true);
+    checkStampFx();
+    renderFlash();
+    var dv = E.dailyView(s); $('carnet-btn').classList.toggle('dot', dv.rdv.some(function (r) { return r.open && !r.done; }) && !s.ev);
+    if (carnetOpen && carnetTab === 'jour' && ticks % 3 === 0 && $('cdetail').hidden) renderCarnet();
     $('gsub').textContent = heroName(s.hero);
     $('hudplace').textContent = E.placeText(s) + ' · ' + Math.round(Math.min(s.km, E.goalKmOf(s))) + ' / ' + E.goalKmOf(s) + ' km';
     $('clock').innerHTML = fmtClock(s.t);
@@ -5350,9 +6531,10 @@ footer .row2 button { min-height: 44px; }
       h += btn('train:' + t.line.id, 'Train vers ' + t.to.s, E.fmtHM(t.dep) + ' · ' + t.price + ' €', t, '');
     });
     h += '</div>';
-    h += '<div class="group"><h2>Sur la route</h2><div class="walkrow"><select id="alarmsel" aria-label="Réveil"><option value=""' + (s.alarm == null ? ' selected' : '') + '>Réveil : sommeil complet (8 h)</option>' + [5, 6, 7, 8, 9, 10].map(function (x) { return '<option value="' + x + '"' + (s.alarm === x ? ' selected' : '') + '>Réveil à ' + x + ' h</option>'; }).join('') + '</select></div>' + (s.sdebt > 2 ? '<p class="hint">Dette de sommeil : ' + s.sdebt.toFixed(1).replace('.', ',') + ' h. Fatigue plus rapide et marche plus lente tant que tu ne rattrapes pas.</p>' : '') + '<div class="row2">' +
+    h += '<div class="group"><h2>Sur la route</h2><div class="walkrow"><select id="alarmsel" aria-label="Réveil"><option value=""' + (s.alarm == null ? ' selected' : '') + '>Réveil : automatique (7 h la nuit, 8 h sinon)</option>' + [5, 6, 7, 8, 9, 10].map(function (x) { return '<option value="' + x + '"' + (s.alarm === x ? ' selected' : '') + '>Réveil à ' + x + ' h</option>'; }).join('') + '</select></div>' + (s.sdebt > 2 ? '<p class="hint">Dette de sommeil : ' + s.sdebt.toFixed(1).replace('.', ',') + ' h. Fatigue plus rapide et marche plus lente tant que tu ne rattrapes pas.</p>' : '') + '<div class="row2">' +
       btn('sleepOut', 'Dormir dehors', 'Gratuit, rude', A.sleepOut) +
       btn('host', 'Chez l’habitant', 'Gratuit · il faut patienter', A.host) + '</div></div>';
+    h += '<div class="group"><h2>Découvrir</h2><div class="row2">' + btn('visit', 'Visiter', A.visitName || 'Un lieu de la ville', A.visit) + '</div></div>';
     if (A.venues && A.venues.length) {
       h += '<div class="group"><h2>Dans la ville</h2><div class="venues">' + A.venues.map(function (v) {
         return '<button type="button" class="btn venue" data-venue="' + v.id + '"' + (v.ok ? '' : ' disabled') + '><span class="vi" aria-hidden="true">' + v.icon + '</span><span>' + esc(v.n) + '<small>' + esc(v.ok ? (v.open ? 'Ouvert' : v.reason) : v.reason) + '</small></span></button>';
@@ -5424,7 +6606,7 @@ footer .row2 button { min-height: 44px; }
   var SHEET_TITLES = { shop: 'Magasin de sport', look: 'Tenue', profile: 'Profil du voyageur', bag: 'Sac', map: 'Carte', actions: 'Actions', venue: 'Commerce' };
   var venueSel = null;
   function bagHTML() {
-    var rows = E.bagList(S), cats = [], h = '';
+    var rows = E.bagList(S).filter(function (r) { return !r.worn; }), cats = [], h = '';
     rows.forEach(function (r) { if (cats.indexOf(r.cat) < 0) cats.push(r.cat); });
     cats.forEach(function (c) {
       h += '<div class="sheetsec"><h3>' + esc(c) + '</h3>';
@@ -5437,6 +6619,363 @@ footer .row2 button { min-height: 44px; }
     h += '<div class="sheetsec"><h3>Portés sur toi</h3><div class="equip">' + equipRows(S) + '</div>' +
       '<div class="row2"><button type="button" class="btn" data-do="look">Tenue<small>Couleurs et couvre-chef</small></button><button type="button" class="btn" data-do="profile">Profil<small>Bonus et malus</small></button></div></div>';
     return h;
+  }
+
+
+
+
+
+  /* ---------- Bandeau « flash » (événements à durée limitée) ---------- */
+  function overlaysOpen() { return bagOpen || mapOpen || carnetOpen || !!mg || !$('stampfx').hidden || !!S.ev || S.won || S.over || (sheet2 && !$('sheet2').hidden) || !!resultView; }
+  var stopHide = 0;
+  function renderFlash() {
+    var bar = $('flashbar'), f = S.flash, ps = null;
+    if (!f && S.act === 'hitch' && !((S.cool.stopgame || 0) > S.t) && !(stopHide > S.t)) ps = { id: 'stopgame', icon: '👍', title: 'Tends mieux le pouce', text: 'Un petit jeu de 20 secondes : si tu es bon, les voitures te remarquent plus vite.', a: 'Jouer', b: 'Plus tard' };
+    if ((!f && !ps) || overlaysOpen()) { bar.hidden = true; return; }
+    var d = f ? E.FLASH[f.id] : ps;
+    bar.hidden = false;
+    $('fl-ic').textContent = d.icon; $('fl-title').textContent = d.title; $('fl-text').textContent = f ? f.text : d.text;
+    $('fl-yes').textContent = d.a; $('fl-no').textContent = d.b;
+    if (f) {
+      var left = Math.max(0, f.until - S.t), tot = Math.max(1, f.until - f.t0), mm = Math.floor(left / 60000), ss = Math.floor(left / 1000) % 60;
+      $('fl-t').textContent = mm + ':' + (ss < 10 ? '0' : '') + ss; $('fl-bar').style.width = Math.round(left / tot * 100) + '%';
+    } else { $('fl-t').textContent = ''; $('fl-bar').style.width = '0%'; }
+    bar.dataset.id = f ? f.id : 'stopgame';
+  }
+  function runPhoto() { startMini('photo', function (st) { var r = E.doPhoto(S, st); saveAdv(); lastActKey = ''; return r.text; }); }
+  function runCook() { startMini('cook', function (st) { var r = E.doCook(S, st); saveAdv(); lastActKey = ''; return r.text; }); }
+  function runStop() { startMini('stop', function (st) { var r = E.doHitchBoost(S, st); saveAdv(); lastActKey = ''; return r.text; }); }
+  function runTent() {
+    startMini('tent', function (st) {
+      E.doSleepOut(S); E.doTentSetup(S, st); saveAdv(); lastActKey = '';
+      return ['La tente est montée de travers, mais elle tient.', 'Une tente correcte pour la nuit.', 'Belle tente bien tendue : tu seras au sec.', 'Tente parfaite, bien ancrée. Bonne nuit.'][st];
+    });
+  }
+
+  /* ---------- Petits jeux ---------- */
+  var mg = null;
+  var MG = {
+    photo: { title: 'Photo', sub: 'Cadre le soleil', hint: 'Touche au bon moment : le soleil doit être au centre du cadre.', tap: 'Déclencher', skip: false },
+    cook: { title: 'Cuisine', sub: 'Trois cuissons à réussir', hint: 'Arrête l’aiguille dans la zone verte.', tap: 'Stop !', skip: false },
+    tent: { title: 'La tente', sub: 'Plante les cinq piquets', hint: 'Touche les cercles avant qu’ils ne se referment.', tap: '', skip: true },
+    stop: { title: 'Le pouce', sub: 'Attire trois conducteurs', hint: 'Touche quand la voiture passe devant toi.', tap: 'Pouce !', skip: false }
+  };
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function startMini(kind, finish) {
+    var c = MG[kind], cv = $('mgcv'), scr = $('mgscreen');
+    scr.classList.remove('out'); scr.hidden = false;
+    var dpr = Math.min(2, window.devicePixelRatio || 1), W = scr.clientWidth || 360, H = scr.clientHeight || 640;
+    cv.width = W * dpr; cv.height = H * dpr; cv.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+    $('mg-title').textContent = c.title; $('mg-sub').textContent = c.sub; $('mg-hint').textContent = c.hint; $('mg-hint').hidden = false;
+    $('mg-tap').textContent = c.tap; $('mg-tap').hidden = !c.tap; $('mg-res').hidden = true; $('mg-skip').hidden = false;
+    mg = { kind: kind, finish: finish, W: W, H: H, t0: performance.now(), done: false, hits: 0, round: 0, st: {}, flash: 0, raf: 0, cfg: c };
+    var m = mg;
+    if (kind === 'cook') { m.st = { zone: rnd(.25, .75), spd: 0.65, w: 0.24, pos: 0, dir: 1, res: [] }; }
+    if (kind === 'tent') { m.st = { i: 0, tx: 0, ty: 0, t1: 0, res: [] }; tentNext(); }
+    if (kind === 'stop') { m.st = { cars: [], i: 0, spd: 0, t1: performance.now(), res: [], used: false, y: 0 }; stopNext(); }
+    if (kind === 'photo') { m.st = { shot: false }; }
+    cancelAnimationFrame(m.raf); mgLoop();
+  }
+  function tentNext() { var m = mg, st = m.st; st.tx = rnd(60, m.W - 60); st.ty = rnd(m.H * 0.28, m.H * 0.72); st.t1 = performance.now(); }
+  function stopNext() { var m = mg, st = m.st; st.spd = rnd(0.34, 0.5); st.t1 = performance.now(); st.used = false; st.hit = false; st.col = ['#c8473a', '#3a6fc8', '#e0b13a', '#4aa66a'][Math.floor(Math.random() * 4)]; }
+  function mgEnd() {
+    var m = mg; if (m.done) return; m.done = true;
+    var stars = m.kind === 'photo' ? m.st.stars : m.kind === 'tent' ? (m.hits >= 5 ? 3 : m.hits >= 3 ? 2 : m.hits >= 1 ? 1 : 0) : m.hits;
+    var txt = ''; try { txt = m.finish(stars) || ''; } catch (e) { txt = ''; }
+    $('mg-hint').hidden = true; $('mg-tap').hidden = true; $('mg-skip').hidden = true;
+    var r = $('mg-res'); r.hidden = false;
+    r.innerHTML = '<div class="stars">' + [0, 1, 2].map(function (i) { return '<i class="' + (i < stars ? 'on' : '') + '">★</i>'; }).join('') + '</div><p style="text-align:center">' + esc(txt) + '</p><div class="acts"><button type="button" class="btn primary" id="mg-done">Continuer</button></div>';
+  }
+  function mgClose() {
+    if (!mg) return;
+    cancelAnimationFrame(mg.raf); mg = null;
+    var scr = $('mgscreen'); scr.classList.add('out'); setTimeout(function () { if (!mg) { scr.hidden = true; scr.classList.remove('out'); } }, 260);
+    if (S) { render(); }
+  }
+  function mgTap(x, y) {
+    var m = mg; if (!m || m.done) return;
+    var now = performance.now(), st = m.st;
+    if (m.kind === 'photo') {
+      if (st.shot) return; st.shot = true; m.flash = now;
+      var t = (now - m.t0) / 1000, p = sunPos(t), cx = m.W / 2, cy = m.H * 0.4, d = Math.hypot(p.x - cx, p.y - cy);
+      st.stars = d < 28 ? 3 : d < 60 ? 2 : d < 110 ? 1 : 0; setTimeout(mgEnd, 700);
+    } else if (m.kind === 'cook') {
+      var ok = Math.abs(st.pos - st.zone) < st.w / 2; if (ok) m.hits++; st.res.push(ok); m.flash = now; m.fok = ok;
+      st.zone = rnd(.2, .8); st.w = Math.max(0.1, st.w - 0.05); st.spd += 0.22; m.round++;
+      if (m.round >= 3) setTimeout(mgEnd, 600);
+    } else if (m.kind === 'tent') {
+      var dd = Math.hypot(x - st.tx, y - st.ty); m.flash = now;
+      if (dd < 44) { m.hits++; st.res.push(1); st.ty = -999; setTimeout(function () { if (mg === m && !m.done) { st.i++; if (st.i >= 5) mgEnd(); else tentNext(); } }, 220); }
+    } else if (m.kind === 'stop') {
+      if (st.used) return; st.used = true;
+      var car = stopCarX(now); if (Math.abs(car - m.W / 2) < 38) { st.hit = true; m.hits++; m.flash = now; }
+      setTimeout(function () { if (mg === m && !m.done) { st.i++; if (st.i >= 3) mgEnd(); else stopNext(); } }, 700);
+    }
+  }
+  function sunPos(t) { var m = mg; return { x: m.W / 2 + Math.sin(t * 0.95) * m.W * 0.34, y: m.H * 0.4 + Math.sin(t * 1.35 + 1) * m.H * 0.1 }; }
+  function stopCarX(now) { var m = mg, st = m.st, p = (now - st.t1) / 1000 * st.spd; return -80 + p * (m.W + 160); }
+  function mgLoop() {
+    var m = mg; if (!m) return;
+    m.raf = requestAnimationFrame(mgLoop);
+    var cv = $('mgcv'), x = cv.getContext('2d'), W = m.W, H = m.H, now = performance.now(), t = (now - m.t0) / 1000, st = m.st, i;
+    x.clearRect(0, 0, W, H);
+    if (m.kind === 'photo') {
+      var g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#2b2a5e'); g.addColorStop(.45, '#c9553a'); g.addColorStop(.7, '#f3a24a'); g.addColorStop(1, '#2a1b24'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+      var p = sunPos(t), gl = x.createRadialGradient(p.x, p.y, 4, p.x, p.y, 90); gl.addColorStop(0, '#fff5c8'); gl.addColorStop(.35, '#ffcf6a99'); gl.addColorStop(1, '#ffcf6a00'); x.fillStyle = gl; x.fillRect(p.x - 100, p.y - 100, 200, 200);
+      x.fillStyle = '#fff2b8'; x.beginPath(); x.arc(p.x, p.y, 20, 0, 7); x.fill();
+      x.fillStyle = '#3a2430'; x.beginPath(); x.moveTo(0, H * .72); for (i = 0; i <= 12; i++) x.lineTo(i * W / 12, H * (.7 + .04 * Math.sin(i * 1.7))); x.lineTo(W, H); x.lineTo(0, H); x.fill();
+      x.fillStyle = '#1d121b'; x.beginPath(); x.moveTo(0, H * .8); for (i = 0; i <= 12; i++) x.lineTo(i * W / 12, H * (.78 + .05 * Math.sin(i * 2.3 + 1))); x.lineTo(W, H); x.lineTo(0, H); x.fill();
+      var cx = W / 2, cy = H * .4, fw = 170, fh = 130;
+      x.strokeStyle = '#ffffffd0'; x.lineWidth = 3; var L = 26;
+      [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(function (c) { var px = cx + c[0] * fw / 2, py = cy + c[1] * fh / 2; x.beginPath(); x.moveTo(px, py - c[1] * L); x.lineTo(px, py); x.lineTo(px - c[0] * L, py); x.stroke(); });
+      x.lineWidth = 1.5; x.beginPath(); x.moveTo(cx - 12, cy); x.lineTo(cx + 12, cy); x.moveTo(cx, cy - 12); x.lineTo(cx, cy + 12); x.stroke();
+      if (m.flash) { var a = 1 - (now - m.flash) / 500; if (a > 0) { x.fillStyle = 'rgba(255,255,255,' + a.toFixed(2) + ')'; x.fillRect(0, 0, W, H); } }
+    } else if (m.kind === 'cook') {
+      var bg = x.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#2a2018'); bg.addColorStop(1, '#17110c'); x.fillStyle = bg; x.fillRect(0, 0, W, H);
+      var bw = Math.min(310, W - 50), bx = (W - bw) / 2, by = H * .6;
+      // casserole + vapeur
+      x.fillStyle = '#8c949c'; x.fillRect(W / 2 - 60, H * .3, 120, 62); x.fillStyle = '#6a7279'; x.fillRect(W / 2 - 72, H * .3 + 4, 12, 7); x.fillRect(W / 2 + 60, H * .3 + 4, 12, 7);
+      x.fillStyle = '#d98b2a'; x.beginPath(); x.ellipse(W / 2, H * .3 + 62, 62, 8, 0, 0, 7); x.fill();
+      for (i = 0; i < 4; i++) { x.strokeStyle = 'rgba(255,255,255,' + (.35 - i * .06) + ')'; x.lineWidth = 4; x.beginPath(); var sy = H * .3 - 8 - i * 22 - (t * 20 % 22); x.moveTo(W / 2 - 26 + i * 17, sy + 30); x.bezierCurveTo(W / 2 - 40 + i * 17, sy + 10, W / 2 - 14 + i * 17, sy, W / 2 - 26 + i * 17, sy - 14); x.stroke(); }
+      // barre
+      x.fillStyle = '#3b3128'; x.fillRect(bx, by, bw, 34); x.fillStyle = '#4faa5f'; x.fillRect(bx + (st.zone - st.w / 2) * bw, by, st.w * bw, 34);
+      if (!m.done && m.round < 3) { st.pos += st.dir * st.spd * 0.016; if (st.pos > 1) { st.pos = 1; st.dir = -1; } if (st.pos < 0) { st.pos = 0; st.dir = 1; } }
+      x.fillStyle = '#fff'; x.fillRect(bx + st.pos * bw - 3, by - 8, 6, 50);
+      for (i = 0; i < 3; i++) { x.fillStyle = st.res[i] === undefined ? '#ffffff30' : st.res[i] ? '#6bdc7a' : '#e0554a'; x.beginPath(); x.arc(W / 2 - 40 + i * 40, by + 80, 12, 0, 7); x.fill(); }
+      if (m.flash) { var a2 = 1 - (now - m.flash) / 350; if (a2 > 0) { x.fillStyle = (m.fok ? 'rgba(107,220,122,' : 'rgba(224,85,74,') + (a2 * .35).toFixed(2) + ')'; x.fillRect(0, 0, W, H); } }
+    } else if (m.kind === 'tent') {
+      var gg = x.createLinearGradient(0, 0, 0, H); gg.addColorStop(0, '#2c4a6a'); gg.addColorStop(.3, '#6a8a4a'); gg.addColorStop(1, '#2f4a2a'); x.fillStyle = gg; x.fillRect(0, 0, W, H);
+      x.fillStyle = '#e8d28a'; x.beginPath(); x.moveTo(W / 2 - 110, H * .74); x.lineTo(W / 2, H * .5); x.lineTo(W / 2 + 110, H * .74); x.closePath(); x.globalAlpha = .35; x.fill(); x.globalAlpha = 1;
+      for (i = 0; i < st.i; i++) { var ang = i / 5 * Math.PI * 2; }
+      if (!m.done && st.ty > -900) {
+        var k = Math.min(1, (now - st.t1) / 1700), r = 62 - 46 * k;
+        x.strokeStyle = '#ffd36a'; x.lineWidth = 5; x.beginPath(); x.arc(st.tx, st.ty, Math.max(8, r), 0, 7); x.stroke();
+        x.fillStyle = '#ffd36a'; x.beginPath(); x.arc(st.tx, st.ty, 8, 0, 7); x.fill();
+        if (k >= 1) { st.res.push(0); st.i++; if (st.i >= 5) mgEnd(); else tentNext(); }
+      }
+      for (i = 0; i < 5; i++) { x.fillStyle = i < st.res.length ? (st.res[i] ? '#6bdc7a' : '#e0554a') : '#ffffff30'; x.beginPath(); x.arc(W / 2 - 60 + i * 30, H - 150, 9, 0, 7); x.fill(); }
+    } else if (m.kind === 'stop') {
+      x.fillStyle = '#5b8a4a'; x.fillRect(0, 0, W, H); x.fillStyle = '#3a3a40'; x.fillRect(0, H * .3, W, H * .26);
+      x.strokeStyle = '#e8e2c8'; x.setLineDash([24, 18]); x.lineWidth = 4; x.beginPath(); x.moveTo(0, H * .43); x.lineTo(W, H * .43); x.stroke(); x.setLineDash([]);
+      x.fillStyle = 'rgba(255,215,90,.22)'; x.fillRect(W / 2 - 38, H * .3, 76, H * .26);
+      // voyageur
+      x.fillStyle = '#d98a2b'; x.fillRect(W / 2 - 9, H * .6 + 14, 18, 30); x.fillStyle = '#e8c9a0'; x.beginPath(); x.arc(W / 2, H * .6 + 8, 9, 0, 7); x.fill();
+      x.strokeStyle = '#e8c9a0'; x.lineWidth = 5; x.beginPath(); x.moveTo(W / 2 + 6, H * .6 + 20); x.lineTo(W / 2 + 26, H * .6 - 4); x.stroke();
+      if (!m.done) {
+        var cx2 = stopCarX(now), cy2 = H * .36; if (st.hit) cx2 = Math.min(cx2, W / 2 - 18 + Math.max(0, 1 - (now - m.flash) / 600) * 40);
+        x.fillStyle = st.col || '#c8473a'; x.fillRect(cx2 - 36, cy2, 72, 30); x.fillStyle = '#9fd0e8'; x.fillRect(cx2 - 14, cy2 + 4, 28, 12); x.fillStyle = '#111'; x.beginPath(); x.arc(cx2 - 20, cy2 + 31, 7, 0, 7); x.arc(cx2 + 20, cy2 + 31, 7, 0, 7); x.fill();
+        if (!st.used && cx2 > W + 70) { st.used = true; st.i++; if (st.i >= 3) mgEnd(); else stopNext(); }
+      }
+      for (i = 0; i < 3; i++) { x.fillStyle = i < st.i ? ((i < st.res.length) ? '#6bdc7a' : '#ffffff55') : '#ffffff30'; x.beginPath(); x.arc(W / 2 - 40 + i * 40, H - 150, 10, 0, 7); x.fill(); }
+      x.fillStyle = '#fff'; x.font = '600 14px sans-serif'; x.textAlign = 'center'; x.fillText('Conducteurs conquis : ' + m.hits + ' / 3', W / 2, H * .22);
+    }
+    if (m.kind === 'photo' && !st.shot && t > 18) mgTap(0, 0);
+  }
+
+  /* ---------- Carnet de voyage : tampons ---------- */
+  var CARNETK = 'kz_carnet', carnetOpen = false, carnetTab = 'jour', seenStampSeq = 0;
+  var MONTHS = ['JANV', 'FÉVR', 'MARS', 'AVR', 'MAI', 'JUIN', 'JUIL', 'AOÛT', 'SEPT', 'OCT', 'NOV', 'DÉC'];
+  var INK = { etape: '#2f7a4d', france: '#264f9e', europe: '#b3342b', monde: '#6a3d9a' };
+  function carnetStore() { var o = rj(CARNETK); if (!o || !o.stamps) o = { stamps: {} }; return o; }
+  function mergeCarnet(gs) {
+    if (!gs || !gs.stamps) return;
+    var o = carnetStore(), ch = false;
+    Object.keys(gs.stamps).forEach(function (id) {
+      var a = gs.stamps[id], b = o.stamps[id];
+      if (!b) { o.stamps[id] = { t: a.t, taste: !!a.taste, seen: !!a.seen }; ch = true; return; }
+      if (a.taste && !b.taste) { b.taste = true; ch = true; }
+      if (a.seen && !b.seen) { b.seen = true; ch = true; }
+      if (a.t < b.t) { b.t = a.t; ch = true; }
+    });
+    if (ch) wj(CARNETK, o);
+  }
+  function allStamps() {
+    var o = carnetStore();
+    if (S && S.stamps) Object.keys(S.stamps).forEach(function (id) {
+      var a = S.stamps[id], b = o.stamps[id];
+      if (!b) o.stamps[id] = a; else o.stamps[id] = { t: Math.min(a.t, b.t), taste: !!(a.taste || b.taste), seen: !!(a.seen || b.seen) };
+    });
+    return o.stamps;
+  }
+  function hashStr(t) { var h = 7; for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; return h; }
+  function fmtStampDate(t) { var d = E.zdate(t); return d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); }
+  function stampSVG(d, st) {
+    var ink = INK[d.r] || '#264f9e', rot = (hashStr(d.id) % 21) - 10, pid = 'sp' + d.id + Math.floor(Math.random() * 1e5), full = E.stampLevel(st) === 3;
+    var nm = d.n.toUpperCase(), fs = nm.length > 16 ? 8.2 : nm.length > 11 ? 9.6 : 11.5;
+    var cn = d.c.toUpperCase(), cfs = cn.length > 14 ? 6.2 : 7.4;
+    return '<svg viewBox="0 0 120 120" role="img" aria-label="Tampon ' + esc(d.n) + '"><defs><path id="' + pid + 't" d="M 17 60 A 43 43 0 0 1 103 60"/><path id="' + pid + 'b" d="M 15 60 A 45 45 0 0 0 105 60"/></defs>' +
+      '<g transform="rotate(' + rot + ' 60 60)" fill="none" stroke="' + ink + '" opacity=".93">' +
+      (full ? '<circle cx="60" cy="60" r="59" stroke="#c99a2e" stroke-width="2.2"/>' : '') +
+      '<circle cx="60" cy="60" r="55" stroke-width="3"/><circle cx="60" cy="60" r="50.5" stroke-width="1"/><circle cx="60" cy="60" r="31" stroke-width="1.2" stroke-dasharray="2 2.4"/>' +
+      '<text font-size="' + fs + '" font-weight="800" letter-spacing="1.2" fill="' + ink + '" stroke="none" text-anchor="middle" font-family="Barlow,sans-serif"><textPath href="#' + pid + 't" startOffset="50%">' + esc(nm) + '</textPath></text>' +
+      '<text font-size="' + cfs + '" font-weight="700" letter-spacing="1.4" fill="' + ink + '" stroke="none" text-anchor="middle" font-family="Barlow,sans-serif"><textPath href="#' + pid + 'b" startOffset="50%">' + esc(cn) + '</textPath></text>' +
+      '<rect x="19" y="50" width="82" height="20" rx="2" fill="#f5ecd7" stroke-width="1.6" transform="rotate(-6 60 60)"/>' +
+      '<text x="60" y="64" font-size="9.4" font-weight="800" fill="' + ink + '" stroke="none" text-anchor="middle" transform="rotate(-6 60 60)" font-family="Barlow,sans-serif">' + esc(fmtStampDate(st.t)) + '</text>' +
+      '<path d="M60 22l1.9 4.2 4.6.4-3.5 3 1.1 4.5L60 31.8l-4.1 2.3 1.1-4.5-3.5-3 4.6-.4z" fill="' + ink + '" stroke="none" transform="translate(0 -4) scale(1)" />' +
+      '</g></svg>';
+  }
+  function lockSVG(d) {
+    return '<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" fill="none" stroke="#a8946d" stroke-width="2.4" stroke-dasharray="5 5"/><text x="60" y="73" font-size="40" font-weight="700" fill="#b8a47e" text-anchor="middle" font-family="Barlow,sans-serif">?</text></svg>';
+  }
+  function carnetTabs() {
+    var t = [];
+    if (S) t.push(['jour', 'Aujourd’hui']);
+    ['etape', 'france', 'europe', 'monde'].forEach(function (r) { t.push([r, r === 'etape' ? 'Étapes' : r === 'france' ? 'France' : r === 'europe' ? 'Europe' : 'Monde']); });
+    return t;
+  }
+  function carnetCounts(stamps) {
+    var tot = E.STAMPS.length, got = 0, byR = {};
+    E.STAMPS.forEach(function (d) { byR[d.r] = byR[d.r] || { t: 0, g: 0 }; byR[d.r].t++; if (stamps[d.id]) { got++; byR[d.r].g++; } });
+    return { tot: tot, got: got, byR: byR };
+  }
+  function dayHTML() {
+    var v = E.dailyView(S), h = '<h2>Aujourd’hui</h2><p class="csub">Trois rendez-vous et trois objectifs, renouvelés chaque matin.</p>';
+    h += '<div class="csum"><span>★ ' + v.stars + '</span><span>Série : ' + v.streak + ' jour' + (v.streak > 1 ? 's' : '') + '</span>' + (v.all ? '<span>Journée complète</span>' : '') + '</div>';
+    h += '<div class="rdvrow">' + v.rdv.map(function (r) {
+      return '<div class="rdvt ' + (r.done ? 'done' : r.open ? 'open' : '') + '"><b>' + esc(r.n) + '</b><small>' + (r.done ? 'Fait' : r.open ? 'Maintenant' : r.past ? 'Manqué' : r.a + ' h – ' + (Math.floor(r.b)) + ' h' + (r.b % 1 ? '30' : '')) + '</small></div>';
+    }).join('') + '</div>';
+    v.goals.forEach(function (g) {
+      var pct = Math.round(g.prog / g.target * 100), pr = g.stat === 'walk' ? g.prog.toFixed(1).replace('.', ',') + ' / ' + g.target + ' km' : g.stat === 'earned' ? Math.round(g.prog) + ' / ' + g.target + ' €' : g.stat === 'slept' ? g.prog.toFixed(1).replace('.', ',') + ' / 7,5 h' : Math.floor(g.prog) + ' / ' + g.target;
+      h += '<div class="goal ' + (g.done ? 'done' : '') + '"><div class="gh"><span>' + esc(g.t) + '</span><em>' + (g.done ? '✓ fait' : pr) + '</em></div><div class="gb"><i style="width:' + pct + '%"></i></div><small>Récompense : ' + g.money + ' €, moral +' + g.moral + '</small></div>';
+    });
+    h += '<p class="csub" style="margin-top:12px">Un rendez-vous tenu (repas dans la plage horaire) donne du moral. Une série de journées complètes augmente le bonus.</p>';
+    return h;
+  }
+  function regionHTML(r, stamps) {
+    var list = E.STAMPS.filter(function (d) { return d.r === r; }), c = carnetCounts(stamps).byR[r] || { g: 0, t: 0 };
+    var h = '<h2>' + esc(E.STAMP_REGIONS[r]) + '</h2><p class="csub">' + (r === 'etape' ? 'Les villes et villages de ton trajet La Rochelle → Bordeaux.' : r === 'france' ? 'Les grandes villes. Chaque tampon se mérite à l’arrivée ; goûte la spécialité et visite le lieu pour le compléter.' : 'À découvrir lors de tes prochains voyages.') + '</p>';
+    h += '<div class="csum"><span>' + c.g + ' / ' + c.t + ' tampons</span></div><div class="cprog"><i style="width:' + Math.round(c.g / Math.max(1, c.t) * 100) + '%"></i></div><div class="sgrid">';
+    list.forEach(function (d) {
+      var st = stamps[d.id], lv = E.stampLevel(st);
+      h += '<button type="button" class="scell ' + (st ? '' : 'lock') + '" data-stamp="' + d.id + '">' + (st ? stampSVG(d, st) : lockSVG(d)) + '<b>' + esc(d.n) + '</b>' + (st ? '<i>' + '●'.repeat(lv) + '○'.repeat(3 - lv) + '</i>' : '') + '</button>';
+    });
+    return h + '</div>';
+  }
+  function renderCarnet() {
+    var stamps = allStamps(), cn = carnetCounts(stamps);
+    $('carnet-meta').textContent = cn.got + ' tampon' + (cn.got > 1 ? 's' : '') + ' sur ' + cn.tot;
+    $('ctabs').innerHTML = carnetTabs().map(function (t) { return '<button type="button" class="ctab" role="tab" data-ctab="' + t[0] + '" aria-selected="' + (carnetTab === t[0]) + '">' + esc(t[1]) + '</button>'; }).join('');
+    $('cpage').innerHTML = carnetTab === 'jour' && S ? dayHTML() : regionHTML(carnetTab === 'jour' ? 'etape' : carnetTab, stamps);
+  }
+  function openCarnet(tab, instant) {
+    stash();
+    carnetTab = tab || (S && !S.won && !S.over ? 'jour' : 'etape');
+    if (carnetTab === 'jour' && !S) carnetTab = 'etape';
+    var scr = $('carnetscreen');
+    scr.classList.remove('out'); scr.hidden = false; carnetOpen = true; $('cdetail').hidden = true;
+    var cv = $('ccover'); cv.style.display = ''; cv.style.animation = 'none'; void cv.offsetWidth; cv.style.animation = instant ? 'none' : '';
+    if (instant) cv.style.display = 'none';
+    renderCarnet(); $('cpage').scrollTop = 0;
+  }
+  function closeCarnet() {
+    if (!carnetOpen) return;
+    carnetOpen = false;
+    var scr = $('carnetscreen'); scr.classList.add('out');
+    setTimeout(function () { if (!carnetOpen) { scr.hidden = true; scr.classList.remove('out'); } }, 280);
+  }
+  function stampDetail(id) {
+    var d = E.STAMP_BY[id], st = allStamps()[id], lv = E.stampLevel(st), c = $('cdetail');
+    var h = '<div class="cat">' + esc(E.STAMP_REGIONS[d.r]) + ' · ' + esc(d.c) + '</div><div class="cdbig">' + (st ? stampSVG(d, st) : lockSVG(d)) + '</div><h3>' + esc(d.n) + '</h3>';
+    if (!st) {
+      h += '<p>' + (d.r === 'etape' || d.r === 'france' && d.lat === undefined ? 'Arrive à ' + esc(d.n) + ' à pied, en stop ou en train pour obtenir ce tampon.' : 'Cette ville est hors de ton trajet actuel. Elle t’attend lors d’un futur voyage.') + '</p>';
+    } else {
+      h += '<div class="cchk"><div><span class="ok">✓</span><span><b>Arrivée</b> · ' + esc(fmtStampDate(st.t)) + '</span></div>' +
+        '<div><span class="' + (st.taste ? 'ok' : 'no') + '">' + (st.taste ? '✓' : '○') + '</span><span><b>Spécialité : ' + esc(d.spec) + '</b><br>' + (st.taste ? 'Goûtée.' : 'À goûter : mange à la boulangerie ou au restaurant de la ville.') + '</span></div>' +
+        '<div><span class="' + (st.seen ? 'ok' : 'no') + '">' + (st.seen ? '✓' : '○') + '</span><span><b>À voir : ' + esc(d.monu) + '</b><br>' + (st.seen ? 'Visité.' : 'À visiter : action « Visiter » une fois sur place, de 9 h à 19 h 30.') + '</span></div></div>';
+      if (lv === 3) h += '<p><b>Tampon complet.</b> Le cercle doré entoure ton tampon.</p>';
+    }
+    h += '<div class="acts"><button type="button" class="btn" data-cdclose="1">Fermer</button></div>';
+    c.hidden = false; c.innerHTML = h; c.style.animation = 'none'; void c.offsetWidth; c.style.animation = '';
+  }
+  function showStampFx(id) {
+    var d = E.STAMP_BY[id]; if (!d || !S) return;
+    $('stampfx-art').innerHTML = stampSVG(d, S.stamps[id] || { t: S.t });
+    $('stampfx-txt').textContent = d.n + ' · ' + d.c + '. Goûte ' + d.spec + ' et visite ' + d.monu.charAt(0).toLowerCase() + d.monu.slice(1) + ' pour le compléter.';
+    $('stampfx').hidden = false;
+    try { if (navigator.vibrate && settings.notify) navigator.vibrate([60, 40, 90]); } catch (e) {}
+  }
+  function checkStampFx() {
+    if (!S) return;
+    var q = S.stampSeq || 0;
+    if (q > seenStampSeq) { seenStampSeq = q; if (S.stampLast && !(S.won || S.over)) showStampFx(S.stampLast); mergeCarnet(S); }
+  }
+  /* ---------- Carte plein écran (cinématique : le papier se déplie) ---------- */
+  var mapOpen = false;
+  function openMapScreen() {
+    stash();
+    var scr = $('mapscreen');
+    scr.classList.remove('out'); scr.hidden = false; scr.classList.add('go'); mapOpen = true;
+    var slot = $('mapslot'); slot.innerHTML = ''; slot.appendChild($('mapcard')); slot.appendChild($('journalbox')); lastLogSeq = -1;
+    ['mapwrap'].forEach(function (id) { var n = $(id); n.classList.remove('go'); void n.offsetWidth; n.classList.add('go'); });
+    $('mappaper').scrollTop = 0;
+    var gk = E.goalKmOf(S);
+    $('map-meta').textContent = E.goalTownOf(S).n + ' · ' + Math.round(Math.min(S.km, gk)) + ' sur ' + gk + ' km';
+    setTimeout(function () { if (mapOpen) setMapMode(mapMode, true); }, 350);
+    render();
+  }
+  function closeMapScreen(now) {
+    if (!mapOpen) return;
+    mapOpen = false;
+    var scr = $('mapscreen');
+    var fin = function () { if (!mapOpen) { scr.hidden = true; scr.classList.remove('out', 'go'); stash(); } };
+    if (now) { fin(); return; }
+    scr.classList.add('out'); setTimeout(fin, 280);
+  }
+  function closeScreensNow() {
+    if (bagOpen) { bagOpen = false; clearInterval(bagTimer); $('bagscreen').hidden = true; if (window.KZ_BAG3D) window.KZ_BAG3D.close(); }
+    closeMapScreen(true);
+    carnetOpen = false; $('carnetscreen').hidden = true; $('stampfx').hidden = true; if (mg) { cancelAnimationFrame(mg.raf); mg = null; $('mgscreen').hidden = true; } $('flashbar').hidden = true;
+  }
+  /* ---------- Sac 3D ---------- */
+  var bagOpen = false, bagSig = '', bagTimer = 0;
+  function bagFlatSig(rows) { return rows.map(function (r) { return r.id + ':' + r.qty + ':' + Math.round(r.pct); }).join('|'); }
+  function pctColor(r) { var p = r.pct; return p > 50 ? '#7ddc8a' : p > 25 ? '#ffb347' : '#ff6b57'; }
+  function bagCardHTML(r) {
+    var h = '<div class="cat">' + esc(r.worn ? 'Porté sur toi' : r.cat) + (r.qty > 1 && !r.worn ? ' · ' + esc(r.qtyText) : '') + '</div><h3>' + esc(r.n) + '</h3>';
+    if (r.stateKind !== 'none') h += '<div class="strow"><span>État</span><b>' + esc(r.stateLabel) + '</b></div><div class="stbar"><i style="width:' + Math.round(r.pct) + '%;background:' + pctColor(r) + '"></i></div>';
+    else h += '<div class="strow"><span>État</span><b>' + esc(r.stateLabel) + '</b></div>';
+    if (r.w) h += '<div class="strow"><span>Poids</span><b>' + String(r.w).replace('.', ',') + ' kg</b></div>';
+    h += '<p>' + esc(r.d) + '</p>';
+    if (r.effects && r.effects.length) h += '<div class="fx">' + r.effects.map(function (f) { return '<em class="' + (f.g ? 'g' : 'n') + '">' + esc(f.t) + '</em>'; }).join('') + '</div>';
+    if (r.acts && r.acts.length) {
+      h += '<div class="acts">' + r.acts.map(function (a, i) {
+        return '<button type="button" class="btn ' + (i === 0 ? 'primary' : '') + '" data-use="' + r.id + '" data-act="' + a.k + '"' + (a.ok ? '' : ' disabled') + '>' + esc(a.verb) + (!a.ok && a.reason ? '<small>' + esc(a.reason) + '</small>' : '') + '</button>';
+      }).join('') + '</div>';
+    }
+    return h;
+  }
+  function showBagCard(r) {
+    var c = $('bagcard');
+    if (!r) { c.hidden = true; $('bag-hint').hidden = false; return; }
+    c.hidden = false; c.innerHTML = bagCardHTML(r); $('bag-hint').hidden = true;
+    c.style.animation = 'none'; void c.offsetWidth; c.style.animation = '';
+  }
+  function bagMeta() {
+    var w = E.bagWeight(S);
+    $('bag-meta').textContent = 'Poids du sac : ' + String(w).replace('.', ',') + ' kg' + (w > 6 ? ' · un peu lourd, tu te fatigues plus vite' : '');
+  }
+  function openBag() {
+    var B = window.KZ_BAG3D;
+    if (!B || !B.supported()) { openSheet2('bag'); return; }
+    stash();
+    var rows = E.bagList(S);
+    $('bagscreen').classList.remove('out');
+    $('bagscreen').hidden = false; bagOpen = true; bagSig = bagFlatSig(rows);
+    $('bagcard').hidden = true; $('bag-hint').hidden = false; bagMeta();
+    requestAnimationFrame(function () { B.open($('bag3d'), rows, { onSelect: showBagCard }); });
+    clearInterval(bagTimer);
+    bagTimer = setInterval(function () {
+      if (!bagOpen) return;
+      if (S.ev || S.won || S.over) { closeBag(); return; }
+      var r2 = E.bagList(S), sg = bagFlatSig(r2);
+      if (sg !== bagSig) { bagSig = sg; B.update(r2); bagMeta(); }
+    }, 1500);
+  }
+  function closeBag() {
+    if (!bagOpen) return;
+    bagOpen = false; clearInterval(bagTimer);
+    var el = $('bagscreen'); el.classList.add('out');
+    setTimeout(function () { if (!bagOpen) { el.hidden = true; el.classList.remove('out'); if (window.KZ_BAG3D) window.KZ_BAG3D.close(); } }, 280);
   }
   function venueHTML() {
     var V = E.VENUES[venueSel], opts = E.venueOptions(S, venueSel), h = '';
@@ -5547,7 +7086,7 @@ footer .row2 button { min-height: 44px; }
 
   /* ---------- Interactions ---------- */
   function afterAction() { lastActKey = ''; saveAdv(); render(); }
-  function leaveGame() { saveAdv(); stash(); S = null; curId = null; sheet2 = null; show('home'); }
+  function leaveGame() { closeScreensNow(); saveAdv(); stash(); S = null; curId = null; sheet2 = null; show('home'); }
 
   document.addEventListener('input', function (e) {
     var t = e.target;
@@ -5590,6 +7129,10 @@ footer .row2 button { min-height: 44px; }
   });
 
   var wipeTimer = 0;
+  document.addEventListener('pointerdown', function (e) {
+    if (mg && !mg.done && mg.kind === 'tent' && e.target && e.target.id === 'mgcv') { var r = e.target.getBoundingClientRect(); mgTap(e.clientX - r.left, e.clientY - r.top); }
+    else if (mg && !mg.done && e.target && e.target.id === 'mgcv' && mg.kind !== 'tent') mgTap(mg.W / 2, 0);
+  });
   document.addEventListener('click', function (e) {
     var t = e.target.closest('button');
     if (!t) return;
@@ -5639,12 +7182,39 @@ footer .row2 button { min-height: 44px; }
 
     // Jeu
     if (id === 'sheet2-close') { closeSheet2(); return; }
-    if (id === 'bag-btn' && S) { openSheet2('bag'); return; }
-    if (id === 'map-btn' && S) { openSheet2('map'); return; }
+    if (id === 'bag-btn' && S) { openBag(); return; }
+    if (id === 'bag-close') { closeBag(); return; }
+    if (id === 'fl-yes') {
+      var fid = $('flashbar').dataset.id;
+      if (fid === 'stopgame') { runStop(); return; }
+      var fr = E.flashAnswer(S, true); saveAdv(); lastActKey = '';
+      if (fr && fr.mini === 'photo') runPhoto(); else render();
+      return;
+    }
+    if (id === 'fl-no') { var fid2 = $('flashbar').dataset.id; if (fid2 === 'stopgame') { stopHide = S.t + 20 * 60000; render(); return; } E.flashAnswer(S, false); saveAdv(); render(); return; }
+    if (id === 'mg-tap') { mgTap(mg ? mg.W / 2 : 0, 0); return; }
+    if (id === 'mg-skip') { if (mg && mg.cfg.skip) { mgTap(-999, -999); mg.hits = 0; mgEnd(); } else mgClose(); return; }
+    if (id === 'mg-done') { mgClose(); return; }
+    if (id === 'carnet-btn' && S) { openCarnet(); return; }
+    if (id === 'h-carnet') { openCarnet(); return; }
+    if (id === 'carnet-close') { closeCarnet(); return; }
+    if (d.ctab) { carnetTab = d.ctab; $('cdetail').hidden = true; renderCarnet(); $('cpage').scrollTop = 0; return; }
+    if (d.stamp) { stampDetail(d.stamp); return; }
+    if (d.cdclose) { $('cdetail').hidden = true; return; }
+    if (id === 'stampfx-ok') { $('stampfx').hidden = true; return; }
+    if (id === 'stampfx-open') { $('stampfx').hidden = true; openCarnet('etape', false); if (S && S.stampLast && E.STAMP_BY[S.stampLast]) { var rr = E.STAMP_BY[S.stampLast].r; carnetTab = rr; renderCarnet(); setTimeout(function () { stampDetail(S.stampLast); }, 1500); } return; }
+    if (id === 'map-btn' && S) { openMapScreen(); return; }
+    if (id === 'map-close') { closeMapScreen(); return; }
     if (id === 'mt-svg') { setMapMode('svg'); return; }
     if (id === 'mt-real') { setMapMode('real'); return; }
     if (id === 'act-btn' && S) { openSheet2('actions'); return; }
-    if (d.use) { E.doUse(S, d.use); saveAdv(); lastActKey = ''; $('sheet2-body').innerHTML = bagHTML(); render(); return; }
+    if (d.use) {
+      var ur = E.doUse(S, d.use, d.act || null); saveAdv(); lastActKey = '';
+      if (ur.mini === 'cook') { closeBag(); setTimeout(runCook, 300); return; }
+      if (bagOpen && window.KZ_BAG3D) { var rr = E.bagList(S); bagSig = bagFlatSig(rr); window.KZ_BAG3D.update(rr); window.KZ_BAG3D.pulse(d.use); bagMeta(); }
+      else if (sheet2 === 'bag') $('sheet2-body').innerHTML = bagHTML();
+      render(); return;
+    }
     if (d.buy) {
       var bp = d.buy.split(':');
       E.doBuy(S, bp[0], bp[1]); saveAdv(); lastActKey = ''; $('sheet2-body').innerHTML = shopHTML(); render(); return;
@@ -5675,12 +7245,13 @@ footer .row2 button { min-height: 44px; }
     if (a === 'walk') E.doWalk(S, walkSel);
     else if (a === 'stop') E.doStop(S);
     else if (a === 'hitch') E.doHitch(S);
-    else if (a === 'sleepOut') E.doSleepOut(S);
+    else if (a === 'sleepOut') { if (S.gear.couchage === 'bivouac' && E.availability(S).sleepOut.ok) { if (sheet2 === 'actions') closeSheet2(); runTent(); return; } E.doSleepOut(S); }
     else if (a === 'hotel') E.doHotel(S);
     else if (a === 'host') E.doHost(S);
     else if (a === 'work') { if (sheet2 === 'actions') closeSheet2(); openVenue('interim'); return; }
     else if (a === 'meal') E.doMeal(S);
     else if (a === 'bread') E.doBread(S);
+    else if (a === 'visit') E.doVisit(S);
     else if (a.indexOf('train:') === 0) E.doTrain(S, a.slice(6));
     if (sheet2 === 'actions') closeSheet2();
     afterAction();
@@ -5699,7 +7270,7 @@ footer .row2 button { min-height: 44px; }
     } catch (e) { return base; }
     return 'Activées. ' + base;
   }
-  var NOTIF_ICON = { arrive: '📍', event: '❗', alert: '⚠️', weather: '🌦️', work: '💶', wake: '🌅', train: '🚆' };
+  var NOTIF_ICON = { flash: '⏱️', stamp: '🔖', goal: '🎯', rdv: '🕗', arrive: '📍', event: '❗', alert: '⚠️', weather: '🌦️', work: '💶', wake: '🌅', train: '🚆' };
   function toast(kind, title, body) {
     if (settings.toasts !== false) {
       var box = $('toasts');
@@ -5709,11 +7280,11 @@ footer .row2 button { min-height: 44px; }
         d.innerHTML = '<b>' + esc((NOTIF_ICON[kind] || '•') + ' ' + title) + '</b>' + (body ? '<span>' + esc(body) + '</span>' : '');
         d.addEventListener('click', function () { if (d.parentNode) d.parentNode.removeChild(d); });
         box.appendChild(d);
-        setTimeout(function () { if (d.parentNode) d.parentNode.removeChild(d); }, kind === 'event' ? 12000 : 7000);
+        setTimeout(function () { if (d.parentNode) d.parentNode.removeChild(d); }, (kind === 'event' || kind === 'flash') ? 12000 : 7000);
       }
     }
     if (settings.notify) {
-      try { if (navigator.vibrate) navigator.vibrate(kind === 'alert' || kind === 'event' ? [120, 80, 120] : 80); } catch (e) {}
+      try { if (navigator.vibrate) navigator.vibrate(kind === 'alert' || kind === 'event' || kind === 'flash' ? [120, 80, 120] : 80); } catch (e) {}
       try {
         if ('Notification' in window && Notification.permission === 'granted' && document.hidden) new Notification(title, { body: body || '', tag: 'cf-' + kind + toastN++ });
       } catch (e) {}
@@ -5729,6 +7300,10 @@ footer .row2 button { min-height: 44px; }
       var title = l.txt, body = '';
       if (l.kind === 'event' && /^Événement : /.test(l.txt) && S.ev) { title = S.ev.title; body = S.ev.text; }
       else if (l.kind === 'event') { title = 'Rencontre'; body = l.txt; }
+      else if (l.kind === 'flash') { var ci = l.txt.indexOf(' : '); title = ci > 0 ? l.txt.slice(0, ci) : 'À saisir vite'; body = ci > 0 ? l.txt.slice(ci + 3) : ''; }
+      else if (l.kind === 'stamp') { title = 'Carnet de voyage'; body = l.txt; }
+      else if (l.kind === 'goal') { title = 'Objectif'; body = l.txt; }
+      else if (l.kind === 'rdv') { title = 'Rendez-vous'; body = l.txt; }
       else if (l.kind === 'arrive') { title = 'Arrivée'; body = l.txt; }
       else if (l.kind === 'weather') { title = 'Météo'; body = l.txt; }
       else if (l.kind === 'alert') { title = 'Attention'; body = l.txt; }
