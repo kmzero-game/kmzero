@@ -5072,36 +5072,36 @@ footer .row2 button { min-height: 44px; }
     for (i = 0; i < id.data.length; i += 4) { v = 128 + (Math.random() - 0.5) * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; }
     gx.putImageData(id, 0, 0); PP.grain = g;
   }
+  PP.lvl = 1; PP.acc = 0; PP.n = 0; PP.last = 0;
+  // Gouverneur de performances : si l'image est trop lente, on coupe les effets coûteux.
+  function ppGovern(now) {
+    if (PP.last) {
+      var d = now - PP.last;
+      if (d < 400) { PP.acc += d; PP.n++; }
+      if (PP.n >= 40) {
+        var avg = PP.acc / PP.n;
+        if (avg > 45 && PP.lvl > 0) PP.lvl--;
+        PP.acc = 0; PP.n = 0;
+      }
+    }
+    PP.last = now;
+  }
   function post(ctx, cw, ch, hour, light, src) {
+    if (PP.lvl <= 0) return;
     try {
-      ppInit();
       var gold = Math.max(0, 1 - Math.abs(hour - 19) / 1.7, 1 - Math.abs(hour - 6.9) / 1.4), night = hour < 5.9 || hour >= 20.2, dull = Math.min(1, light.gray || 0);
-      // 1) lueur : les zones claires débordent doucement
-      var bw = Math.max(32, Math.round(cw / 7)), bh = Math.max(32, Math.round(ch / 7)), b = PP.bloom;
-      if (b.width !== bw || b.height !== bh) { b.width = bw; b.height = bh; }
-      var bx = b.getContext('2d');
-      bx.setTransform(1, 0, 0, 1, 0, 0); bx.globalCompositeOperation = 'source-over'; bx.clearRect(0, 0, bw, bh);
-      var hasF = ('filter' in bx);
-      if (hasF) bx.filter = night ? 'brightness(0.95) contrast(2.4) blur(2px)' : 'brightness(0.85) contrast(2.1) blur(2px)';
-      bx.imageSmoothingEnabled = true; bx.drawImage(src, 0, 0, bw, bh); if (hasF) bx.filter = 'none';
-      ctx.save(); ctx.imageSmoothingEnabled = true; ctx.globalCompositeOperation = 'lighter';
-      ctx.globalAlpha = hasF ? (night ? 0.75 : 0.32 + gold * 0.25) : 0.06; ctx.drawImage(b, 0, 0, cw, ch); ctx.restore();
-      // 2) étalonnage : heure dorée chaude, nuit bleutée, jour légèrement orange/teal
+      if (PP.lvl >= 2) { ppInit(); }
+      // étalonnage léger : simples voiles de couleur (pas de mélange coûteux)
       ctx.save();
-      ctx.globalCompositeOperation = 'soft-light';
-      if (night) { ctx.fillStyle = 'rgba(40,70,170,0.34)'; ctx.fillRect(0, 0, cw, ch); }
+      if (night) { ctx.fillStyle = 'rgba(30,55,140,0.16)'; ctx.fillRect(0, 0, cw, ch); }
       else {
         var gr = ctx.createLinearGradient(0, 0, 0, ch);
-        gr.addColorStop(0, 'rgba(60,110,150,' + (0.12 * (1 - gold)).toFixed(3) + ')'); gr.addColorStop(1, 'rgba(255,170,90,' + (0.1 + gold * 0.34).toFixed(3) + ')');
+        gr.addColorStop(0, 'rgba(60,110,150,' + (0.05 * (1 - gold)).toFixed(3) + ')'); gr.addColorStop(1, 'rgba(255,170,90,' + (0.04 + gold * 0.2).toFixed(3) + ')');
         ctx.fillStyle = gr; ctx.fillRect(0, 0, cw, ch);
-        if (gold > 0.05) { ctx.globalCompositeOperation = 'overlay'; ctx.fillStyle = 'rgba(255,120,50,' + (gold * 0.16).toFixed(3) + ')'; ctx.fillRect(0, 0, cw, ch); }
       }
-      if (dull > 0.3) { ctx.globalCompositeOperation = 'soft-light'; ctx.fillStyle = 'rgba(120,140,160,' + (dull * 0.18).toFixed(3) + ')'; ctx.fillRect(0, 0, cw, ch); }
+      if (dull > 0.3) { ctx.fillStyle = 'rgba(120,140,160,' + (dull * 0.08).toFixed(3) + ')'; ctx.fillRect(0, 0, cw, ch); }
       ctx.restore();
-      // 3) grain de pellicule
-      ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = night ? 0.1 : 0.065;
-      ctx.translate(-Math.random() * 160, -Math.random() * 160); ctx.fillStyle = ctx.createPattern(PP.grain, 'repeat'); ctx.fillRect(0, 0, cw + 160, ch + 160); ctx.restore();
-    } catch (e) { PP.ok = false; }
+    } catch (e) { PP.lvl = 0; }
   }
   function render(ctx, cw, ch, info, now, opts) {
     var w = world, dt = w.last ? Math.min(0.1, (now - w.last) / 1000) : 0; w.last = now;
@@ -5301,7 +5301,7 @@ footer .row2 button { min-height: 44px; }
       var fa = Math.max(0, 1 - ctt / 0.5, 1 - Math.abs(ctt - 3.4) / 0.14);
       if (fa > 0) { ctx.fillStyle = 'rgba(0,0,0,' + Math.min(1, fa).toFixed(3) + ')'; ctx.fillRect(0, 0, cw, ch); }
     }
-    if (PP.ok) post(ctx, cw, ch, info.hour, light, R.domElement);
+    ppGovern(now); post(ctx, cw, ch, info.hour, light, R.domElement);
     var vg = ctx.createRadialGradient(cw / 2, ch * 0.5, Math.min(cw, ch) * 0.3, cw / 2, ch * 0.5, Math.max(cw, ch) * 0.78);
     vg.addColorStop(0, 'rgba(10,8,20,0)'); vg.addColorStop(1, 'rgba(10,8,20,0.5)');
     ctx.fillStyle = vg; ctx.fillRect(0, 0, cw, ch);
