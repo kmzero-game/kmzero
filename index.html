@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Km Zero</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,6 +60,20 @@ h1, h2 { margin: 0; font-family: var(--f-display); font-weight: 700; text-wrap: 
 }
 
 .mapcard { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 10px; }
+.maptabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.maptabs .btn { min-height: 40px; align-items: center; justify-content: center; font-size: 15px; }
+.maptabs .btn[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+#rmap { position: relative; width: 100%; height: min(58vh, 430px); min-height: 280px; border-radius: 8px; overflow: hidden; background: #EFE7D2; }
+.rmerr { margin: 0; color: var(--muted); font-size: 14px; }
+.rm-me { position: absolute; left: 10px; bottom: 28px; z-index: 2; border: 0; border-radius: 999px; padding: 8px 14px; font: 600 14px var(--f-body); background: #fff; color: #12222A; box-shadow: 0 2px 8px rgba(0,0,0,.3); cursor: pointer; }
+.rm-town { display: flex; align-items: center; gap: 5px; pointer-events: none; }
+.rm-town i { width: 9px; height: 9px; border-radius: 50%; background: #fff; border: 2.4px solid #1B2A33; flex: none; }
+.rm-town.big i { width: 12px; height: 12px; }
+.rm-town span { font: 600 12px var(--f-body); color: #1B2A33; text-shadow: 0 0 3px #FBF6E8, 0 0 3px #FBF6E8, 0 0 3px #FBF6E8; white-space: nowrap; }
+.rm-me-dot { position: relative; width: 22px; height: 22px; }
+.rm-me-dot b { position: absolute; inset: 4px; border-radius: 50%; background: var(--signal); border: 2.5px solid #fff; box-shadow: 0 1px 6px rgba(0,0,0,.45); }
+.rm-me-dot i { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--signal); animation: pulse 2.2s ease-out infinite; }
+.rm-goal { pointer-events: none; filter: drop-shadow(0 1px 3px rgba(0,0,0,.4)); }
 .mapcard svg { width: 100%; height: auto; display: block; border-radius: 8px; background: var(--bg); }
 .sea { fill: var(--sea); }
 .estuary { fill: none; stroke: var(--sea); stroke-width: 9; stroke-linecap: round; }
@@ -530,6 +545,9 @@ footer .row2 button { min-height: 44px; }
 
 <div id="holder" hidden>
   <section class="mapcard" id="mapcard" aria-label="Position sur le trajet">
+    <div class="maptabs" id="maptabs" hidden role="tablist" aria-label="Type de carte"><button type="button" class="btn" id="mt-svg" role="tab" aria-selected="false">Schéma</button><button type="button" class="btn" id="mt-real" role="tab" aria-selected="true">Carte réelle</button></div>
+    <div id="rmap" hidden></div>
+    <p class="rmerr" id="rmerr" hidden></p>
     <svg id="map" viewBox="0 0 300 340" role="img" aria-label="Carte simplifiée du trajet de La Rochelle à Bordeaux"></svg>
     <div class="where"><strong id="where"></strong><span id="kmtxt"></span></div>
     <div class="pbar"><i id="pbar"></i></div>
@@ -795,7 +813,7 @@ footer .row2 button { min-height: 44px; }
   ];
 
   // ---------- Intitulé de métier libre -> compétences ----------
-  function normTxt(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function normTxt(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
   // [mots-clés (début de mot), compétences {domaine: niveau}]
   var JOB_DICT = [
     [['charpent', 'macon', 'couvreur', 'carreleur', 'platrier', 'plaquiste', 'terrassier', 'grutier', 'menuisier', 'ebeniste', 'coffreur', 'ferrailleur', 'facadier', 'etancheur', 'zingueur', 'vitrier', 'parqueteur', 'staffeur'], { bat: 3, manut: 1 }],
@@ -4656,6 +4674,231 @@ footer .row2 button { min-height: 44px; }
 
 </script>
 <script>
+/* Km Zero — carte réelle (MapLibre GL JS + fichier PMTiles OpenStreetMap/Protomaps).
+   Les bibliothèques sont chargées à la demande, seulement quand le joueur ouvre « Carte réelle ».
+   Fichiers attendus à côté de index.html : trajet.pmtiles (obligatoire) et trajet.geojson (facultatif : route réelle). */
+(function (root) {
+  'use strict';
+  var CDN = 'https://cdn.jsdelivr.net/npm/';
+  var ML = 'maplibre-gl@4.7.1/dist/maplibre-gl', PM = 'pmtiles@3.2.1/dist/pmtiles.js';
+  var TILES_FILE = 'trajet.pmtiles', ROUTE_FILE = 'trajet.geojson';
+  var GLYPHS = 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf';
+  var RM = { available: null, ready: false, failed: '' };
+  var map = null, towns = [], route = [], routeKm = 0, meMarker = null, goalMarker = null, lastKm = -1, lastGoal = '', following = true, box = null, loading = null;
+
+  function loadScript(url) {
+    return new Promise(function (ok, ko) {
+      var s = document.createElement('script'); s.src = url; s.async = true; s.onload = ok; s.onerror = function () { ko(new Error('script ' + url)); }; document.head.appendChild(s);
+    });
+  }
+  function loadCss(url) { var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = url; document.head.appendChild(l); }
+  function url(name) { try { return new URL(name, location.href).href; } catch (e) { return name; } }
+
+  /* La carte n'existe que si le fichier de tuiles est servi par un vrai site (pas dans l'aperçu Claude ni en fichier local). */
+  RM.probe = function () {
+    if (RM.available !== null) return Promise.resolve(RM.available);
+    if (!/^https?:$/.test(location.protocol) || typeof fetch !== 'function') { RM.available = false; return Promise.resolve(false); }
+    return fetch(url(TILES_FILE), { headers: { Range: 'bytes=0-15' } }).then(function (r) { return r.ok ? r.arrayBuffer() : null; }).then(function (b) {
+      RM.available = !!b && b.byteLength >= 7 && String.fromCharCode.apply(null, new Uint8Array(b, 0, 7)) === 'PMTiles';
+      return RM.available;
+    }).catch(function () { RM.available = false; return false; });
+  };
+
+  function hav(a, b) {
+    var R = 6371, rad = Math.PI / 180, dLat = (b[1] - a[1]) * rad, dLon = (b[0] - a[0]) * rad;
+    var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(a[1] * rad) * Math.cos(b[1] * rad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return 2 * R * Math.asin(Math.sqrt(h));
+  }
+  function bearing(a, b) {
+    var rad = Math.PI / 180, y = Math.sin((b[0] - a[0]) * rad) * Math.cos(b[1] * rad), x = Math.cos(a[1] * rad) * Math.sin(b[1] * rad) - Math.sin(a[1] * rad) * Math.cos(b[1] * rad) * Math.cos((b[0] - a[0]) * rad);
+    return (Math.atan2(y, x) / rad + 360) % 360;
+  }
+  /* route = [[lon, lat, km du jeu]]. Chaque ville du jeu est « clouée » à son point le plus proche sur le tracé,
+     et les kilomètres du jeu sont répartis entre deux villes au prorata de la distance réelle : le personnage passe devant
+     une ville exactement quand le jeu dit qu'il y est. */
+  function buildRoute(coords, townList) {
+    var pts = [], acc = 0, i, j;
+    for (i = 0; i < coords.length; i++) { if (i) acc += hav(coords[i - 1], coords[i]); pts.push([coords[i][0], coords[i][1], acc]); }
+    var anchors = [], from = 0;
+    townList.forEach(function (t, k) {
+      var best = from, bd = 1e9;
+      for (j = from; j < pts.length; j++) { var d = hav([t.lon, t.lat], pts[j]); if (d < bd) { bd = d; best = j; } }
+      if (k === 0) best = 0; if (k === townList.length - 1) best = pts.length - 1;
+      if (best < from) best = from;
+      anchors.push({ i: best, d: pts[best][2], km: t.km }); from = best;
+    });
+    var out = pts.map(function (p) { return [p[0], p[1], 0]; });
+    for (var a = 0; a < anchors.length - 1; a++) {
+      var A = anchors[a], B = anchors[a + 1], span = Math.max(1e-9, B.d - A.d);
+      for (j = A.i; j <= B.i; j++) out[j][2] = A.km + (B.km - A.km) * (B.d > A.d ? (pts[j][2] - A.d) / span : 0);
+    }
+    return out;
+  }
+  function pointAt(km) {
+    if (!route.length) return null;
+    if (km <= 0) return { lon: route[0][0], lat: route[0][1], i: 0, brg: bearing(route[0], route[1] || route[0]) };
+    for (var i = 1; i < route.length; i++) {
+      if (km <= route[i][2]) {
+        var a = route[i - 1], b = route[i], f = (km - a[2]) / Math.max(1e-9, b[2] - a[2]);
+        return { lon: a[0] + f * (b[0] - a[0]), lat: a[1] + f * (b[1] - a[1]), i: i - 1, brg: bearing(a, b) };
+      }
+    }
+    var L = route[route.length - 1]; return { lon: L[0], lat: L[1], i: route.length - 2, brg: 0 };
+  }
+  function lineUpTo(km) {
+    var p = pointAt(km), out = [];
+    if (!p) return out;
+    for (var i = 0; i <= p.i; i++) out.push([route[i][0], route[i][1]]);
+    out.push([p.lon, p.lat]);
+    return out;
+  }
+
+  /* ---------- Style : couleurs du jeu, sur le schéma des tuiles Protomaps ---------- */
+  function style(withLabels) {
+    var F = ['Noto Sans Regular'], FM = ['Noto Sans Medium'];
+    var roadW = function (a, b, c) { return { stops: [[8, a], [12, b], [16, c]] }; };
+    var layers = [
+      { id: 'bg', type: 'background', paint: { 'background-color': '#EFE7D2' } },
+      { id: 'earth', type: 'fill', source: 'osm', 'source-layer': 'earth', paint: { 'fill-color': '#EFE7D2' } },
+      { id: 'landuse', type: 'fill', source: 'osm', 'source-layer': 'landuse', paint: { 'fill-color': ['match', ['get', 'kind'],
+        ['park', 'nature_reserve', 'forest', 'wood', 'grassland', 'golf_course', 'pitch', 'garden', 'recreation_ground', 'village_green', 'allotments', 'cemetery'], '#CFE2A8',
+        ['farmland', 'farmyard', 'orchard', 'vineyard', 'meadow'], '#E5E6B8',
+        ['residential', 'commercial', 'retail', 'industrial', 'urban_area', 'hospital', 'school', 'university'], '#E3D8BF',
+        ['beach', 'sand'], '#F1E3B0', '#EAE5CC'], 'fill-opacity': 0.9 } },
+      { id: 'natural', type: 'fill', source: 'osm', 'source-layer': 'natural', paint: { 'fill-color': ['match', ['get', 'kind'], ['wood', 'forest', 'scrub', 'grassland', 'heath'], '#BFD895', ['beach', 'sand'], '#F1E3B0', ['wetland'], '#CFE3C4', '#E6E3C8'], 'fill-opacity': 0.85 } },
+      { id: 'water', type: 'fill', source: 'osm', 'source-layer': 'water', paint: { 'fill-color': '#A7D2E6' } },
+      { id: 'waterway', type: 'line', source: 'osm', 'source-layer': 'water', filter: ['==', ['geometry-type'], 'LineString'], paint: { 'line-color': '#A7D2E6', 'line-width': roadW(0.6, 1.2, 2.5) } },
+      { id: 'buildings', type: 'fill', source: 'osm', 'source-layer': 'buildings', minzoom: 14, paint: { 'fill-color': '#D9CDB0', 'fill-opacity': 0.9 } },
+      { id: 'rail', type: 'line', source: 'osm', 'source-layer': 'roads', filter: ['==', ['get', 'kind'], 'rail'], minzoom: 9, paint: { 'line-color': '#9A8F7A', 'line-width': 1, 'line-dasharray': [3, 2] } },
+      { id: 'road-minor-case', type: 'line', source: 'osm', 'source-layer': 'roads', minzoom: 11, filter: ['in', ['get', 'kind'], ['literal', ['minor_road', 'other']]], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#CDBF9C', 'line-width': roadW(0, 1.6, 6) } },
+      { id: 'road-minor', type: 'line', source: 'osm', 'source-layer': 'roads', minzoom: 11, filter: ['in', ['get', 'kind'], ['literal', ['minor_road', 'other']]], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#FFFDF6', 'line-width': roadW(0, 0.9, 4) } },
+      { id: 'road-medium-case', type: 'line', source: 'osm', 'source-layer': 'roads', minzoom: 8, filter: ['==', ['get', 'kind'], 'medium_road'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#CDBF9C', 'line-width': roadW(1.4, 3, 9) } },
+      { id: 'road-medium', type: 'line', source: 'osm', 'source-layer': 'roads', minzoom: 8, filter: ['==', ['get', 'kind'], 'medium_road'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#FFF3C9', 'line-width': roadW(0.8, 2, 6.5) } },
+      { id: 'road-major-case', type: 'line', source: 'osm', 'source-layer': 'roads', filter: ['==', ['get', 'kind'], 'major_road'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#C9A25A', 'line-width': roadW(2, 4.5, 12) } },
+      { id: 'road-major', type: 'line', source: 'osm', 'source-layer': 'roads', filter: ['==', ['get', 'kind'], 'major_road'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#FFD88A', 'line-width': roadW(1.2, 3, 9) } },
+      { id: 'road-highway-case', type: 'line', source: 'osm', 'source-layer': 'roads', filter: ['==', ['get', 'kind'], 'highway'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#B9783A', 'line-width': roadW(2.4, 5.5, 14) } },
+      { id: 'road-highway', type: 'line', source: 'osm', 'source-layer': 'roads', filter: ['==', ['get', 'kind'], 'highway'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#F5A94E', 'line-width': roadW(1.4, 3.6, 10.5) } },
+      { id: 'boundary', type: 'line', source: 'osm', 'source-layer': 'boundaries', paint: { 'line-color': '#B79ACB', 'line-width': 1.2, 'line-dasharray': [4, 3] } }
+    ];
+    var labels = [
+      { id: 'place-village', type: 'symbol', source: 'osm', 'source-layer': 'places', minzoom: 10, filter: ['all', ['==', ['get', 'kind'], 'locality'], ['in', ['get', 'kind_detail'], ['literal', ['village', 'hamlet']]]],
+        layout: { 'text-field': ['get', 'name'], 'text-font': F, 'text-size': 11 }, paint: { 'text-color': '#5A5444', 'text-halo-color': '#FBF6E8', 'text-halo-width': 1.4 } },
+      { id: 'place-town', type: 'symbol', source: 'osm', 'source-layer': 'places', minzoom: 7, filter: ['all', ['==', ['get', 'kind'], 'locality'], ['in', ['get', 'kind_detail'], ['literal', ['town']]]],
+        layout: { 'text-field': ['get', 'name'], 'text-font': FM, 'text-size': 13 }, paint: { 'text-color': '#3C382C', 'text-halo-color': '#FBF6E8', 'text-halo-width': 1.6 } },
+      { id: 'place-city', type: 'symbol', source: 'osm', 'source-layer': 'places', minzoom: 4, filter: ['all', ['==', ['get', 'kind'], 'locality'], ['in', ['get', 'kind_detail'], ['literal', ['city']]]],
+        layout: { 'text-field': ['get', 'name'], 'text-font': FM, 'text-size': 16 }, paint: { 'text-color': '#2B2820', 'text-halo-color': '#FBF6E8', 'text-halo-width': 1.8 } }
+    ];
+    if (withLabels) layers = layers.concat(labels);
+    return {
+      version: 8, glyphs: GLYPHS,
+      sources: {
+        osm: { type: 'vector', url: 'pmtiles://' + url(TILES_FILE), attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> · <a href="https://protomaps.com" target="_blank" rel="noopener">Protomaps</a>' },
+        route: { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [] } } },
+        done: { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [] } } }
+      },
+      layers: layers.concat([
+        { id: 'route-case', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#FFFFFF', 'line-width': { stops: [[6, 5], [12, 9], [16, 16]] }, 'line-opacity': 0.95 } },
+        { id: 'route-base', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#6C7378', 'line-width': { stops: [[6, 2.6], [12, 5], [16, 9]] } } },
+        { id: 'route-done', type: 'line', source: 'done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#1A4E9B', 'line-width': { stops: [[6, 3.4], [12, 6.2], [16, 10.5]] } } }
+      ])
+    };
+  }
+
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html) e.innerHTML = html; return e; }
+
+  function ensureLibs() {
+    if (root.maplibregl && root.pmtiles) return Promise.resolve();
+    if (loading) return loading;
+    loadCss(CDN + ML + '.css');
+    loading = Promise.all([loadScript(CDN + ML + '.js'), loadScript(CDN + PM)]).then(function () { loading = null; }, function (e) { loading = null; throw e; });
+    return loading;
+  }
+
+  /* Les noms de villes de la carte demandent des polices en ligne. Si elles sont inaccessibles, on affiche la carte sans ces noms (les villes du jeu restent nommées). */
+  function glyphProbe() {
+    var u = GLYPHS.replace('{fontstack}', 'Noto Sans Regular').replace('{range}', '0-255');
+    var t = new Promise(function (ok) { setTimeout(function () { ok(false); }, 4000); });
+    return Promise.race([fetch(u).then(function (r) { return r.ok; }).catch(function () { return false; }), t]);
+  }
+  function fetchRoute(townList, totalKm) {
+    var fallback = townList.map(function (t) { return [t.lon, t.lat]; });
+    return fetch(url(ROUTE_FILE)).then(function (r) { if (!r.ok) throw new Error('no route'); return r.json(); }).then(function (g) {
+      var f = g.type === 'FeatureCollection' ? g.features[0] : g, c = f && (f.geometry || f).coordinates;
+      if (!c || c.length < 2) throw new Error('bad route');
+      return { coords: c, real: true };
+    }).catch(function () { return { coords: fallback, real: false }; });
+  }
+
+  /* Démarre la carte dans `container`. `townList` : villes du jeu (lat, lon, km, s, hotel). `totalKm` : longueur du trajet. */
+  RM.open = function (container, townList, totalKm) {
+    if (map) { RM.resize(); return Promise.resolve(); }
+    box = container; towns = townList;
+    var hasGlyphs = false;
+    return ensureLibs().then(function () { return RM.probe(); }).then(function (ok) {
+      if (!ok) throw new Error('Fichier de carte introuvable.');
+      return glyphProbe().then(function (g) { hasGlyphs = g; return fetchRoute(towns, totalKm); });
+    }).then(function (rt) {
+      route = buildRoute(rt.coords, towns); routeKm = totalKm; RM.realRoute = rt.real;
+      var proto = new root.pmtiles.Protocol(); root.maplibregl.addProtocol('pmtiles', proto.tile);
+      map = new root.maplibregl.Map({ container: container, style: style(hasGlyphs), center: [route[0][0], route[0][1]], zoom: 9, minZoom: 5, maxZoom: 17, attributionControl: { compact: true }, pitchWithRotate: false, dragRotate: false });
+      map.touchZoomRotate.disableRotation();
+      map.addControl(new root.maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+      var btn = el('button', 'rm-me', 'Me suivre'); btn.type = 'button';
+      btn.addEventListener('click', function () { following = true; focusMe(true); });
+      container.appendChild(btn);
+      map.on('dragstart', function () { following = false; });
+      var started = false;
+      var onStyle = function () {
+        if (started) return; started = true;
+        map.getSource('route').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: route.map(function (p) { return [p[0], p[1]]; }) } });
+        towns.forEach(function (t) {
+          var big = !!t.hotel, d = el('div', 'rm-town' + (big ? ' big' : ''), '<i></i><span>' + t.s + '</span>');
+          new root.maplibregl.Marker({ element: d, anchor: 'left', offset: [-5, 0] }).setLngLat([t.lon, t.lat]).addTo(map);
+        });
+        meMarker = new root.maplibregl.Marker({ element: el('div', 'rm-me-dot', '<b></b><i></i>') }).setLngLat([route[0][0], route[0][1]]).addTo(map);
+        goalMarker = new root.maplibregl.Marker({ element: el('div', 'rm-goal', '<svg viewBox="0 0 24 30" width="24" height="30"><path d="M4 28V3" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M4 28V3" stroke="#B5391A" stroke-width="2.4" stroke-linecap="round"/><path d="M4 3l16 5.5L4 14z" fill="#D9461F" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>'), anchor: 'bottom-left', offset: [-4, 2] }).setLngLat([route[route.length - 1][0], route[route.length - 1][1]]).addTo(map);
+        RM.ready = true; lastKm = -1; RM.update(RM._km || 0, RM._goal);
+        fitAll();
+      };
+      map.on('style.load', onStyle); map.on('load', onStyle);
+      map.on('error', function (e) { if (e && e.error && /pmtiles|Range|404|Failed/i.test(String(e.error.message || e.error))) RM.failed = String(e.error.message || e.error); });
+    });
+  };
+  function fitAll() {
+    if (!map || !route.length) return;
+    var gk = RM._goal ? RM._goal.km : routeKm, b = new root.maplibregl.LngLatBounds();
+    route.forEach(function (p) { if (p[2] <= gk + 0.01) b.extend([p[0], p[1]]); });
+    var q = pointAt(gk); if (q) b.extend([q.lon, q.lat]);
+    map.fitBounds(b, { padding: { top: 40, left: 40, right: 40, bottom: 64 }, duration: 0 });
+  }
+  function focusMe(animate) {
+    var p = pointAt(RM._km || 0); if (!map || !p) return;
+    map.easeTo({ center: [p.lon, p.lat], zoom: Math.max(map.getZoom(), 11), duration: animate ? 700 : 0 });
+  }
+  RM.update = function (km, goalTown) {
+    RM._km = km; RM._goal = goalTown;
+    if (!map || !RM.ready) return;
+    var p = pointAt(km); if (!p) return;
+    if (Math.abs(km - lastKm) > 0.02) {
+      meMarker.setLngLat([p.lon, p.lat]);
+      map.getSource('done').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: lineUpTo(km) } });
+      if (following && lastKm >= 0) map.easeTo({ center: [p.lon, p.lat], duration: 600 });
+      lastKm = km;
+    }
+    if (goalTown && goalTown.id !== lastGoal) {
+      lastGoal = goalTown.id;
+      var g = pointAt(goalTown.km); if (g) goalMarker.setLngLat([g.lon, g.lat]);
+    }
+  };
+  RM.resize = function () { if (map) { map.resize(); } };
+  RM.stop = function () { if (map) { try { map.remove(); } catch (e) {} map = null; RM.ready = false; meMarker = goalMarker = null; lastKm = -1; lastGoal = ''; } };
+  RM.pointAt = pointAt;
+  RM.debug = function () { return map; };
+  root.KZ_REALMAP = RM;
+})(typeof window !== 'undefined' ? window : this);
+
+</script>
+<script>
 (function () {
   'use strict';
   var E = window.PasAPas, SC = window.PasScene, SC3 = window.PasScene3D || { ok: false };
@@ -4920,6 +5163,7 @@ footer .row2 button { min-height: 44px; }
     return n;
   }
   var map = $('map'), doneEl, meEl, goalEl;
+  var RM = window.KZ_REALMAP, mapMode = 'svg', rmStarted = false;
   function proj(lon, lat) { return [20 + (lon + 1.40) * 145.8, 20 + (46.22 - lat) * 208]; }
   function pts(list) { return list.map(function (p) { var q = proj(p[0], p[1]); return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' L'); }
   function buildMap() {
@@ -4968,6 +5212,26 @@ footer .row2 button { min-height: 44px; }
     meEl.setAttribute('transform', 'translate(' + p.x.toFixed(1) + ',' + p.y.toFixed(1) + ')');
   }
 
+  /* ---------- Carte réelle (facultative) ---------- */
+  function setMapMode(m) {
+    mapMode = m;
+    var real = m === 'real', err = $('rmerr');
+    $('map').style.display = real ? 'none' : '';
+    $('rmap').hidden = !real;
+    $('mt-svg').setAttribute('aria-selected', !real); $('mt-real').setAttribute('aria-selected', real);
+    err.hidden = true;
+    if (!real) return;
+    RM.open($('rmap'), E.TOWNS, E.ROUTE_KM).then(function () { RM.resize(); if (S) RM.update(Math.min(S.km, E.goalKmOf(S)), E.goalTownOf(S)); }).catch(function (e) {
+      mapMode = 'svg'; $('map').style.display = ''; $('rmap').hidden = true;
+      $('mt-svg').setAttribute('aria-selected', true); $('mt-real').setAttribute('aria-selected', false);
+      err.hidden = false; err.textContent = 'La carte réelle n’a pas pu se charger (' + (e && e.message ? e.message : 'connexion') + '). Le schéma reste disponible.';
+    });
+  }
+  function initRealMap() {
+    if (!RM) return;
+    RM.probe().then(function (ok) { if (!ok) return; $('maptabs').hidden = false; mapMode = 'real'; $('mt-svg').setAttribute('aria-selected', false); $('mt-real').setAttribute('aria-selected', true); });
+  }
+
   /* ---------- Rendu du jeu ---------- */
   var ringData = {};
   function setGauge(id, v, label, lines) {
@@ -5001,6 +5265,7 @@ footer .row2 button { min-height: 44px; }
     $('pbar').style.width = (done / gk2 * 100).toFixed(2) + '%';
     if (goalEl) { var gt = E.goalTownOf(s); goalEl.setAttribute('transform', 'translate(' + gt.x.toFixed(1) + ',' + gt.y.toFixed(1) + ')'); }
     drawProgress(done);
+    if (RM && RM.ready) RM.update(done, E.goalTownOf(s));
 
     var adv = E.gearAdvice(s);
     var wxl = { pluie: 'Pluie', nuageux: 'Nuageux', clair: 'Dégagé' }[adv.weather];
@@ -5206,7 +5471,7 @@ footer .row2 button { min-height: 44px; }
     sheet2 = kind;
     var body = $('sheet2-body');
     $('sheet2-title').textContent = kind === 'venue' ? E.VENUES[venueSel].icon + ' ' + E.VENUES[venueSel].n : SHEET_TITLES[kind];
-    if (kind === 'map') { body.innerHTML = ''; body.appendChild($('mapcard')); body.appendChild($('journalbox')); lastLogSeq = -1; }
+    if (kind === 'map') { body.innerHTML = ''; body.appendChild($('mapcard')); body.appendChild($('journalbox')); lastLogSeq = -1; if (mapMode === 'real') setTimeout(function () { setMapMode('real'); }, 30); }
     else if (kind === 'actions') { body.innerHTML = ''; body.appendChild($('actions')); lastActKey = ''; }
     else body.innerHTML = kind === 'shop' ? shopHTML() : kind === 'look' ? lookHTML() : kind === 'bag' ? bagHTML() : kind === 'venue' ? venueHTML() : profileHTML();
     if (kind === 'look') drawPreview();
@@ -5376,6 +5641,8 @@ footer .row2 button { min-height: 44px; }
     if (id === 'sheet2-close') { closeSheet2(); return; }
     if (id === 'bag-btn' && S) { openSheet2('bag'); return; }
     if (id === 'map-btn' && S) { openSheet2('map'); return; }
+    if (id === 'mt-svg') { setMapMode('svg'); return; }
+    if (id === 'mt-real') { setMapMode('real'); return; }
     if (id === 'act-btn' && S) { openSheet2('actions'); return; }
     if (d.use) { E.doUse(S, d.use); saveAdv(); lastActKey = ''; $('sheet2-body').innerHTML = bagHTML(); render(); return; }
     if (d.buy) {
@@ -5612,6 +5879,7 @@ footer .row2 button { min-height: 44px; }
     loadSettings();
     migrate();
     buildMap();
+    initRealMap();
     try { if (window.THREE && SC3.init) SC3.init(); } catch (e) { if (window.console) console.error(e); }
     show('home');
     setInterval(tick, 1000);
