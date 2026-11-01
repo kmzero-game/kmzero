@@ -1,6 +1,10 @@
 <meta charset="utf-8">
 <title>Km Zero</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#1A4E9B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap">
@@ -468,6 +472,23 @@ footer .row2 button { min-height: 44px; }
 .dockbtn svg { width: 18px; height: 18px; }
 .hudmid { position: absolute; left: 0; right: 0; top: 50%; display: grid; gap: 8px; padding: 0 16px; transform: translateY(-50%); pointer-events: none; }
 .hudmid > * { pointer-events: auto; max-width: 520px; margin: 0 auto; }
+/* v32 : conseil du moment, tutoriel, succès */
+.hudtip { background: rgba(120,30,18,.88); color: #fff; border: 1px solid #FF9A7E; border-radius: 10px; padding: 8px 12px; font-size: 14px; line-height: 1.3; }
+.hudtip b { display: block; font-family: var(--f-display); letter-spacing: .08em; text-transform: uppercase; font-size: 12px; color: #FFC2B2; }
+.advice.pause { background: #E8F0FA; border-color: #8FB0DB; color: #14315a; }
+.advice { background: #FBE9E4; border: 1px solid #E08A74; color: #5b1c10; border-radius: 10px; padding: 10px 12px; margin: 0 0 10px; font-size: 15px; }
+body.tutoon #toasts { visibility: hidden; }
+.tuto .panel { gap: 10px; }
+.tuto .tdots { display: flex; gap: 6px; justify-content: center; }
+.tuto .tdots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: block; }
+.tuto .tdots i.on { background: var(--accent, #1A4E9B); }
+.tuto .tic { font-size: 40px; line-height: 1; }
+.ach { display: grid; gap: 8px; margin: 10px 0; }
+.ach .a { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; background: var(--surface); }
+.ach .a.off { opacity: .55; }
+.ach .a b { display: block; font-size: 16px; }
+.ach .a span { color: var(--muted); font-size: 13px; }
+
 .hudmid .away { background: rgba(10,18,28,.82); color: #fff; border-color: rgba(255,255,255,.4); }
 .hudbottom { position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: 10px; max-width: 560px; margin: 0 auto;
   padding: 36px max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
@@ -711,6 +732,10 @@ footer .row2 button { min-height: 44px; }
     <p class="hint" id="notify-hint"></p>
   </section>
   <section class="setgroup">
+    <h2>Aide</h2>
+    <button class="btn" id="s-tuto" type="button">Revoir le tutoriel<small>Les bases en 5 écrans</small></button>
+  </section>
+  <section class="setgroup">
     <h2>Données</h2>
     <p class="hint" id="s-data"></p>
     <button class="btn" id="s-wipe" type="button">Effacer toutes les aventures<small>Action définitive</small></button>
@@ -718,6 +743,7 @@ footer .row2 button { min-height: 44px; }
 </main>
 
 <div id="toasts" aria-live="polite"></div>
+<script>try { if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && window.top === window) navigator.serviceWorker.register("sw.js").catch(function () {}); } catch (e) {}</script>
 <div class="gamefs" id="v-game" hidden>
   <canvas id="scene" role="img" aria-label="Ton personnage en train de voyager"></canvas>
   <div class="hudtop">
@@ -743,6 +769,7 @@ footer .row2 button { min-height: 44px; }
   <div class="cinebar" id="cinebar" hidden><div class="cinespk" id="cine-spk"></div><p id="cine-line"></p><div class="cinebtns" id="cine-btns"></div></div>
   <div class="hudmid">
     <div class="testbanner" id="testbanner" hidden></div>
+    <div class="hudtip" id="hudtip" hidden role="status"></div>
     <div class="away" id="away" hidden><span id="awaytxt"></span><button class="btn" id="awayok" type="button" style="min-height:40px">OK</button></div>
   </div>
   <div class="hudbottom">
@@ -854,6 +881,17 @@ footer .row2 button { min-height: 44px; }
   </div>
 </div>
 
+
+<div class="overlay centered tuto" id="tuto" hidden role="dialog" aria-modal="true" aria-labelledby="tuto-title">
+  <div class="panel">
+    <div class="tic" id="tuto-ic" aria-hidden="true"></div>
+    <h2 id="tuto-title"></h2>
+    <p id="tuto-text"></p>
+    <div class="tdots" id="tuto-dots" aria-hidden="true"></div>
+    <div class="choices"><button class="btn" id="tuto-prev" type="button">Précédent</button><button class="btn primary" id="tuto-next" type="button">Suivant</button></div>
+    <button class="btn" id="tuto-skip" type="button" style="min-height:40px">Passer le tutoriel</button>
+  </div>
+</div>
 <div class="overlay centered" id="endsheet" hidden role="dialog" aria-modal="true" aria-labelledby="end-title">
   <div class="panel">
     <div><span class="sign" id="end-kind"></span></div>
@@ -861,7 +899,7 @@ footer .row2 button { min-height: 44px; }
     <p id="end-text"></p>
     <p id="end-story" class="storyend" hidden></p>
     <div class="stats" id="end-stats"></div>
-    <div class="choices"><button class="btn primary" id="end-again" type="button">Nouvelle aventure</button><button class="btn" id="end-home" type="button">Retour à l’accueil</button></div>
+    <div class="choices"><button class="btn primary" id="end-share" type="button">Partager mon voyage</button><button class="btn" id="end-again" type="button">Nouvelle aventure</button><button class="btn" id="end-home" type="button">Retour à l’accueil</button></div>
   </div>
 </div>
 
@@ -1728,26 +1766,28 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     return out;
   }
   function storyEndPage(s) {
-    var m = storyMotif(s), st = s.story; if (!m || !m.endp || st.endShown) return null;
+    var m = storyMotif(s), st = s.story; if (!m || !m.endp || st.endShown || (!st.done && (st.pending != null || st.beat < m.beats.length))) return null;
     var a = st.flags.filter(function (f) { return f === 'a'; }).length, key = a >= st.flags.length - a ? 'a' : 'b';
     return { title: m.n, panels: stPanels(s, m.endp[key]), text: stFill(s, m.end[key]) };
   }
   function storyEndShown(s) { if (s.story) s.story.endShown = 1; }
   function storyPrologueDone(s) { if (s.story) s.story.pro = 1; }
   function storyBeat(s) {
-    var m = storyMotif(s), st = s.story; if (!m || st.pending == null) return null;
+    var m = storyMotif(s), st = s.story; if (!m) return null;
+    if (st.pending == null && (s.won || s.over) && !st.done && st.beat < m.beats.length && s.won) st.pending = st.beat; // chapitres pas encore vus : on les montre avant l'épilogue
+    if (st.pending == null) return null;
     var b = m.beats[st.pending]; if (!b) return null;
     return { title: b.t, text: stFill(s, b.x), panels: stPanels(s, b.pan), choices: b.ch.map(function (c) { return stFill(s, c.l); }), n: st.pending + 1, of: m.beats.length };
   }
   function storyAnswer(s, idx) {
     var m = storyMotif(s), st = s.story; if (!m || st.pending == null) return false;
     var b = m.beats[st.pending], c = b.ch[idx]; if (!c) return false;
-    applyFx(s, c.fx || {}); st.flags.push(c.f); st.beat = st.pending + 1; st.pending = null;
+    applyFx(s, c.fx || {}); st.flags.push(c.f); st.beat = st.pending + 1; st.pending = null; if (st.beat >= m.beats.length) st.done = true;
     note(s, b.t + ' — ' + stFill(s, c.l), 'story');
     return true;
   }
   function storyEnd(s) {
-    var m = storyMotif(s), st = s.story; if (!m) return '';
+    var m = storyMotif(s), st = s.story; if (!m || (!st.done && (st.pending != null || st.beat < m.beats.length))) return '';
     var a = st.flags.filter(function (f) { return f === 'a'; }).length;
     return stFill(s, a >= st.flags.length - a ? m.end.a : m.end.b);
   }
@@ -1820,7 +1860,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
   function defaultHero(oldLook) {
     var l = oldLook || {};
     return {
-      first: 'Voyageur', last: '', age: 32, height: 175, weight: 70, silhouette: 'neutre', fitness: 'normale', trait: 'aucun', metier: 'aucun', metierText: '',
+      first: 'Voyageur', last: '', age: 32, height: 175, weight: 70, silhouette: 'neutre', fitness: 'normale', trait: 'aucun', metier: 'aucun', metierText: '', easy: '',
       look: {
         skin: l.skin || '#E0AE84', eyes: l.eyes || '#5B3A24', hair: l.hair || '#6B3E1E', hairStyle: l.hairStyle || 'court',
         beard: l.beard || 'aucune', glasses: l.glasses || 'aucune', jacket: l.jacket || '#7A1F2B', pants: l.pants || '#3B3A36',
@@ -1863,6 +1903,8 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     // Atout
     var tr = TRAITS[h.trait] || TRAITS.aucun;
     F.push({ label: 'Atout : ' + tr.n, m: tr.mods || {} });
+    // Mode Détente (choisi à la création) : un voyage plus indulgent
+    if (h.easy === 'oui' || h.easy === true) F.push({ label: 'Mode Détente', m: { sante: 0.6, drain: 0.85, moral: 0.8, hungerH: 4, heat: 0.7 } });
     // Barbe
     if (h.look.beard === 'longue') F.push({ label: 'Barbe longue', m: { coldTol: 1 } });
     else if (h.look.beard === 'pleine') F.push({ label: 'Barbe pleine', m: { coldTol: 0.5 } });
@@ -2976,7 +3018,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     if (fx.refill) { ensure(s); s.bag.eau = EAU_MAX; }
     if (fx.bagAdd) { ensure(s); Object.keys(fx.bagAdd).forEach(function (k) { s.bag[k] = (s.bag[k] || 0) + fx.bagAdd[k]; }); }
     if (fx.bagLose) { ensure(s); Object.keys(fx.bagLose).forEach(function (k) { s.bag[k] = Math.max(0, (s.bag[k] || 0) - fx.bagLose[k]); }); }
-    if (fx.stall) { s.stallUntil = Math.max(s.stallUntil, s.t) + fx.stall * MIN; s.stallWhy = why || ''; }
+    if (fx.stall) { s.stallUntil = Math.max(s.stallUntil, s.t) + fx.stall * MIN; s.stallWhy = why || ''; if (fx.stall >= 60) s.stallFixedUntil = s.stallUntil; }
     if (fx.km) {
       var k = s.km + fx.km;
       if (s.act === 'walk' && s.target !== null) k = Math.min(k, s.target);
@@ -3184,7 +3226,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     { id: 'soir', n: 'Dîner', a: 19, b: 22, txt: 'Rendez-vous du soir : un dîner, puis un toit pour la nuit.' }
   ];
   function dayNum(t) { var d = zdate(t); return Math.floor(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) / 864e5); }
-  function bump(s, stat, n) { if (!s.dstat) s.dstat = {}; s.dstat[stat] = (s.dstat[stat] || 0) + n; }
+  function bump(s, stat, n) { if (!s.dstat) s.dstat = {}; s.dstat[stat] = (s.dstat[stat] || 0) + n; if (!s.tot) s.tot = {}; s.tot[stat] = (s.tot[stat] || 0) + n; }
   function dailyEnsure(s) {
     var dn = dayNum(s.t);
     if (s.daily && s.daily.dn === dn) return;
@@ -3347,6 +3389,96 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     if (s.act === 'walk' && (s.target === null || s.target === undefined)) s.act = 'idle';
     if (s.money < 0) s.money = 0;
   }
+
+
+  // ---------- Succès (v32) ----------
+  var ACH = [
+    { id: 'pas',    n: 'Premiers pas',        d: 'Marcher 1 km.',                       f: function (s) { return s.stats.walk >= 1; } },
+    { id: 'walk25', n: 'Marcheur',            d: 'Marcher 25 km au total.',             f: function (s) { return s.stats.walk >= 25; } },
+    { id: 'walk100',n: 'Randonneur',          d: 'Marcher 100 km au total.',            f: function (s) { return s.stats.walk >= 100; } },
+    { id: 'walk300',n: 'Long cours',          d: 'Marcher 300 km au total.',            f: function (s) { return s.stats.walk >= 300; } },
+    { id: 'out1',   n: 'À la belle étoile',   d: 'Dormir une nuit dehors.',             f: function (s) { return s.stats.out >= 1; } },
+    { id: 'out5',   n: 'Vagabond',            d: 'Dormir 5 nuits dehors.',              f: function (s) { return s.stats.out >= 5; } },
+    { id: 'hotel',  n: 'Un vrai lit',         d: 'Passer une nuit à l’hôtel.',          f: function (s) { return s.stats.hotel >= 1; } },
+    { id: 'photo',  n: 'Photographe',         d: 'Prendre une belle photo.',            f: function (s) { return (s.photos || 0) >= 1; } },
+    { id: 'meals10',n: 'Bon appétit',         d: 'Faire 10 repas.',                     f: function (s) { return ((s.tot && s.tot.meals) || 0) >= 10; } },
+    { id: 'cook',   n: 'Chef de chemin',      d: 'Cuisiner au bord du chemin.',         f: function (s) { return ((s.tot && s.tot.cooks) || 0) >= 1; } },
+    { id: 'call',   n: 'Un mot pour un proche', d: 'Appeler un proche.',                f: function (s) { return ((s.tot && s.tot.calls) || 0) >= 1; } },
+    { id: 'events10', n: 'Aventurier',        d: 'Vivre 10 événements.',                f: function (s) { return s.stats.events >= 10; } },
+    { id: 'train',  n: 'Voyageur du rail',    d: 'Prendre le train.',                   f: function (s) { return s.stats.train >= 1; } },
+    { id: 'work',   n: 'Gagne-pain',          d: 'Travailler 6 heures au total.',       f: function (s) { return s.stats.workH >= 6; } },
+    { id: 'rich',   n: 'Bas de laine',        d: 'Avoir 200 € en poche.',               f: function (s) { return s.money >= 200; } },
+    { id: 'stamps5',n: 'Collectionneur',      d: 'Obtenir 5 tampons.',                  f: function (s) { return Object.keys(s.stamps || {}).length >= 5; } },
+    { id: 'day7',   n: 'Une semaine de route',d: 'Voyager 7 jours.',                    f: function (s) { return s.t - s.start >= 7 * 864e5; } },
+    { id: 'perfect',n: 'Journée parfaite',    d: 'Réussir tous les objectifs d’une journée.', f: function (s) { return s.lastAllDay !== undefined; } }
+  ];
+  function achTick(s) {
+    if (!s.ach) s.ach = {};
+    for (var i = 0; i < ACH.length; i++) {
+      var a = ACH[i];
+      if (!s.ach[a.id] && a.f(s)) { s.ach[a.id] = s.t; note(s, 'Succès débloqué : ' + a.n + '. ' + a.d, 'goal'); }
+    }
+  }
+  function achList(s) { return ACH.map(function (a) { return { id: a.id, n: a.n, d: a.d, done: !!(s.ach && s.ach[a.id]) }; }); }
+  // ---------- Alertes et conseils (v32) : prévenir avant la catastrophe ----------
+  var FOOD_ITEMS = ['sandwich', 'pain', 'viennoiserie', 'barre'];
+  function foodInBag(s) { var n = 0; if (s.bag) FOOD_ITEMS.forEach(function (id) { n += s.bag[id] || 0; }); return n; }
+  function foodAdvice(s) {
+    var tw = townNear(s.km), eat = function (t) { return t && t.venues && (t.venues.indexOf('boulangerie') >= 0 || t.venues.indexOf('resto') >= 0 || t.venues.indexOf('centre') >= 0); };
+    var bag = foodInBag(s);
+    if (bag > 0) return 'Tu as de quoi manger dans ton sac.';
+    if (eat(tw)) return 'Il y a de quoi manger ici : boulangerie ou restaurant.';
+    var A = townsAhead(s.km, goalKmOf(s)), i;
+    for (i = 0; i < A.length; i++) if (eat(A[i])) return 'Prochaine ville où manger : ' + A[i].n + ', à ' + Math.max(1, Math.round(A[i].km - s.km)) + ' km.';
+    return 'Pas de ville où manger avant l’arrivée : prends vite des vivres.';
+  }
+  function healthCauses(s, hungry, coldHit, wetHit) {
+    var c = [];
+    if (hungry) c.push('la faim');
+    if (s.ill > 25) c.push('la maladie');
+    if (s.inj > 25) c.push('une blessure');
+    if (coldHit) c.push('le froid');
+    if (wetHit) c.push('la pluie');
+    if ((s.alc || 0) > 3.5) c.push('l’alcool');
+    if (s.sdebt > 4) c.push('le manque de sommeil');
+    if (s.moral <= 0) c.push('le moral à zéro');
+    return c.length ? ' Causes probables : ' + c.join(', ') + '.' : '';
+  }
+  function warnTick(s, hungry, coldHit, wetHit, sleeping) {
+    var w = s.warn || (s.warn = {}), M = s.mods, thr = 10 + M.hungerH, soft = Math.max(5, thr - 3);
+    function flag(key, on, clear, txt) {
+      if (!w[key] && on) { w[key] = 1; note(s, txt, 'alert'); }
+      else if (w[key] && clear) w[key] = 0;
+    }
+    flag('faim1', s.sinceMeal > soft && !hungry && !sleeping, s.sinceMeal < soft - 2, 'Ton ventre gargouille : ' + Math.round(s.sinceMeal) + ' h sans vrai repas. ' + foodAdvice(s));
+    flag('faim2', hungry && !sleeping, !hungry, 'Tu as très faim : ta santé et ton endurance baissent. ' + foodAdvice(s));
+    var cs = healthCauses(s, hungry, coldHit, wetHit);
+    flag('sante1', s.sante < 50, s.sante > 62, 'Ta santé est basse (' + Math.round(s.sante) + ' %).' + cs + ' Repose-toi, mange, ou va à la pharmacie.');
+    flag('sante2', s.sante < 25, s.sante > 40, 'Danger : ta santé est très basse (' + Math.round(s.sante) + ' %).' + cs + ' Arrête-toi, mange et dors au chaud.');
+    flag('endu', s.endu < 15 && !sleeping, s.endu > 35, 'Tu es à bout de forces. Trouve vite où dormir : hôtel, hôte ou un abri au sec.');
+    flag('ill', s.ill > 40, s.ill < 20, 'Tu es malade. Du repos au chaud ou des médicaments à la pharmacie te remettront sur pied.');
+  }
+  // Pause volontaire en cours (achats, commerce) : on le dit clairement au joueur
+  function pauseInfo(s) {
+    if (s.ev || s.won || s.over || !(s.act === 'walk' || s.act === 'idle' || s.act === 'hitch')) return '';
+    if (!(s.t < s.stallUntil)) return '';
+    var rel = s.stallUntil > Math.max(s.t, s.stallFixedUntil || 0), mins = Math.ceil((s.stallUntil - s.t) / MIN);
+    var why = s.stallWhy ? ' (' + s.stallWhy.toLowerCase() + ')' : '';
+    if (s.act === 'idle') return '';
+    return 'Tu es en pause' + why + ' : encore ' + mins + ' min.' + (rel ? ' Touche « Marcher » pour repartir tout de suite.' : '');
+  }
+  // Le conseil du moment, affiché dans l'écran d'actions
+  function advice(s) {
+    if (s.won || s.over || !s.mods) return '';
+    var M = s.mods, hungry = s.sinceMeal > 10 + M.hungerH, asleep = s.act === 'sleep_out' || s.act === 'sleep_hotel';
+    if (s.sante < 25) return 'Danger : ta santé est très basse. Arrête-toi, mange et dors au chaud.';
+    if (hungry && !asleep) return 'Tu as très faim. ' + foodAdvice(s);
+    if (s.endu < 15 && !asleep) return 'Tu es à bout de forces : trouve où dormir.';
+    if (s.ill > 40) return 'Tu es malade : repos au chaud ou pharmacie.';
+    if (s.sinceMeal > Math.max(5, 7 + M.hungerH) && !asleep) return 'Ça fait ' + Math.round(s.sinceMeal) + ' h sans vrai repas. ' + foodAdvice(s);
+    if (s.sante < 50) return 'Ta santé est basse : repose-toi et mange.';
+    return '';
+  }
   function step(s, dh) {
     normalize(s);
     s.t += dh * H;
@@ -3452,18 +3584,18 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
       note(s, msgs[wx], 'weather'); s.wxLast = wx;
     }
     if (s.act === 'walk' && dE < 0) dE *= gsh.drain * (1 + (100 - cnd(s, 'g_chaussures')) * 0.0015) * (1 + Math.max(0, bagWeight(s) - 6) * 0.01);
-    var illAdd = 0, bg = s.bag || {};
+    var illAdd = 0, bg = s.bag || {}, coldHit = false, wetHit = false;
     if (s.act === 'idle' || s.act === 'walk' || s.act === 'hitch' || s.act === 'host_search') {
       var felt = temp + (s.act === 'walk' ? 4 : 0) + (bg.gants > 0 ? 1.5 : 0);
       var vcold = gv.cold + (100 - cnd(s, 'g_veste')) * 0.03;
-      if (felt < vcold - M.coldTol) { var df = vcold - M.coldTol - felt; dS -= df * 0.06; dE -= df * 0.2; dM -= df * 0.12; illAdd += df * 0.12; }
-      if (wx === 'pluie' && !gv.rain) { var pn = bg.poncho > 0 ? 1 - 0.6 * cnd(s, 'poncho') / 100 : 1; dE -= 1.2 * pn; dM -= 0.8 * pn; dS -= 0.25 * pn; illAdd += 0.35 * pn; }
+      if (felt < vcold - M.coldTol) { coldHit = true; var df = vcold - M.coldTol - felt; dS -= df * 0.06; dE -= df * 0.2; dM -= df * 0.12; illAdd += df * 0.12; }
+      if (wx === 'pluie' && !gv.rain) { wetHit = true; var pn = bg.poncho > 0 ? 1 - 0.6 * cnd(s, 'poncho') / 100 : 1; dE -= 1.2 * pn; dM -= 0.8 * pn; dS -= 0.25 * pn; illAdd += 0.35 * pn; }
     } else if (s.act === 'sleep_out') {
       var rating = gc.cold + (100 - cnd(s, 'g_couchage')) * 0.03 - gv.sleepBonus - M.coldTol - (bg.couverture > 0 ? 2 : 0) - (s.tentStars || 0) * 1.2;
       if (s.tentStars) dE += s.tentStars * 0.5;
-      if (temp < rating) { var d2 = rating - temp; dS -= d2 * 0.08; dE -= d2 * 0.35; dM -= d2 * 0.1; illAdd += d2 * 0.2; }
+      if (temp < rating) { coldHit = true; var d2 = rating - temp; dS -= d2 * 0.08; dE -= d2 * 0.35; dM -= d2 * 0.1; illAdd += d2 * 0.2; }
       else if (!(wx === 'pluie' && !gc.rain && !(s.tentStars >= 2))) dS += 0.6; // nuit correcte : le corps récupère un peu au lieu de s'user
-      if (wx === 'pluie' && !gc.rain && !(s.tentStars >= 2)) { dE -= 1.0; dM -= 0.6; illAdd += 0.4; }
+      if (wx === 'pluie' && !gc.rain && !(s.tentStars >= 2)) { wetHit = true; dE -= 1.0; dM -= 0.6; illAdd += 0.4; }
     }
     // hygiène, maladie, blessures
     var inBed = s.act === 'sleep_hotel';
@@ -3488,6 +3620,8 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     s.sante = clamp(s.sante + dS * dh);
     var capS = santeMax(s); if (s.sante > capS) s.sante = Math.max(capS, s.sante - 4 * dh);
     s.moral = clamp(s.moral + dM * dh);
+    warnTick(s, hungry, coldHit, wetHit, sleeping);
+    achTick(s);
 
     if (sleeping && !s.sleepFrom) { s.sleepFrom = s.t - dh * H; s.wakeAt = wakeTimeFor(s, s.sleepFrom); }
     if (!sleeping && s.sleepFrom) { s.sleepFrom = null; s.wakeAt = 0; }
@@ -3509,7 +3643,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
       return;
     }
     if (s.km >= goalKmOf(s) - 1e-6 && !s.won) {
-      s.km = goalKmOf(s); s.won = true; s.wonAt = s.t; s.act = 'idle'; s.train = null; if (s.story) { s.story.done = true; s.story.pending = null; }
+      s.km = goalKmOf(s); s.won = true; s.wonAt = s.t; s.act = 'idle'; s.train = null;
       note(s, goalTownOf(s).n + '. Tu y es.', 'arrive');
       return;
     }
@@ -3926,7 +4060,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
   }
 
   root.PasAPas = {
-    skillList: skillList, skillsFromJob: skillsFromJob, SLEEP_NEED: SLEEP_NEED, healthIssues: healthIssues, santeMax: santeMax, METIERS: METIERS, METIER_ORDER: METIER_ORDER, SKILLS: SKILLS, LEVEL_NAMES: LEVEL_NAMES, doHost: doHost, jobOffers: jobOffers, routeKm: function () { return ROUTE_KM; }, routeKey: function () { return CUR.key; }, destCandidates: destCandidates, destSearch: destSearch, destFromKey: destFromKey, levelOf: levelOf, daysOf: daysOf, CC_NAMES: CC_NAMES, storyPrologue: storyPrologue, storyPrologueDone: storyPrologueDone, storyBeat: storyBeat, storyAnswer: storyAnswer, storyEnd: storyEnd, storyMotif: storyMotif, storyCast: storyCast, storyEndPage: storyEndPage, storyEndShown: storyEndShown, planRoute: planRoute, citySearch: citySearch, nearLR: nearLR, useRoute: useRoute, destinations: destinations, goalKmOf: goalKmOf, goalTownOf: goalTownOf, PRICE: PRICE, VENUES: VENUES, venueList: venueList, venueOptions: venueOptions, doVenue: doVenue, WAGE: WAGE, TOWNS: TOWNS, TRAINS: TRAINS, EVENTS: EVENTS, TOWNS_REF: TOWNS,
+    skillList: skillList, skillsFromJob: skillsFromJob, SLEEP_NEED: SLEEP_NEED, healthIssues: healthIssues, santeMax: santeMax, METIERS: METIERS, METIER_ORDER: METIER_ORDER, SKILLS: SKILLS, LEVEL_NAMES: LEVEL_NAMES, doHost: doHost, jobOffers: jobOffers, routeKm: function () { return ROUTE_KM; }, routeKey: function () { return CUR.key; }, destCandidates: destCandidates, destSearch: destSearch, destFromKey: destFromKey, levelOf: levelOf, daysOf: daysOf, CC_NAMES: CC_NAMES, advice: advice, pauseInfo: pauseInfo, foodInBag: foodInBag, ACH: ACH, achList: achList, storyPrologue: storyPrologue, storyPrologueDone: storyPrologueDone, storyBeat: storyBeat, storyAnswer: storyAnswer, storyEnd: storyEnd, storyMotif: storyMotif, storyCast: storyCast, storyEndPage: storyEndPage, storyEndShown: storyEndShown, planRoute: planRoute, citySearch: citySearch, nearLR: nearLR, useRoute: useRoute, destinations: destinations, goalKmOf: goalKmOf, goalTownOf: goalTownOf, PRICE: PRICE, VENUES: VENUES, venueList: venueList, venueOptions: venueOptions, doVenue: doVenue, WAGE: WAGE, TOWNS: TOWNS, TRAINS: TRAINS, EVENTS: EVENTS, TOWNS_REF: TOWNS,
     newGame: newGame, advance: advance, step: step, choose: choose, availability: availability,
     doVisit: doVisit, doWalk: doWalk, flashAnswer: flashAnswer, FLASH: FLASH, doPhoto: doPhoto, doCook: doCook, doHitchBoost: doHitchBoost, doTentSetup: doTentSetup, doStop: doStop, doHitch: doHitch, doSleepOut: doSleepOut, doHotel: doHotel,
     TRAITS: TRAITS, FITNESS: FITNESS, SILHOUETTES: SILHOUETTES, defaultHero: defaultHero, computeProfile: computeProfile, refreshProfile: refreshProfile, cost: cost, walkKmh: walkKmh, bmiOf: bmiOf,
@@ -7263,7 +7397,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     var o = readAdv(id); if (!o) return;
     S = E.ensure(o.s); curId = id; last = o.last || Date.now(); seenStampSeq = S.stampSeq || 0;
     walkSel = null; resultView = null; sheet2 = null; awayMsg = null;
-    var kmBefore = S.km, gap;
+    var kmBefore = S.km, moneyBefore = S.money, santeBefore = S.sante, seqBefore = S.logSeq, gap;
     if (settings.speed === 1) { var dr0 = Date.now() - S.t; if (dr0 < -3000) E.shiftTime(S, -dr0); gap = Math.max(0, Date.now() - S.t); }
     else gap = Date.now() - last;
     if (gap > 0 && gap <= 10 * 60e3 && !(S.won || S.over)) E.advance(S, gap * settings.speed);
@@ -7271,11 +7405,26 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
       E.advance(S, gap * settings.speed);
       var moved = S.km - kmBefore;
       awayMsg = 'Pendant ton absence de ' + E.fmtDur(gap) + (settings.speed > 1 ? ' (temps accéléré)' : '') + ', ' +
-        (moved > 0.2 ? S.hero.first + ' a avancé de ' + moved.toFixed(1).replace('.', ',') + ' km.' : S.hero.first + ' n’a pas beaucoup avancé.') + ' Détails dans le journal.';
+        (moved > 0.2 ? S.hero.first + ' a avancé de ' + moved.toFixed(1).replace('.', ',') + ' km.' : S.hero.first + ' n’a pas beaucoup avancé.') + awayRecap(S, seqBefore, moneyBefore, santeBefore) + ' Détails dans le journal.';
     }
     last = Date.now(); notifSeq = S.logSeq; saveAdv(); show('game');
   }
 
+  /* Récap de retour : ce qui s'est passé pendant l'absence */
+  function awayRecap(s, seq0, money0, sante0) {
+    var n = Math.min(s.logSeq - seq0, s.log.length), L = n > 0 ? s.log.slice(-n) : [], p = [];
+    var arr = L.filter(function (x) { return x.kind === 'arrive'; }), evs = L.filter(function (x) { return x.kind === 'event'; }).length;
+    var ach = L.filter(function (x) { return /^Succès débloqué/.test(x.txt); }).length;
+    var dm = Math.round((s.money - money0) * 100) / 100, ds = Math.round(s.sante - sante0);
+    if (s.won) p.push('Tu es arrivé !');
+    else if (arr.length) p.push(arr[arr.length - 1].txt.replace(/\.$/, '') + '.');
+    if (dm <= -1) p.push(E.fmtMoney(-dm) + ' dépensés.'); else if (dm >= 1) p.push(E.fmtMoney(dm) + ' gagnés.');
+    if (evs > 0) p.push(evs + (evs > 1 ? ' événements' : ' événement') + '.');
+    if (ach > 0) p.push(ach + (ach > 1 ? ' succès débloqués' : ' succès débloqué') + '.');
+    if (ds <= -8) p.push('Santé en baisse (' + ds + ' %).');
+    var a = E.advice(s); if (a) p.push(a);
+    return p.length ? ' ' + p.join(' ') : '';
+  }
   /* ---------- Paramètres ---------- */
   function renderSettings() {
     $('speed').value = String(settings.speed);
@@ -7363,6 +7512,9 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
       h += '<p class="hint">Ces vêtements sont ta tenue de base. En route, tu devras t’équiper selon la saison, la météo et la région : une veste imperméable ou une parka remplaceront ta veste.</p>';
     } else if (sid === 'bilan') {
       var P = E.computeProfile(draft), when = new Date();
+      h += '<div class="field"><h3>Difficulté</h3><div class="cards two">' +
+        '<button type="button" class="btn" data-set="easy:" aria-pressed="' + (draft.easy !== 'oui') + '">Normal<small>Le voyage tel qu’il est conçu : exigeant.</small></button>' +
+        '<button type="button" class="btn" data-set="easy:oui" aria-pressed="' + (draft.easy === 'oui') + '">Détente<small>Faim plus lente, santé et moral plus solides. Idéal pour découvrir.</small></button></div></div>';
       h += '<div class="identity"><b>' + esc(heroName(draft)) + '</b><span>' + draft.age + ' ans · ' + draft.height + ' cm · ' + draft.weight + ' kg · ' + esc(bodySummary()) + '</span><span>Atout : ' + esc(E.TRAITS[draft.trait].n) + ' · Condition ' + esc(E.FITNESS[draft.fitness].n.toLowerCase()) + '</span></div>';
       h += '<div class="bilan"><h3 style="margin:0;font-family:var(--f-display);font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Bonus et malus</h3>';
       if (!P.notes.length) h += '<p class="sumline">Aucun bonus ni malus : un profil équilibré.</p>';
@@ -7736,6 +7888,8 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     checkStampFx();
     renderFlash();
     storyPoll();
+    tutoPoll();
+    hudTip();
     var dv = E.dailyView(s); $('carnet-btn').classList.toggle('dot', dv.rdv.some(function (r) { return r.open && !r.done; }) && !s.ev);
     if (carnetOpen && carnetTab === 'jour' && ticks % 3 === 0 && $('cdetail').hidden) renderCarnet();
     $('gsub').textContent = heroName(s.hero);
@@ -7830,13 +7984,15 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     var s = S, A = E.availability(s), ae = document.activeElement, keepFocus = ae && (ae.id === 'walksel' || ae.id === 'alarmsel') ? ae.id : null;
     var paused = !!s.ev || s.t < s.stallUntil;
     var key = JSON.stringify([s.act, paused, A.ahead.map(function (t) { return t.id; }), !!s.ev, s.won, !!s.over, A.walk, A.stop, A.hitch, A.sleepOut, A.work, A.host, A.visit, A.visitName, s.alarm, Math.round(s.sdebt), s.hyg < 50, A.venues.map(function (v) { return [v.id, v.ok, v.open, v.reason]; }), Math.floor(E.hourOf(s.t) * 2),
-      A.trains.map(function (t) { return [t.line.id, t.ok, t.reason, t.dep, t.price]; }), A.shop, s.gear, walkSel]);
+      A.trains.map(function (t) { return [t.line.id, t.ok, t.reason, t.dep, t.price]; }), A.shop, s.gear, walkSel, E.advice(s), E.pauseInfo(s)]);
     var ahead = A.ahead, kmh = E.walkKmh(s);
     if (key === lastActKey) { updateWalkOpts(ahead, kmh); return; }
     lastActKey = key;
 
     if (!ahead.some(function (t) { return t.id === walkSel; })) walkSel = ahead.length ? ahead[0].id : null;
-    var h = '';
+    var h = '', adv = E.advice(s), pz = E.pauseInfo(s);
+    if (pz) h += '<p class="advice pause">' + esc(pz) + '</p>';
+    if (adv) h += '<p class="advice">' + esc(adv) + '</p>';
     h += '<div class="group"><h2>Avancer</h2>';
     h += '<div class="walkrow"><select id="walksel" aria-label="Destination à pied">' + ahead.map(function (t) {
       var km = t.km - s.km;
@@ -7861,7 +8017,8 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     h += '<div class="group"><h2>Équipement</h2><div class="equip">' + equipRows(s) + '</div><div class="row2">' +
       btn('shop', 'Boutique', 'Magasin de sport', A.shop) +
       '<button type="button" class="btn" data-do="look">Tenue<small>Couleurs et couvre-chef</small></button></div>' +
-      '<button type="button" class="btn" data-do="profile">Profil du voyageur<small>Bonus et malus</small></button></div>';
+      '<button type="button" class="btn" data-do="profile">Profil du voyageur<small>Bonus et malus</small></button>' +
+      '<button type="button" class="btn" data-do="tuto">Revoir le tutoriel<small>Les bases en 5 écrans</small></button></div>';
     $('actions').innerHTML = h;
     if (keepFocus && $(keepFocus)) { try { $(keepFocus).focus({ preventScroll: true }); } catch (e) {} }
   }
@@ -8002,10 +8159,44 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     var nb = $('st-more') || $('st-next') || document.querySelector('[data-stch]'); if (nb && nb.focus) nb.focus();
   }
   function storyClose() { storyOpen = false; $('storyscreen').hidden = true; stState = null; }
+  /* ---------- Conseil du moment et tutoriel (v32) ---------- */
+  function hudTip() {
+    var t = $('hudtip'); if (!t) return;
+    var a = S && !S.ev ? E.advice(S) : '';
+    if (!a) { t.hidden = true; return; }
+    var k = a;
+    if (t.dataset.k !== k) { t.dataset.k = k; t.innerHTML = '<b>Conseil</b>' + esc(a); }
+    t.hidden = false;
+  }
+  var TUTO = [
+    ['⏳', 'Un voyage en temps réel', 'Ton personnage avance vraiment pendant des heures, même si tu fermes le jeu. Reviens de temps en temps : un trajet de quelques jours se vit sur quelques jours.'],
+    ['🚶', 'Avancer', 'Ouvre « Actions » : choisis la prochaine ville et touche « Marcher », ou tends le pouce avec « Faire du stop ». « Stop » t’arrête quand tu veux.'],
+    ['🥖', 'Manger et boire', 'La jauge « Faim » est en haut. Sans manger, ta santé baisse. En ville, achète à la boulangerie ou au restaurant, et prends des vivres à emporter : tu les manges depuis ton « Sac » quand il le faut. La gourde se remplit à chaque ville.'],
+    ['🌙', 'Dormir et se soigner', 'La nuit, dors à l’hôtel, chez des hôtes ou dehors (mieux vaut être bien équipé). Si tu es malade ou blessé, la pharmacie te remet sur pied. Des alertes te préviennent avant que ça tourne mal.'],
+    ['🗺️', 'Argent, objectifs et carte', 'Travaille en ville pour gagner de l’argent. Le « Carnet » garde tes objectifs du jour, tes tampons et tes succès. La « Carte » montre ton trajet. Bon voyage !']
+  ];
+  var tutoOpen = false, tutoI = 0;
+  function tutoRender() {
+    var d = TUTO[tutoI];
+    $('tuto-ic').textContent = d[0]; $('tuto-title').textContent = d[1]; $('tuto-text').textContent = d[2];
+    $('tuto-dots').innerHTML = TUTO.map(function (_, i) { return '<i class="' + (i === tutoI ? 'on' : '') + '"></i>'; }).join('');
+    $('tuto-prev').hidden = tutoI === 0;
+    $('tuto-next').textContent = tutoI === TUTO.length - 1 ? 'C’est parti' : 'Suivant';
+  }
+  function tutoShow() { tutoI = 0; tutoOpen = true; $('tuto').hidden = false; document.body.classList.add('tutoon'); tutoRender(); }
+  function tutoClose() { tutoOpen = false; $('tuto').hidden = true; document.body.classList.remove('tutoon'); if (!settings.tutoSeen) { settings.tutoSeen = true; saveSettings(); } }
+  function tutoPoll() {
+    if (tutoOpen || settings.tutoSeen || !S || view !== 'game' || storyOpen) return;
+    if (S.ev || S.won || S.over || mg || (S.story && !S.story.pro)) return;
+    tutoShow();
+  }
+
   function storyPoll() {
-    if (!S || !S.story || storyOpen || view !== 'game') return;
+    if (!S || !S.story || storyOpen || tutoOpen || view !== 'game') return;
     if (S.ev || mg || bagOpen || mapOpen || carnetOpen || resultView || (sheet2 && !$('sheet2').hidden)) return;
     if (S.won) {
+      var bw = E.storyBeat(S);
+      if (bw) { storyShow({ kick: 'Chapitre ' + bw.n + ' sur ' + bw.of, title: bw.title, pages: [bw.text], panels: bw.panels, choices: bw.choices, done: null }); return; }
       var ep = E.storyEndPage(S);
       if (ep) storyShow({ kick: 'Épilogue', title: ep.title, panels: ep.panels, text: ep.text, endLabel: 'Fermer', done: function () { E.storyEndShown(S); saveAdv(); } });
       return;
@@ -8029,7 +8220,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     if (d.stch !== undefined) { E.storyAnswer(S, parseInt(d.stch, 10)); saveAdv(); storyClose(); lastActKey = ''; render(); return true; }
     return !!(t.closest && t.closest('#storyscreen'));
   }
-  function overlaysOpen() { return storyOpen || bagOpen || mapOpen || carnetOpen || !!mg || !$('stampfx').hidden || !!S.ev || S.won || S.over || (sheet2 && !$('sheet2').hidden) || !!resultView; }
+  function overlaysOpen() { return storyOpen || tutoOpen || bagOpen || mapOpen || carnetOpen || !!mg || !$('stampfx').hidden || !!S.ev || S.won || S.over || (sheet2 && !$('sheet2').hidden) || !!resultView; }
   var stopHide = 0;
   function renderFlash() {
     var bar = $('flashbar'), f = S.flash, ps = null;
@@ -8222,7 +8413,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
   }
   function carnetTabs() {
     var t = [];
-    if (S) t.push(['jour', 'Aujourd’hui']);
+    if (S) { t.push(['jour', 'Aujourd’hui']); t.push(['succes', 'Succès']); }
     ['etape', 'france', 'europe', 'monde'].forEach(function (r) { t.push([r, r === 'etape' ? 'Étapes' : r === 'france' ? 'France' : r === 'europe' ? 'Europe' : 'Monde']); });
     return t;
   }
@@ -8230,6 +8421,12 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     var tot = E.STAMPS.length, got = 0, byR = {};
     E.STAMPS.forEach(function (d) { byR[d.r] = byR[d.r] || { t: 0, g: 0 }; byR[d.r].t++; if (stamps[d.id]) { got++; byR[d.r].g++; } });
     return { tot: tot, got: got, byR: byR };
+  }
+  function achHTML() {
+    var L = E.achList(S), got = L.filter(function (a) { return a.done; }).length;
+    var h = '<h2>Succès</h2><p class="csub">' + got + ' sur ' + L.length + ' débloqués dans cette aventure.</p><div class="ach">';
+    L.forEach(function (a) { h += '<div class="a ' + (a.done ? '' : 'off') + '"><b>' + (a.done ? '★ ' : '☆ ') + esc(a.n) + '</b><span>' + esc(a.d) + '</span></div>'; });
+    return h + '</div>';
   }
   function dayHTML() {
     var v = E.dailyView(S), h = '<h2>Aujourd’hui</h2><p class="csub">Trois rendez-vous et trois objectifs, renouvelés chaque matin.</p>';
@@ -8258,12 +8455,12 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     var stamps = allStamps(), cn = carnetCounts(stamps);
     $('carnet-meta').textContent = cn.got + ' tampon' + (cn.got > 1 ? 's' : '') + ' sur ' + cn.tot;
     $('ctabs').innerHTML = carnetTabs().map(function (t) { return '<button type="button" class="ctab" role="tab" data-ctab="' + t[0] + '" aria-selected="' + (carnetTab === t[0]) + '">' + esc(t[1]) + '</button>'; }).join('');
-    $('cpage').innerHTML = carnetTab === 'jour' && S ? dayHTML() : regionHTML(carnetTab === 'jour' ? 'etape' : carnetTab, stamps);
+    $('cpage').innerHTML = carnetTab === 'succes' && S ? achHTML() : carnetTab === 'jour' && S ? dayHTML() : regionHTML(carnetTab === 'jour' || carnetTab === 'succes' ? 'etape' : carnetTab, stamps);
   }
   function openCarnet(tab, instant) {
     stash();
     carnetTab = tab || (S && !S.won && !S.over ? 'jour' : 'etape');
-    if (carnetTab === 'jour' && !S) carnetTab = 'etape';
+    if ((carnetTab === 'jour' || carnetTab === 'succes') && !S) carnetTab = 'etape';
     var scr = $('carnetscreen');
     scr.classList.remove('out'); scr.hidden = false; carnetOpen = true; $('cdetail').hidden = true;
     var cv = $('ccover'); cv.style.display = ''; cv.style.animation = 'none'; void cv.offsetWidth; cv.style.animation = instant ? 'none' : '';
@@ -8492,6 +8689,21 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
 
   /* ---------- Interactions ---------- */
   function afterAction() { lastActKey = ''; saveAdv(); render(); }
+  function shareTrip() {
+    if (!S) return;
+    var su = E.summary(S), o0 = (S.route && S.route.start && S.route.start.city) || 'La Rochelle', g = E.goalTownOf(S).n;
+    var ach = E.achList(S).filter(function (a) { return a.done; }).length;
+    var txt = S.won
+      ? 'J’ai rejoint ' + g + ' depuis ' + o0 + ' à pied et en stop avec Km Zero : ' + Math.round(S.km) + ' km en ' + E.fmtDur(su.elapsed) + ', ' + ach + ' succès. Et toi, jusqu’où irais-tu ?'
+      : 'Mon voyage de ' + o0 + ' vers ' + g + ' s’est arrêté à ' + Math.round(S.km) + ' km avec Km Zero. Saurais-tu faire mieux ?';
+    var url = 'https://kmzero-game.github.io/kmzero/';
+    var done = function (m) { toast('go', 'Partage', m); };
+    try {
+      if (navigator.share) { navigator.share({ title: 'Km Zero', text: txt, url: url }).catch(function () {}); return; }
+    } catch (e) {}
+    try { navigator.clipboard.writeText(txt + ' ' + url).then(function () { done('Texte copié : colle-le où tu veux.'); }, function () { done(txt); }); }
+    catch (e) { done(txt); }
+  }
   function leaveGame() { closeScreensNow(); saveAdv(); stash(); S = null; curId = null; sheet2 = null; show('home'); }
 
 
@@ -8600,6 +8812,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     if (id === 'l-back' || id === 's-back' || id === 'home-btn' || id === 'end-home') { if (view === 'game') leaveGame(); else show('home'); return; }
     if (d.ring) { showRing(d.ring); return; }
     if (id === 'menu-btn') { leaveGame(); return; }
+    if (id === 'end-share') { shareTrip(); return; }
     if (id === 'end-again') { saveAdv(); S = null; curId = null; startCreate(); return; }
 
     // Chargement
@@ -8681,13 +8894,17 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     if (id === 'stampfx-ok') { $('stampfx').hidden = true; return; }
     if (id === 'stampfx-open') { $('stampfx').hidden = true; openCarnet('etape', false); if (S && S.stampLast && E.STAMP_BY[S.stampLast]) { var rr = E.STAMP_BY[S.stampLast].r; carnetTab = rr; renderCarnet(); setTimeout(function () { stampDetail(S.stampLast); }, 1500); } return; }
     if (id === 'map-btn' && S) { openMapScreen(); return; }
+    if (id === 'tuto-next') { if (tutoI >= TUTO.length - 1) tutoClose(); else { tutoI++; tutoRender(); } return; }
+    if (id === 'tuto-prev') { if (tutoI > 0) { tutoI--; tutoRender(); } return; }
+    if (id === 'tuto-skip') { tutoClose(); return; }
+    if (id === 's-tuto') { tutoShow(); return; }
     if (id === 'map-close') { closeMapScreen(); return; }
     if (id === 'mt-svg') { setMapMode('svg'); return; }
     if (id === 'mt-real') { setMapMode('real'); return; }
     if (id === 'act-btn' && S) { openSheet2('actions'); return; }
     if (d.use) {
       var ur = E.doUse(S, d.use, d.act || null); saveAdv(); lastActKey = '';
-      if (ur.mini === 'cook') { closeBag(); setTimeout(runCook, 300); return; }
+      if (ur.mini === 'cook') { closeBag(); if (sheet2) closeSheet2(); setTimeout(runCook, 300); return; }
       if (bagOpen && window.KZ_BAG3D) { var rr = E.bagList(S); bagSig = bagFlatSig(rr); window.KZ_BAG3D.update(rr); window.KZ_BAG3D.pulse(d.use); bagMeta(); }
       else if (sheet2 === 'bag') $('sheet2-body').innerHTML = bagHTML();
       render(); return;
@@ -8719,6 +8936,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     if (a === 'shop') { if (E.availability(S).shop.ok) openSheet2('shop'); return; }
     if (a === 'look') { openSheet2('look'); return; }
     if (a === 'profile') { openSheet2('profile'); return; }
+    if (a === 'tuto') { if (sheet2 === 'actions') closeSheet2(); tutoShow(); return; }
     if (a === 'walk') E.doWalk(S, walkSel);
     else if (a === 'stop') E.doStop(S);
     else if (a === 'hitch') E.doHitch(S);
