@@ -2023,6 +2023,15 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     barre:      { n: 'Barres de céréales',  cat: 'Vivres',     w: 0.05, kind: 'none', stateText: 'Emballées, intactes', model: 'barre',
       d: 'Une vraie collation : coupe la faim et redonne un peu d’énergie.',
       fx: [{ t: 'Faim −4 h', g: 1 }, { t: 'Endurance +4', g: 1 }, { t: 'Moral +1', g: 1 }], acts: [{ k: 'use', verb: 'Manger' }] },
+    sandwich:   { n: 'Sandwichs',           cat: 'Vivres',     w: 0.22, kind: 'none', stateText: 'Emballés, frais', model: 'sandwich',
+      d: 'Achetés pour la route : à manger quand la faim se fait sentir, entre deux villes.',
+      fx: [{ t: 'Faim −4 h', g: 1 }, { t: 'Endurance +4', g: 1 }, { t: 'Moral +1', g: 1 }], acts: [{ k: 'use', verb: 'Manger' }] },
+    pain:       { n: 'Pain et fromage',     cat: 'Vivres',     w: 0.35, kind: 'none', stateText: 'Pain entamé, fromage emballé', model: 'pain',
+      d: 'Des provisions simples qui calent bien. Une portion à chaque fois.',
+      fx: [{ t: 'Faim −5 h', g: 1 }, { t: 'Endurance +5', g: 1 }, { t: 'Moral +2', g: 1 }], acts: [{ k: 'use', verb: 'Manger' }] },
+    viennoiserie:{ n: 'Viennoiseries',      cat: 'Vivres',     w: 0.1,  kind: 'none', stateText: 'Dans un sachet en papier', model: 'viennoiserie',
+      d: 'Un petit coup de pouce sucré à grignoter en marchant.',
+      fx: [{ t: 'Faim −1,5 h', g: 1 }, { t: 'Endurance +1', g: 1 }, { t: 'Moral +1', g: 1 }], acts: [{ k: 'use', verb: 'Manger' }] },
     pansement:  { n: 'Pansements',          cat: 'Soins',      w: 0.02, kind: 'none', stateText: 'Stériles', model: 'pansement',
       d: 'Servent automatiquement en cas d’ampoule : gratuit, au lieu de 4 €.',
       fx: [{ t: 'Soigne une ampoule (automatique)', g: 1 }], acts: [] },
@@ -2066,7 +2075,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
       d: 'Dans la poche intérieure. Pas d’effet pour l’instant.',
       fx: [{ t: 'Nécessaire pour certains services', g: 0 }], acts: [] }
   };
-  var BAG_ORDER = ['eau', 'barre', 'rechaud', 'toilette', 'chaussettes', 'habits', 'pansement', 'trousse', 'poncho', 'couverture', 'gants', 'lampe', 'tel', 'batterie', 'carnet', 'papiers'];
+  var BAG_ORDER = ['eau', 'sandwich', 'pain', 'viennoiserie', 'barre', 'rechaud', 'toilette', 'chaussettes', 'habits', 'pansement', 'trousse', 'poncho', 'couverture', 'gants', 'lampe', 'tel', 'batterie', 'carnet', 'papiers'];
   function starterBag() { return { eau: EAU_MAX, barre: 3, pansement: 2, trousse: 1, lampe: 1, tel: 1, carnet: 1, papiers: 1, habits: 1 }; }
   var COOL = { tel: 12, carnet: 6 };
   var SHOE_WEAR = 0.14;   // % d’usure par km marché
@@ -2095,6 +2104,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     var reason = '', ok = true, c;
     if (busy) return { ok: false, reason: 'Pas maintenant' };
     if (id === 'eau' && s.endu > 97 && s.moral > 97) { ok = false; reason = 'Pas soif'; }
+    else if ((id === 'sandwich' || id === 'pain') && s.sinceMeal < 1) { ok = false; reason = 'Tu viens de manger'; }
     else if (id === 'trousse' && s.sante > 90) { ok = false; reason = 'En forme, inutile'; }
     else if (COOL[id] && a.k === 'use' && s.cool[id] && s.t < s.cool[id]) { ok = false; reason = 'Dans ' + fmtDur(s.cool[id] - s.t); }
     else if (id === 'tel' && a.k === 'use' && cnd(s, 'tel') < 8) { ok = false; reason = 'Batterie vide'; }
@@ -2141,6 +2151,9 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     if (k === 'use') {
       if (id === 'eau') { s.bag.eau--; s.endu = clamp(s.endu + 3); s.moral = clamp(s.moral + 1); txt = 'Tu bois quelques gorgées d’eau fraîche.'; }
       else if (id === 'barre') { s.bag.barre--; s.sinceMeal = Math.max(0, s.sinceMeal - 4); s.endu = clamp(s.endu + 4); s.moral = clamp(s.moral + 1); txt = 'Tu croques une barre de céréales en marchant.'; }
+      else if (id === 'sandwich') { s.bag.sandwich--; s.sinceMeal = Math.max(0, s.sinceMeal - 4); s.endu = clamp(s.endu + 4); s.moral = clamp(s.moral + 1); mealHook(s, false); txt = 'Tu sors un sandwich de ton sac et tu le manges en marchant.'; }
+      else if (id === 'pain') { s.bag.pain--; s.sinceMeal = Math.max(0, s.sinceMeal - 5); s.endu = clamp(s.endu + 5); s.moral = clamp(s.moral + 2); mealHook(s, false); txt = 'Du pain, un morceau de fromage : un petit repas simple au bord du chemin.'; }
+      else if (id === 'viennoiserie') { s.bag.viennoiserie--; s.sinceMeal = Math.max(0, s.sinceMeal - 1.5); s.endu = clamp(s.endu + 1); s.moral = clamp(s.moral + 1); mealHook(s, false); txt = 'Tu grignotes une viennoiserie en marchant.'; }
       else if (id === 'toilette') { s.bag.toilette--; bump(s, 'cleans', 1); s.hyg = clamp(s.hyg + 25); s.moral = clamp(s.moral + 2); s.stallUntil = Math.max(s.t, s.stallUntil) + 15 * MIN; s.stallWhy = 'Toilette'; txt = 'Une toilette au bord de l’eau : tu te sens un peu plus propre.'; }
       else if (id === 'chaussettes') { s.bag.chaussettes--; bump(s, 'cleans', 1); s.hyg = clamp(s.hyg + 8); s.moral = clamp(s.moral + 3); s.inj = clamp(s.inj - 3); txt = 'Chaussettes propres : le pied respire.'; }
       else if (id === 'trousse') { setCnd(s, 'trousse', cnd(s, 'trousse') - 34); if (cnd(s, 'trousse') <= 0) { s.bag.trousse--; setCnd(s, 'trousse', 100); } s.sante = clamp(s.sante + 14); s.inj = clamp(s.inj - 10); txt = 'Tu te soignes avec la trousse de secours. Ça va mieux.'; }
@@ -2999,6 +3012,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     s.ev = null;
     s.noEvUntil = s.t + 45 * MIN;
     applyFx(s, o.fx || {}, title);
+    if (o.fx && o.fx.stall) s.stallFixedUntil = s.stallUntil;
     var text = (auto ? 'Sans réponse de ta part. ' : '') + o.t;
     note(s, text, 'event');
     return { ok: true, text: text, auto: !!auto };
@@ -3563,10 +3577,15 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
     return A;
   }
 
+  /* Quitter un commerce, une boutique ou une pause volontaire : la pause en cours s'arrête, sinon le personnage « marche » sans avancer.
+     Seules les pauses imposées par un événement (stallFixedUntil) restent. */
+  function releaseStall(s) {
+    if (s.t < s.stallUntil) s.stallUntil = Math.max(s.t, s.stallFixedUntil || 0);
+  }
   function doWalk(s, townId) {
     var a = availability(s), t = townById(townId);
     if (!a.walk.ok || !t || t.km <= s.km + 0.05) return { ok: false };
-    s.act = 'walk'; s.target = t.km;
+    s.act = 'walk'; s.target = t.km; releaseStall(s);
     note(s, 'Tu marches vers ' + t.n + '.', 'go');
     return { ok: true };
   }
@@ -3582,7 +3601,7 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
   }
   function doHitch(s) {
     if (!availability(s).hitch.ok) return { ok: false };
-    s.act = 'hitch'; s.target = null; s.hitchSince = s.t;
+    s.act = 'hitch'; s.target = null; s.hitchSince = s.t; releaseStall(s);
     note(s, 'Tu tends le pouce au bord de la route.', 'go');
     return { ok: true };
   }
@@ -3646,6 +3665,10 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
       opts: {
         viennoiserie: { n: 'Une viennoiserie', price: 1.4, d: 'Croissant ou pain au chocolat. Un petit coup de pouce.', fx: { meal: 1.5, endu: 1, moral: 1 }, stall: 5 },
         sandwich:     { n: 'Un sandwich', price: 5.5, d: 'Jambon-beurre, une vraie collation.', fx: { meal: 4, endu: 4, moral: 1 }, stall: 10 },
+        sandwich_emp: { n: 'Un sandwich à emporter', price: 5.5, d: 'Rangé dans ton sac pour plus tard : tu le manges quand tu veux.', item: 'sandwich', qty: 1, fx: {}, stall: 5 },
+        sandwich_x2:  { n: 'Deux sandwichs à emporter', price: 10.5, d: 'De quoi tenir sur une longue portion sans village.', item: 'sandwich', qty: 2, fx: {}, stall: 8 },
+        pain_emp:     { n: 'Baguette et fromage à emporter', price: 4, d: 'Deux portions simples pour la route.', item: 'pain', qty: 2, fx: {}, stall: 5 },
+        vienn_emp:    { n: 'Deux viennoiseries à emporter', price: 2.6, d: 'Un sachet à grignoter en marchant.', item: 'viennoiserie', qty: 2, fx: {}, stall: 3 },
         formule:      { n: 'La formule midi', price: 9, d: 'Sandwich, boisson et dessert.', fx: { meal: 6, endu: 6, moral: 3, sante: 1 }, stall: 20, hrs: [[11, 15]] }
       }
     },
@@ -3727,6 +3750,8 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
         toil3: { n: 'Trousse de toilette premium', price: 16, d: 'Dix toilettes, produits de qualité.', item: 'toilette', qty: 10, fx: { moral: 1 }, stall: 15 },
         sock1: { n: 'Chaussettes (lot de 3)', price: 5, d: 'Du coton basique.', item: 'chaussettes', qty: 3, fx: {}, stall: 10 },
         sock2: { n: 'Chaussettes de randonnée (lot de 3)', price: 14, d: 'Mérinos, sans coutures : moins d’ampoules.', item: 'chaussettes', qty: 3, fx: {}, stall: 10 },
+        sup_sand: { n: 'Sandwichs sous cellophane (x3)', price: 8, d: 'Pas les meilleurs, mais ça dépanne et ça se range dans le sac.', item: 'sandwich', qty: 3, fx: {}, stall: 10 },
+        sup_pain: { n: 'Provisions : pain, fromage, fruits (x3)', price: 6, d: 'Trois petits repas pour la route.', item: 'pain', qty: 3, fx: {}, stall: 10 },
         bar1:  { n: 'Barres de céréales (x6)', price: 3.5, d: 'Entrée de gamme.', item: 'barre', qty: 6, fx: {}, stall: 10 },
         bar2:  { n: 'Barres énergétiques (x6)', price: 8, d: 'Fruits secs et noix.', item: 'barre', qty: 6, fx: {}, stall: 10 },
         ponch: { n: 'Poncho de pluie', price: 6, d: 'Léger, il dépanne sous la pluie.', item: 'poncho', qty: 1, once: true, fx: {}, stall: 10 },
@@ -6732,6 +6757,24 @@ window.KZ_CITIES_TXT = "El Tarter|4258|165|11|AD\nSant Julià de Lòria|4246|149
         g.add(b);
         var st = box(0.47, 0.072, 0.05, 0xf4ead2); st.position.copy(b.position); st.rotation.y = b.rotation.y; g.add(st);
       }
+      return g;
+    },
+    sandwich: function (row) {
+      var g = new T.Group(), n = Math.min(4, Math.max(1, row.qty));
+      for (var i = 0; i < n; i++) {
+        var y = i * 0.17, x = (i % 2 ? 0.03 : -0.03);
+        g.add(at(box(0.44, 0.05, 0.26, 0xe0b878), x, y + 0.03, 0)); g.add(at(box(0.42, 0.045, 0.24, 0xe9a0a0), x, y + 0.075, 0));
+        g.add(at(box(0.4, 0.03, 0.22, 0xa7c76a), x, y + 0.11, 0)); g.add(at(box(0.44, 0.05, 0.26, 0xd9a864), x, y + 0.15, 0));
+      }
+      return g;
+    },
+    pain: function (row) {
+      var g = new T.Group(), b = cyl(0.07, 0.07, 0.6, 0xc98a45, { r: 0.8 }); b.rotation.z = Math.PI / 2; g.add(at(b, 0, 0.08, 0));
+      g.add(at(box(0.26, 0.1, 0.2, 0xf1d36a), 0.05, 0.05, 0.22)); return g;
+    },
+    viennoiserie: function (row) {
+      var g = new T.Group(), n = Math.min(4, Math.max(1, row.qty));
+      for (var i = 0; i < n; i++) { var c = cyl(0.1, 0.13, 0.12, 0xd8943e, { r: 0.8 }); c.rotation.z = 0.5; g.add(at(c, (i - (n - 1) / 2) * 0.2, 0.08, (i % 2) * 0.1)); }
       return g;
     },
     pansement: function () {
